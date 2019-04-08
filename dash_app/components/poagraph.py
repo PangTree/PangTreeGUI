@@ -1,6 +1,6 @@
 from typing import List, Dict, Union
 
-from fileformats.json.JSONPangenome import JSONPangenome
+from pangpang.output.PangenomeJSON import PangenomeJSON
 import plotly.graph_objs as go
 
 y_pos_dict = {'A': 40, 'C': 35, 'G': 30, 'T': 25, 'N': 20, 'W': 10, '?': 5, 'n': 2}
@@ -11,7 +11,7 @@ PathsDict = Dict[int, Path]
 PoagraphData = Dict[str, Union[PointsDict, PathsDict]]
 
 
-def get_data(jsonpangenome: JSONPangenome) -> PoagraphData:
+def get_data(jsonpangenome: PangenomeJSON) -> PoagraphData:
     poagraph_data: PoagraphData = {"nodes": {"x": [node.column_id for node in jsonpangenome.nodes],
                                              "y": [y_pos_dict[node.base] for node in jsonpangenome.nodes],
                                              "base": [node.base for node in jsonpangenome.nodes]},

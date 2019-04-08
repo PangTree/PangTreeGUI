@@ -1,18 +1,19 @@
 from collections import deque
 from typing import List, Dict
 
-from consensus.ConsensusNode import ConsensusNodeID
+from pangpang.consensus.ConsensusTree import ConsensusNodeID
+from pangpang.output.PangenomeJSON import PangenomeJSON
 from dash_app.components import consensustree
 from dash_app.layout.css_styles import colors
-from fileformats.json.JSONPangenome import JSONPangenome
+# from fileformats.json.JSONPangenome import JSONPangenome
 import pandas as pd
 import networkx as nx
 
-def get_full_table_data(jsonpangenome: JSONPangenome) -> pd.DataFrame:
+def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
     if not jsonpangenome.sequences:
         return pd.DataFrame()
     if jsonpangenome.consensuses:
-        all_consensuses_ids = [get_consensus_column_name(c.node_id) for c in jsonpangenome.consensuses]
+        all_consensuses_ids = [get_consensus_column_name(c.consensus_node_id) for c in jsonpangenome.consensuses]
     else:
         all_consensuses_ids = []
     first_consensus = jsonpangenome.sequences[0]

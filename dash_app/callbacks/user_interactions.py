@@ -3,9 +3,8 @@ from base64 import b64decode
 from pathlib import Path
 import jsonpickle
 
-from Pangenome import Pangenome
-from arguments.PangenomeParameters import PangenomeParameters
-from fileformats.json.JSONPangenome import JSONPangenome
+# from Pangenome import Pangenome
+from pangpang.output.PangenomeJSON import PangenomeJSON, TaskParameters
 from ..server import app
 from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
@@ -46,11 +45,11 @@ def update_last_clicked_info(pang_n_clicks: int, load_pangenome_n_clicks: int, l
      State('metadata_upload', 'contents'),
      State('pang_options', 'values'),
      State('algorithm', 'value'),
-     State('hbmin', 'value'),
-     State('r', 'value'),
-     State('multiplier', 'value'),
+     # State('hbmin', 'value'),
+     # State('r', 'value'),
+     # State('multiplier', 'value'),
      State('stop', 'value'),
-     State('tree_consensus_options', 'values')
+     # State('tree_consensus_options', 'values')
      ])
 def call_pang(last_clicked_jsonified: str,
               pangenome_contents,
@@ -68,27 +67,28 @@ def call_pang(last_clicked_jsonified: str,
        return decode_content(pangenome_contents)
         # return get_jsonified_pangenome_from_jsonpangenomefile(pangenome_decoded)
     elif last_clicked["action"] == "pang":
-        fasta_option = True if 'FASTA' in pang_options_values else False
-        re_consensus_value = True if 're_consensus' in tree_consensus_options_values else False
-        anti_fragmentation_value = True if 'anti_fragmentation' in tree_consensus_options_values else False
-        no_multiplier_anti_granular = True  # todo
-        output_path = "" #todo
-        maf_decoded = decode_content(maf_contents)
-        metadata_decoded = decode_content(metadata_contents) if metadata_contents else None
-        params = PangenomeParameters(multialignment_file_content=maf_decoded, multialignment_file_path="",
-                                     metadata_file_content=metadata_decoded, metadata_file_path="", blosum_file_path="",
-                                     output_path=output_path, generate_fasta=fasta_option, consensus_type="",
-                                     hbmin=hbmin_value, search_range=r_value, multiplier=multiplier_value,
-                                     stop=stop_value, re_consensus=re_consensus_value, raw_maf="",
-                                     fasta_complementation_option="", missing_base_symbol="", fasta_source_file="",
-                                     max_cutoff_option="", node_cutoff_option="", verbose=True, quiet=True,
-                                     email_address="paulina-ph@wp.pl", cache=False, p=1, datatype="", output_po="",
-                                     output_with_nodes=True)
-        pangenome = run_pangenome_algorithm(params)
-        jsonpangenome = get_jsonpangenome_from_pangenome(pangenome, params)
-        jsonified_pangenome = get_jsonified_pangenome_from_jsonpangenome(jsonpangenome)
-        pangenome_json_path = save_jsonifiedpangenome_to_file(jsonified_pangenome)
-        shutil.copy(pangenome_json_path, "download/pangenome.json")
+        # fasta_option = True if 'FASTA' in pang_options_values else False
+        # re_consensus_value = True if 're_consensus' in tree_consensus_options_values else False
+        # anti_fragmentation_value = True if 'anti_fragmentation' in tree_consensus_options_values else False
+        # no_multiplier_anti_granular = True  # todo
+        # output_path = "" #todo
+        # maf_decoded = decode_content(maf_contents)
+        # metadata_decoded = decode_content(metadata_contents) if metadata_contents else None
+        # params = PangenomeParameters(multialignment_file_content=maf_decoded, multialignment_file_path="",
+        #                              metadata_file_content=metadata_decoded, metadata_file_path="", blosum_file_path="",
+        #                              output_path=output_path, generate_fasta=fasta_option, consensus_type="",
+        #                              hbmin=hbmin_value, search_range=r_value, multiplier=multiplier_value,
+        #                              stop=stop_value, re_consensus=re_consensus_value, raw_maf="",
+        #                              fasta_complementation_option="", missing_base_symbol="", fasta_source_file="",
+        #                              max_cutoff_option="", node_cutoff_option="", verbose=True, quiet=True,
+        #                              email_address="paulina-ph@wp.pl", cache=False, p=1, datatype="", output_po="",
+        #                              output_with_nodes=True)
+        # pangenome = run_pangenome_algorithm(params)
+        # jsonpangenome = get_jsonpangenome_from_pangenome(pangenome, params)
+        # jsonified_pangenome = get_jsonified_pangenome_from_jsonpangenome(jsonpangenome)
+        # pangenome_json_path = save_jsonifiedpangenome_to_file(jsonified_pangenome)
+        # shutil.copy(pangenome_json_path, "download/pangenome.json")
+        jsonified_pangenome = ''
         return jsonified_pangenome
     else:
         return ""
@@ -100,25 +100,25 @@ def get_jsonified_pangenome_from_jsonpangenomefile(jsonpangenomefile_stream) -> 
     return jsonified_pangenome
 
 
-def run_pangenome_algorithm(pangenome_parameters: PangenomeParameters) -> str:
+def run_pangenome_algorithm() -> str:
     raise NotImplementedError("Run pangenome algorithm")
 
 
-def get_jsonpangenome_from_pangenome(pangenome: Pangenome, pangenome_parameters: PangenomeParameters) -> JSONPangenome:
-    return JSONPangenome(pangenome, pangenome_parameters)
+# def get_jsonpangenome_from_pangenome(pangenome: Pangenome, pangenome_parameters: PangenomeParameters) -> JSONPangenome:
+#     return JSONPangenome(pangenome, pangenome_parameters)
 
 
-def save_jsonifiedpangenome_to_file(jsonified_pangenome: str) -> Path:
-    raise NotImplementedError("save_jsonifiedpangenome_to_file")
-    jsonpath = Path("") #todo
-    with open(jsonpath, 'w') as json_output:
-        json_output.write(jsonified_pangenome)
-    return jsonpath
+# def save_jsonifiedpangenome_to_file(jsonified_pangenome: str) -> Path:
+#     raise NotImplementedError("save_jsonifiedpangenome_to_file")
+#     jsonpath = Path("") #todo
+#     with open(jsonpath, 'w') as json_output:
+#         json_output.write(jsonified_pangenome)
+#     return jsonpath
 
 
-def get_jsonified_pangenome_from_jsonpangenome(jsonpangenome: JSONPangenome) -> str:
-    jsonpickle.set_encoder_option('simplejson', indent=4)
-    return jsonpickle.encode(jsonpangenome)
+# def get_jsonified_pangenome_from_jsonpangenome(jsonpangenome: PangenomeJSON) -> str:
+#     jsonpickle.set_encoder_option('simplejson', indent=4)
+#     return jsonpickle.encode(jsonpangenome)
 
 
 def decode_content(content: str) -> str:

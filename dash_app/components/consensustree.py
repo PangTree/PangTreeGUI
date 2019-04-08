@@ -5,20 +5,20 @@ import math
 import plotly.graph_objs as go
 import pandas as pd
 
-from consensus.ConsensusNode import ConsensusNodeID
+from pangpang.consensus.ConsensusTree import ConsensusNodeID
 from dash_app.layout.css_styles import colors
-from fileformats.json.JSONPangenome import JSONPangenome, JSONConsensus
+from pangpang.output.PangenomeJSON import PangenomeJSON, ConsensusNode
 import networkx as nx
 from networkx.readwrite import json_graph
 
 
-def get_consensustree_dict(jsonpangenome: JSONPangenome) -> Dict:
+def get_consensustree_dict(jsonpangenome: PangenomeJSON) -> Dict:
     tree = get_consensustree(jsonpangenome)
     tree_dict = tree_to_dict(tree)
     return tree_dict
 
 
-def get_consensustree(jsonpangenome: JSONPangenome) -> nx.DiGraph:
+def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
     tree_graph = nx.DiGraph()
     for consensus in sorted(jsonpangenome.consensuses, key=lambda c: c.node_id):
         node_is_leaf = True if not consensus.children else False

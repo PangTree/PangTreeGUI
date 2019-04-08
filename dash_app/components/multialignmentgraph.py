@@ -1,10 +1,10 @@
 from typing import List, Dict
 
-from fileformats.json.JSONPangenome import JSONPangenome
+from pangpang.output.PangenomeJSON import PangenomeJSON
 import plotly.graph_objs as go
 
 
-def get_data(jsonpangenome: JSONPangenome) -> Dict:
+def get_data(jsonpangenome: PangenomeJSON) -> Dict:
     multialignmentgraph_data = {}
     for sequence in jsonpangenome.sequences:
         multialignmentgraph_data[sequence.sequence_int_id] = {

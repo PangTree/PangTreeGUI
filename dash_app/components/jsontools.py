@@ -3,10 +3,10 @@ from typing import Dict, Union
 
 import jsonpickle
 import pandas as pd
-from fileformats.json.JSONPangenome import JSONPangenome
+from pangpang.output.PangenomeJSON import PangenomeJSON
 
 
-def unjsonify_jsonpangenome(jsonified_pangenome: str) -> JSONPangenome:
+def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
     return jsonpickle.decode(jsonified_pangenome)
 
 def jsonify_dict(data: Dict) -> str:
