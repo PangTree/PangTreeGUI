@@ -5,6 +5,7 @@ from pangpang.output.PangenomeJSON import PangenomeJSON
 
 def get_data(jsonpangenome: PangenomeJSON) -> Dict[str, str]:
     parameters_data = {}
+    return {}
     if jsonpangenome.program_parameters:
         parameters_data["Multialignment file name"] = jsonpangenome.program_parameters.multialignment_file_path
         parameters_data["Datatype"] = jsonpangenome.program_parameters.datatype

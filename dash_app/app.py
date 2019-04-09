@@ -9,8 +9,8 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 from .callbacks import user_interactions
 from .callbacks import broadcast_pangenome
-from .callbacks import parameters
+# from .callbacks import parameters
 from .callbacks import consensustable
 from .callbacks import consensustree
-from .callbacks import multialignmentgraph
-from .callbacks import poagraph
+# from .callbacks import multialignmentgraph
+# from .callbacks import poagraph

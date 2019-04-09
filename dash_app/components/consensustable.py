@@ -26,7 +26,7 @@ def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
         for m, v in seq.metadata.items():
             row[m] = v
         for c in jsonpangenome.consensuses:
-            row[get_consensus_column_name(c.node_id)] = get_mapped_compatibility(c.comp_to_all_sequences[seq.sequence_str_id])
+            row[get_consensus_column_name(c.consensus_node_id)] = get_mapped_compatibility(c.comp_to_all_sequences[seq.sequence_str_id])
         consensus_df = consensus_df.append(row, ignore_index=True)
     return consensus_df
 

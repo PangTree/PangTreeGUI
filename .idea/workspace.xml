@@ -2,15 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8df2908f-5cb8-4095-b3de-61784bebd5ab" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/assets/tabs.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/tools.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dash_app/layout/about.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dash_app/layout/authors.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dash_app/layout/package.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dash_app/layout/tools.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash_app/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash_app/callbacks/broadcast_pangenome.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/callbacks/broadcast_pangenome.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash_app/callbacks/consensustable.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/callbacks/consensustable.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash_app/callbacks/user_interactions.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/callbacks/user_interactions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash_app/components/consensustable.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/components/consensustable.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash_app/components/consensustree.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/components/consensustree.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dash_app/components/jsontools.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/components/jsontools.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dash_app/components/multialignmentgraph.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/components/multialignmentgraph.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash_app/components/parameters.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/components/parameters.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dash_app/components/poagraph.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/components/poagraph.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash_app/layout/css_styles.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/layout/css_styles.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dash_app/layout/layout.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/layout/layout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dash_app/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dash_app/layout/layout_ids.py" beforeDir="false" afterPath="$PROJECT_DIR$/dash_app/layout/layout_ids.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,107 +28,202 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dash_app/app.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" selection-start-line="6" selection-end-line="6" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/run_dash_app.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../pangpang/pangpang/output/PangenomeJSON.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/dash_app/layout/layout.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="122" column="22" lean-forward="true" selection-start-line="122" selection-start-column="22" selection-end-line="122" selection-end-column="22" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-                <element signature="e#331#955#0" />
-                <element signature="e#13733#26259#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dash_app/layout/css_styles.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/assets/style.css">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../pangpang/pangpang/datamodel/DAGMaf.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="31" lean-forward="true" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
-              <folding>
-                <element signature="e#0#23#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dash_app/callbacks/user_interactions.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="52" column="7" lean-forward="true" selection-start-line="52" selection-start-column="7" selection-end-line="52" selection-end-column="7" />
-              <folding>
-                <element signature="e#0#13#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dash_app/callbacks/parameters.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#0#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustree.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="81" column="19" lean-forward="true" selection-start-line="81" selection-start-column="19" selection-end-line="81" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="vertical" split-proportion="0.8696925">
+      <split-first>
+        <splitter split-orientation="horizontal" split-proportion="0.641844">
+          <split-first>
+            <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dash_app/callbacks/user_interactions.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="1729">
+                      <caret line="137" column="10" selection-start-line="137" selection-start-column="10" selection-end-line="137" selection-end-column="10" />
+                      <folding>
+                        <element signature="e#0#13#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustree.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="39">
+                      <caret line="84" selection-start-line="84" selection-end-line="92" selection-end-column="34" />
+                      <folding>
+                        <element signature="e#0#43#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dash_app/layout/css_styles.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="150">
+                      <caret line="10" column="33" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="33" />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/assets/style.css">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="346">
+                      <caret line="66" column="39" selection-start-line="66" selection-start-column="39" selection-end-line="66" selection-end-column="39" />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dash_app/layout/tools.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="179">
+                      <caret line="173" column="18" lean-forward="true" selection-start-line="173" selection-start-column="18" selection-end-line="173" selection-end-column="18" />
+                      <folding>
+                        <element signature="e#0#35#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dash_app/components/consensustree.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="319">
+                      <caret line="128" column="61" selection-start-line="128" selection-start-column="61" selection-end-line="128" selection-end-column="61" />
+                      <folding>
+                        <element signature="e#0#29#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/dash/dash.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="155">
+                      <caret line="741" selection-start-line="741" selection-end-line="741" />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+            </leaf>
+          </split-first>
+          <split-second>
+            <leaf>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/assets/tabs.css">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="45">
+                      <caret line="9" selection-start-line="9" selection-end-line="9" />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/assets/tools.css">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="329">
+                      <caret line="30" column="1" lean-forward="true" selection-start-line="30" selection-start-column="1" selection-end-line="30" selection-end-column="1" />
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="false">
+                <entry file="file://$PROJECT_DIR$/dash_app/callbacks/parameters.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state>
+                      <folding>
+                        <element signature="e#0#43#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+              <file pinned="false" current-in-tab="true">
+                <entry file="file://$PROJECT_DIR$/dash_app/layout/layout.py">
+                  <provider selected="true" editor-type-id="text-editor">
+                    <state relative-caret-position="105">
+                      <caret line="473" column="39" lean-forward="true" selection-start-line="375" selection-start-column="38" selection-end-line="473" selection-end-column="39" />
+                      <folding>
+                        <element signature="e#0#35#0" expanded="true" />
+                      </folding>
+                    </state>
+                  </provider>
+                </entry>
+              </file>
+            </leaf>
+          </split-second>
+        </splitter>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dash_app/app.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="195">
+                  <caret line="13" column="36" lean-forward="true" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
+                  <folding>
+                    <element signature="e#0#31#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustable.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="17">
+                  <caret line="63" column="38" selection-start-line="63" selection-start-column="38" selection-end-line="63" selection-end-column="38" />
+                  <folding>
+                    <element signature="e#0#50#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dash_app/callbacks/broadcast_pangenome.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="70">
+                  <caret line="44" column="4" selection-start-line="44" selection-start-column="4" selection-end-line="44" selection-end-column="4" />
+                  <folding>
+                    <element signature="e#0#50#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="FindInProjectRecents">
+    <findStrings>
+      <find>pangenome_u</find>
+      <find>program_pa</find>
+      <find>displa</find>
+      <find>id=</find>
+      <find>consensus_table</find>
+      <find>consensus_table_info</find>
+      <find>id_pangenome_hidden</find>
+      <find>show</find>
+      <find>id_full_consensustable_hidden</find>
+      <find>disa</find>
+      <find>id_leaf_info_dropdown</find>
+      <find>tools_consensus_tree_section</find>
+      <find>display</find>
+      <find>id_consensus_tree_slider</find>
+      <find>jaki</find>
+    </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/dash_app</dir>
     </dirStrings>
@@ -131,25 +235,28 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/dash_app/server.py" />
-        <option value="$PROJECT_DIR$/dash_app/components/consensustable.py" />
-        <option value="$PROJECT_DIR$/dash_app/components/consensustree.py" />
         <option value="$PROJECT_DIR$/dash_app/components/jsontools.py" />
         <option value="$PROJECT_DIR$/dash_app/components/multialignmentgraph.py" />
-        <option value="$PROJECT_DIR$/dash_app/components/parameters.py" />
         <option value="$PROJECT_DIR$/dash_app/components/poagraph.py" />
         <option value="$PROJECT_DIR$/../pangpang/pangpang/output/PangenomeJSON.py" />
+        <option value="$PROJECT_DIR$/dash_app/components/parameters.py" />
+        <option value="$PROJECT_DIR$/dash_app/components/consensustable.py" />
+        <option value="$PROJECT_DIR$/dash_app/layout/css_styles.py" />
+        <option value="$PROJECT_DIR$/dash_app/layout/about.py" />
+        <option value="$PROJECT_DIR$/dash_app/layout/package.py" />
+        <option value="$PROJECT_DIR$/dash_app/layout/authors.py" />
+        <option value="$PROJECT_DIR$/dash_app/layout/layout_ids.py" />
         <option value="$PROJECT_DIR$/dash_app/callbacks/user_interactions.py" />
+        <option value="$PROJECT_DIR$/assets/tabs.css" />
         <option value="$PROJECT_DIR$/dash_app/layout/layout.py" />
-      </list>
-    </option>
-  </component>
-  <component name="ProjectConfigurationFiles">
-    <option name="files">
-      <list>
-        <option value="$PROJECT_DIR$/.idea/pangviz.iml" />
-        <option value="$PROJECT_DIR$/.idea/misc.xml" />
-        <option value="$PROJECT_DIR$/.idea/modules.xml" />
-        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/dash_app/callbacks/broadcast_pangenome.py" />
+        <option value="$PROJECT_DIR$/dash_app/app.py" />
+        <option value="$PROJECT_DIR$/assets/tools.css" />
+        <option value="$PROJECT_DIR$/dash_app/callbacks/consensustree.py" />
+        <option value="$PROJECT_DIR$/dash_app/layout/tools.py" />
+        <option value="$PROJECT_DIR$/dash_app/callbacks/consensustable.py" />
+        <option value="$PROJECT_DIR$/dash_app/components/consensustree.py" />
+        <option value="$PROJECT_DIR$/assets/style.css" />
       </list>
     </option>
   </component>
@@ -192,6 +299,12 @@
               <item name="pangviz" type="b2602c69:ProjectViewProjectNode" />
               <item name="pangviz" type="462c0819:PsiDirectoryNode" />
               <item name="dash_app" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="pangviz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="pangviz" type="462c0819:PsiDirectoryNode" />
+              <item name="dash_app" type="462c0819:PsiDirectoryNode" />
               <item name="layout" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
@@ -201,14 +314,21 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/dash_app/layout" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/dash_app/layout" />
+      <recent name="$PROJECT_DIR$/assets" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -267,24 +387,26 @@
       <workItem from="1554545885759" duration="1333000" />
       <workItem from="1554665432593" duration="1537000" />
       <workItem from="1554709411238" duration="3172000" />
-      <workItem from="1554760781945" duration="6576000" />
+      <workItem from="1554760781945" duration="6616000" />
+      <workItem from="1554806604252" duration="1384000" />
+      <workItem from="1554809659431" duration="23454000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16596000" />
+    <option name="totallyTimeSpent" value="41474000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="55" y="25" width="1865" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1797691" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1891149" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32937366" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.26241902" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.41684666" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -309,31 +431,31 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dash_app/layout/layout.py</url>
-          <line>48</line>
+          <line>123</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dash_app/layout/layout.py</url>
-          <line>51</line>
+          <line>126</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dash_app/components/parameters.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dash_app/callbacks/consensustree.py</url>
+          <line>43</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/pangviz$run_dash_app.coverage" NAME="run_dash_app Coverage Results" MODIFIED="1554767001973" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pangviz$run_dash_app.coverage" NAME="run_dash_app Coverage Results" MODIFIED="1554851926348" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/dash_app/components/consensustable.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-412">
-          <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
-          <folding>
-            <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dash_app/server.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -346,13 +468,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dash_app/wsgi.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/components/consensustree.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="18" lean-forward="true" selection-start-column="18" selection-end-column="18" />
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dash_app/components/jsontools.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -374,16 +489,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/components/parameters.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-67">
-          <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dash_app/components/poagraph.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
@@ -398,20 +503,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="16" selection-start-line="16" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/callbacks/broadcast_pangenome.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="7" selection-start-column="7" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustable.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="16" selection-start-line="2" selection-start-column="16" selection-end-line="2" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -442,15 +533,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/run_dash_app.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/../pangpang/pangpang/consensus/ConsensusTree.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" selection-start-line="2" selection-end-line="2" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/run_dash_app.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/../pangpang/pangpang/output/PangenomeJSON.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -461,26 +552,75 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../pangpang/pangpang/datamodel/DAGMaf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="31" lean-forward="true" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
+        <state relative-caret-position="225">
+          <caret line="18" column="31" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/layout/css_styles.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/style.css">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/app.py">
+    <entry file="file://$PROJECT_DIR$/dash_app/components/parameters.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        <state relative-caret-position="390">
+          <caret line="26" column="19" selection-start-line="26" selection-start-column="19" selection-end-line="26" selection-end-column="19" />
           <folding>
-            <element signature="e#0#31#0" expanded="true" />
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/components/consensustable.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="28" column="61" selection-start-line="28" selection-start-column="61" selection-end-line="28" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/authors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/package.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="18" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/about.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="35" selection-start-column="35" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/tabs.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="9" selection-start-line="9" selection-end-line="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/layout_ids.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="27" column="14" selection-start-line="27" selection-start-column="14" selection-end-line="27" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/callbacks/broadcast_pangenome.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="70">
+          <caret line="44" column="4" selection-start-line="44" selection-start-column="4" selection-end-line="44" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -494,35 +634,108 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustree.py">
+    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/dash/development/base_component.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="81" column="19" lean-forward="true" selection-start-line="81" selection-start-column="19" selection-end-line="81" selection-end-column="19" />
+        <state relative-caret-position="100">
+          <caret line="220" selection-start-line="220" selection-end-line="220" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="36" lean-forward="true" selection-start-line="13" selection-start-column="36" selection-end-line="13" selection-end-column="36" />
           <folding>
-            <element signature="e#0#43#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/tools.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="30" column="1" lean-forward="true" selection-start-line="30" selection-start-column="1" selection-end-line="30" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/lib/python3.6/site-packages/dash/dash.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="741" selection-start-line="741" selection-end-line="741" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/layout.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="473" column="39" lean-forward="true" selection-start-line="375" selection-start-column="38" selection-end-line="473" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/dash_app/callbacks/user_interactions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="52" column="7" lean-forward="true" selection-start-line="52" selection-start-column="7" selection-end-line="52" selection-end-column="7" />
+        <state relative-caret-position="1729">
+          <caret line="137" column="10" selection-start-line="137" selection-start-column="10" selection-end-line="137" selection-end-column="10" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dash_app/layout/layout.py">
+    <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustree.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="122" column="22" lean-forward="true" selection-start-line="122" selection-start-column="22" selection-end-line="122" selection-end-column="22" />
+        <state relative-caret-position="39">
+          <caret line="84" selection-start-line="84" selection-end-line="92" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/callbacks/consensustable.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="63" column="38" selection-start-line="63" selection-start-column="38" selection-end-line="63" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#50#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="173" column="18" lean-forward="true" selection-start-line="173" selection-start-column="18" selection-end-line="173" selection-end-column="18" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
-            <element signature="e#331#955#0" />
-            <element signature="e#13733#26259#0" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/components/consensustree.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="319">
+          <caret line="128" column="61" selection-start-line="128" selection-start-column="61" selection-end-line="128" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dash_app/layout/css_styles.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="33" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/style.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="346">
+          <caret line="66" column="39" selection-start-line="66" selection-start-column="39" selection-end-line="66" selection-end-column="39" />
         </state>
       </provider>
     </entry>

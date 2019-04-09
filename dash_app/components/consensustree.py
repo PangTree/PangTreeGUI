@@ -20,12 +20,12 @@ def get_consensustree_dict(jsonpangenome: PangenomeJSON) -> Dict:
 
 def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
     tree_graph = nx.DiGraph()
-    for consensus in sorted(jsonpangenome.consensuses, key=lambda c: c.node_id):
+    for consensus in sorted(jsonpangenome.consensuses, key=lambda c: c.consensus_node_id):
         node_is_leaf = True if not consensus.children else False
-        tree_graph.add_node(consensus.node_id,
+        tree_graph.add_node(consensus.consensus_node_id,
                             name=consensus.name,
                             comp=consensus.comp_to_all_sequences,
-                            sequences_ids=consensus.sequences_ids,
+                            sequences_ids=consensus.sequences_int_ids,
                             show_in_table=True,
                             hidden=False,
                             children_consensuses=consensus.children,
@@ -33,7 +33,7 @@ def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
                             mincomp=consensus.mincomp,
                             is_leaf=node_is_leaf)
         if consensus.parent is not None:
-            tree_graph.add_edge(consensus.parent, consensus.node_id, weight=len(consensus.sequences_ids))
+            tree_graph.add_edge(consensus.parent, consensus.consensus_node_id, weight=len(consensus.sequences_int_ids))
 
     return tree_graph
 
@@ -117,7 +117,7 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
                   )
 
     return go.Figure(
-            data=[tree_nodes_graph, tree_lines_graph, line_graph, leaves_text_graph],
+            data=[tree_lines_graph, tree_nodes_graph, line_graph, leaves_text_graph],
             layout=layout
             )
 
@@ -126,7 +126,7 @@ def get_line_graph(slider_value: float) -> go.Scatter:
     return go.Scatter(x=[slider_value, slider_value],
                       y=[0, 100],
                       mode='lines',
-                      line=dict(color=colors['accent']))
+                      line=dict(color='rgba(126, 178, 54, 1)'))
 
 
 def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: List[str]) -> go.Scatter:
@@ -135,9 +135,9 @@ def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: 
                       mode='markers',
                       name='',
                       marker=dict(symbol='circle',
-                                  size=15,
-                                  color='white',
-                                  line=dict(color='rgb(50,50,50)',
+                                  size=20,
+                                  color='rgba(255, 255, 255, 1)',
+                                  line=dict(color='rgba(49, 55, 21, 1)',
                                             width=1),
                                   ),
                       text=labels_on_hover,
@@ -154,7 +154,7 @@ def get_tree_lines_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph)
     tree_lines_graph = go.Scatter(x=lines_x,
                                   y=lines_y,
                                   mode='lines',
-                                  line=dict(color='rgb(210,210,210)', width=1),
+                                  line=dict(color='rgba(49, 55, 21, 1)',width=2),
                                   hoverinfo='none'
                                   )
     return tree_lines_graph

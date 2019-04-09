@@ -9,13 +9,14 @@ id_hidenn_divs = "hidenn_divs"
 id_last_clicked_hidden = 'last_clicked_hidden'
 id_pang_button = 'pang_button'
 id_load_pangenome_button = 'load_pangenome_button'
+id_pangenome_upload = 'pangenome_upload'
 
 id_pangenome_hidden = 'pangenome_hidden'
 
 id_pangenome_parameters_hidden = 'pangenome_parameters_hidden'
 id_program_parameters = 'program_parameters'
-id_program_parameters_display = 'program_parameters_display'
 
+id_pangenome_info = 'pangenome_info'
 
 id_full_consensustable_hidden = 'full_consensustable_hidden'
 id_partial_consensustable_hidden = 'partial_consensustable_hidden'

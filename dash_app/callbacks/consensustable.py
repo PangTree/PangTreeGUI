@@ -58,3 +58,13 @@ def color_consensuses_table_cells(jsonified_partial_consensustable, jsonified_co
     tree = consensustree.dict_to_tree(consensustree_data)
 
     return consensustable.get_cells_styling(tree, partial_consensustable_data)
+
+
+@app.callback(
+    Output("consensus_table_container", 'style'),
+    [Input(id_full_consensustable_hidden, 'children')])
+def show_consensus_tree_container(jsonified_current_consensustree):
+    if jsonified_current_consensustree:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
