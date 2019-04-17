@@ -1,6 +1,6 @@
 from typing import List, Dict
 
-from pangpang.output.PangenomeJSON import PangenomeJSON
+from poapangenome.output.PangenomeJSON import PangenomeJSON
 import plotly.graph_objs as go
 
 

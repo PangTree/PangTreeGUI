@@ -1,7 +1,7 @@
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_table
-
+import dash_cytoscape as cyto
 from dash_app.layout.layout_ids import *
 
 
@@ -62,13 +62,95 @@ def get_vis_tab_content():
                                     className='nine columns section')]
                  ),
         html.Div(id="tools_poagraph_section",
-                 children=[html.Div(id=id_poagraph,
-                                    className='twelve columns section')
+                 children=[html.Div(id=id_poagraph_container,
+                                    className='twelve columns section',
+                                    children=cyto.Cytoscape(id=id_poagraph,
+                                                            layout={'name': 'circle'},
+                                                            stylesheet=[
+            {
+                'selector': 'node',
+                'style': {
+                    'background-color': 'white',
+                }
+            },
+            {
+                'selector': '.s_node',
+                'style': {
+                    'border-color': 'green',
+                    'border-width': '0.5px',
+                    'content': 'data(label)',
+                    'height': '10px',
+                    'width': '10px',
+                    'text-halign': 'center',
+                    'text-valign': 'center',
+                    'font-size': '5px',
+                    'shape': 'roundrectangle',
+                }
+            },
+{
+                'selector': '.c_node',
+                'style': {
+                    'height': '7px',
+                    'width': '7px',
+                    'opacity': 0.5
+                }
+            },
+            {
+                'selector': 'edge',
+                'style':{
+
+                }
+            },
+            {
+                'selector': '.s_edge',
+                'style': {
+                    'width': 'data(weight)',
+                    'target-arrow-shape': 'triangle',
+                    'arrow-scale': 0.5,
+                    'curve-style': 'bezier'
+                }
+            },
+            {
+                'selector': '.c_edge',
+                'style': {
+                    'opacity': 0.5,
+                    'curve-style': 'haystack',
+                    'haystack-radius': 0.7,
+                    'width': '2px',
+                }
+            },
+            {
+                'selector': '.c2',
+                'style':{
+                    'line-color': 'red',
+                }
+            },
+            {
+                'selector': '.c1',
+                'style': {
+                    'line-color': 'green',
+                }
+            },
+            {
+                'selector': '.c_short',
+                'style': {
+                    'curve-style': 'haystack',
+                }
+            },
+            {
+                'selector': '.s_edge_aligned',
+                'style': {
+                    'line-style': 'dashed',
+                    'width': '1px'
+                }
+            },
+        ],
+                                                            elements=[{'data': {'id': '0', 'label': 'a'}, 'position': {'x': 100, 'y': 100}, 'classes': ''}],
+                                                            style={'width': '100%', 'height': '500px'},))
                            ]
                  ),
-                  html.Div(
-                                                      id=id_consensus_tree_container,
-                      style={'display': 'none'},
+                  html.Div( id=id_consensus_tree_container,
+                            style={'display': 'none'},
                                                       children=[
                                                           html.Div(
                                                               id='tree',

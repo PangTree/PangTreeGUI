@@ -1,8 +1,8 @@
 from collections import deque
 from typing import List, Dict
 
-from pangpang.consensus.ConsensusTree import ConsensusNodeID
-from pangpang.output.PangenomeJSON import PangenomeJSON
+from poapangenome.consensus.ConsensusTree import ConsensusNodeID
+from poapangenome.output.PangenomeJSON import PangenomeJSON
 from dash_app.components import consensustree
 from dash_app.layout.css_styles import colors
 # from fileformats.json.JSONPangenome import JSONPangenome

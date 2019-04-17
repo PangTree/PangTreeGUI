@@ -5,7 +5,7 @@ import jsonpickle
 
 import dash_html_components as html
 import dash_core_components as dcc
-from pangpang.output.PangenomeJSON import PangenomeJSON, TaskParameters
+from poapangenome.output import PangenomeJSON
 from ..server import app
 from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
@@ -133,9 +133,10 @@ def run_pangenome_algorithm() -> str:
 #     return jsonpath
 
 
-def get_jsonified_pangenome_from_jsonpangenome(jsonpangenome: PangenomeJSON) -> str:
+def get_jsonified_pangenome_from_jsonpangenome(jsonpangenome: PangenomeJSON.PangenomeJSON) -> str:
     jsonpickle.set_encoder_option('simplejson', indent=4)
-    return jsonpickle.encode(jsonpangenome)
+    return PangenomeJSON.to_json(jsonpangenome)
+    # return jsonpickle.encode(jsonpangenome)
 
 
 def decode_content(content: str) -> str:

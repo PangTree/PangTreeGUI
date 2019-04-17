@@ -5,9 +5,9 @@ import math
 import plotly.graph_objs as go
 import pandas as pd
 
-from pangpang.consensus.ConsensusTree import ConsensusNodeID
+from poapangenome.consensus.ConsensusTree import ConsensusNodeID
 from dash_app.layout.css_styles import colors
-from pangpang.output.PangenomeJSON import PangenomeJSON, ConsensusNode
+from poapangenome.output.PangenomeJSON import PangenomeJSON, ConsensusNode
 import networkx as nx
 from networkx.readwrite import json_graph
 

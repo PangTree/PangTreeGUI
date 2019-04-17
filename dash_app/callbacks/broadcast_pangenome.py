@@ -1,7 +1,7 @@
 from dash.dependencies import Input, Output, State
 
 from dash_app.components import parameters, consensustable, consensustree, multialignmentgraph, poagraph
-
+import dash_html_components as html
 import dash_app.components.jsontools as jsontools
 from ..layout.layout_ids import *
 
@@ -54,17 +54,16 @@ def update_consensustree_hidden(jsonified_pangenome):
 #     pangraph_data = multialignmentgraph.get_data(jsonpangenome)
 #     return jsontools.jsonify_dict(pangraph_data)
 #
-# @app.callback(
-#     Output(id_poagraph_hidden, 'children'),
-#     [Input(id_pangenome_hidden, 'children')],
-#     [State(id_show_vis, "value")]
-# )
-# def update_poagraph_hidden(jsonified_pangenome, show_vis_value):
-#     if not jsonified_pangenome or show_vis_value == "NO":
-#         return []
-#     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
-#     poagraph_data = poagraph.get_data(jsonpangenome)
-#     return jsontools.jsonify_dict(poagraph_data)
+@app.callback(
+    Output(id_poagraph_hidden, 'children'),
+    [Input(id_pangenome_hidden, 'children')],
+)
+def update_poagraph_hidden(jsonified_pangenome):
+    if not jsonified_pangenome:
+        return []
+    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    nodes_data, edges_data = poagraph.get_data(jsonpangenome)
+    return html.Div(nodes_data), html.Div(edges_data)#jsontools.jsonify_dict(poagraph_data)
 
 @app.callback(
     Output(id_mafgraph_hidden, 'children'),

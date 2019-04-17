@@ -1,4 +1,4 @@
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 
 from dash_app.components import multialignmentgraph, poagraph
 from ..components import jsontools
@@ -7,14 +7,17 @@ from ..layout.layout_ids import *
 from ..server import app
 
 @app.callback(
-    Output(id_poagraph, 'figure'),
-    [Input(id_poagraph_hidden, 'children')]
+    Output(id_poagraph, 'elements'),
+    [Input(id_poagraph_hidden, 'children')],
+[State(id_poagraph, 'elements')]
 )
-def update_poagraph(jsonified_poagraph_data: str):
+def update_poagraph(jsonified_poagraph_data: str, elements):
     if not jsonified_poagraph_data:
         return []
-    poagraph_data = jsontools.unjsonify_dict(jsonified_poagraph_data)
-    return poagraph.get_graph(poagraph_data)
+    nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
+    edges_data = jsontools.unjsonify_df(jsonified_poagraph_data[1]['props']['children'])
+    elements += poagraph.get_cytoscape_graph(nodes_data, edges_data)
+    return elements
 
 
 @app.callback(
