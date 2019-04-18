@@ -63,9 +63,10 @@ def get_vis_tab_content():
                  ),
         html.Div(id="tools_poagraph_section",
                  children=[html.Div(id=id_poagraph_container,
-                                    className='twelve columns section',
-                                    children=cyto.Cytoscape(id=id_poagraph,
-                                                            layout={'name': 'circle'},
+                                    className='twelve columns section row',
+
+                                    children=[cyto.Cytoscape(id=id_poagraph,
+                                                            layout={'name': 'preset'},
                                                             stylesheet=[
             {
                 'selector': 'node',
@@ -138,6 +139,12 @@ def get_vis_tab_content():
                 }
             },
             {
+                'selector': '.s_short',
+                'style': {
+                    'curve-style': 'haystack',
+                }
+            },
+            {
                 'selector': '.s_edge_aligned',
                 'style': {
                     'line-style': 'dashed',
@@ -145,8 +152,10 @@ def get_vis_tab_content():
                 }
             },
         ],
-                                                            elements=[{'data': {'id': '0', 'label': 'a'}, 'position': {'x': 100, 'y': 100}, 'classes': ''}],
-                                                            style={'width': '100%', 'height': '500px'},))
+                                                            elements=[
+                                                            ],
+                                                            style={'width': 'auto', 'height': '500px'},)
+                                              ])
                            ]
                  ),
                   html.Div( id=id_consensus_tree_container,

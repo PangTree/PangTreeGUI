@@ -1,7 +1,7 @@
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_table
-
+import dash_cytoscape as cyto
 from .layout_ids import *
 from .css_styles import colors
 from ..components import texts
@@ -10,6 +10,7 @@ from dash_app.layout import tools, about, package, authors
 
 def get_layout(get_url_function):
     return html.Div(id='lll', children=[
+
     dcc.Tabs(
         id="main-tabs",
         value='tools',
