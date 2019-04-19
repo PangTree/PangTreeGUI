@@ -45,3 +45,6 @@ id_poagraph_container = "poagraph_container"
 id_poagraph = "poagraph"
 
 id_show_vis = "show_vis"
+
+id_full_pangenome_container = "full_pangenome_container"
+id_full_pangenome_graph = "full_pangenome_graph"

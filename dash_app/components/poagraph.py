@@ -2,6 +2,8 @@ from collections import namedtuple, deque
 from typing import List, Dict, Union, Tuple, Set
 import pandas as pd
 from poapangenome.output.PangenomeJSON import PangenomeJSON
+import plotly.graph_objs as go
+import numpy as np
 
 
 EdgeData = namedtuple('EdgeData', ['to', 'classes'])
@@ -308,3 +310,18 @@ def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam el
                                                            ]]
     return nodes + c_nodes + edges
 
+
+def get_pangenome_graph(nodes_data, edges_data) -> go.Figure:
+    N=1000000
+    return go.Figure(
+        data = [go.Scattergl(
+            x = np.random.randn(N),
+            y = np.random.randn(N),
+            mode = 'markers',
+            marker = dict(
+                color = 'rgb(152, 0, 0)',
+                line = dict(
+                    width = 1,
+                    color = 'rgb(0,0,0)')
+            )
+        )])
