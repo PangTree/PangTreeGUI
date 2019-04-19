@@ -1,7 +1,7 @@
 from collections import namedtuple, deque
 from typing import List, Dict, Union, Tuple, Set
 import pandas as pd
-from poapangenome.output.PangenomeJSON import PangenomeJSON
+from poapangenome.output.PangenomeJSON import PangenomeJSON, Sequence
 import plotly.graph_objs as go
 import numpy as np
 
@@ -123,7 +123,8 @@ class Poagraph:
             y_candidate = 0
             while True:
                 if any([y_candidate == y and node_id not in continuous_path for co in columns_occupied_y for node_id, y in co.items()]):
-                    y_candidate += self.node_width * 1.5
+                    # y_candidate += self.node_width * 1.5
+                    y_candidate += self.node_width
                 else:
                     for node_id in continuous_path:
                         cols_occupancy[jsonpangenome.nodes[node_id].column_id][node_id] = y_candidate
@@ -141,7 +142,8 @@ class Poagraph:
                         if len(cols_occupancy[col]) == 0:
                             new_y_2 = 0
                         else:
-                            new_y_2 = max([y for y in cols_occupancy[col].values()]) + self.node_width * 1.5
+                            # new_y_2 = max([y for y in cols_occupancy[col].values()]) + self.node_width * 1.5
+                            new_y_2 = max([y for y in cols_occupancy[col].values()]) + self.node_width
                         cols_occupancy[col][node_id] = new_y_2
                         update_y_2(node_id, new_y_2)
 
@@ -311,17 +313,38 @@ def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam el
     return nodes + c_nodes + edges
 
 
-def get_pangenome_graph(nodes_data, edges_data) -> go.Figure:
-    N=1000000
+def get_pangenome_graph(nodes_data, edges_data, jsonpangenome) -> go.Figure:
+    if len(jsonpangenome.sequences) == 0:
+        return None
+    sequences_traces = []
+    for sequence in jsonpangenome.sequences:
+        sequences_traces.extend(_get_pangenome_trace(sequence, nodes_data))
+
     return go.Figure(
-        data = [go.Scattergl(
-            x = np.random.randn(N),
-            y = np.random.randn(N),
-            mode = 'markers',
-            marker = dict(
-                color = 'rgb(152, 0, 0)',
-                line = dict(
-                    width = 1,
-                    color = 'rgb(0,0,0)')
-            )
-        )])
+        data = sequences_traces,
+        layout = go.Layout(
+            legend=dict(x=-.1, y=1.2,)),
+
+        #marker color - jako tablica
+
+    )
+
+
+def _get_pangenome_trace(sequence: Sequence, nodes_data) -> [go.Scattergl]:
+    traces = []
+    for path in sequence.nodes_ids:
+        x = [nodes_data.loc[node_id, "x_2"] for node_id in path]
+        y = [nodes_data.loc[node_id, "y_2"] for node_id in path]
+        traces.append(go.Scattergl(
+                        x = x,
+                        y = y,
+                        mode = 'markers',
+                        marker = dict(
+                            width = 0.5
+                            # line = dict(
+                            #     width = 0,
+                            # )
+                        ),
+            name=sequence.sequence_str_id
+                    ))
+    return traces

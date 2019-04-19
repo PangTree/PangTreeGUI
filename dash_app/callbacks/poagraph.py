@@ -12,6 +12,7 @@ from ..server import app
     [State(id_poagraph, 'elements')]
 )
 def update_poagraph(jsonified_poagraph_data: str, elements):
+    return []
     if not jsonified_poagraph_data:
         return []
     nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
@@ -22,14 +23,16 @@ def update_poagraph(jsonified_poagraph_data: str, elements):
 
 @app.callback(
     Output(id_full_pangenome_graph, 'figure'),
-    [Input(id_poagraph_hidden, 'children')]
+    [Input(id_poagraph_hidden, 'children')],
+    [State(id_pangenome_hidden, 'children')]
 )
-def update_poagraph(jsonified_poagraph_data: str):
-    if not jsonified_poagraph_data:
+def update_poagraph(jsonified_poagraph_data: str, jsonified_pangenome):
+    if not jsonified_poagraph_data or not jsonified_pangenome:
         return []
+    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
     nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
     edges_data = jsontools.unjsonify_df(jsonified_poagraph_data[1]['props']['children'])
-    pangenome_graph = poagraph.get_pangenome_graph(nodes_data, edges_data)
+    pangenome_graph = poagraph.get_pangenome_graph(nodes_data, edges_data, jsonpangenome)
     return pangenome_graph
 
 @app.callback(
@@ -40,3 +43,17 @@ def show_poagraph(jsonified_poagraph_data):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
+# @app.callback(
+#     Output(id_full_pangenome_graph, 'style'),
+#     [Input(id_poagraph_hidden, 'children')])
+# def show_poagraph(jsonified_poagraph_data):
+#     if not jsonified_poagraph_data:
+#         return []
+#     nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
+#     m = nodes_data['x_2'].max()
+#     if m < 1000:
+#         w = "auto"
+#     else:
+#         w = f'{10000}px'
+#     return {'width': w}

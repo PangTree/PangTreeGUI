@@ -161,9 +161,10 @@ def get_vis_tab_content():
                                               className="twelve columns section row",
                                               children=[dcc.Graph(
                                                   id=id_full_pangenome_graph,
-                                                  style={'height': '600px', 'width': 'auto'},
+                                                  style={'height': '400px', 'width': 'auto'},
                                                   figure=[]
-                                              )])
+                                              )],
+                                              style={'overflow-x': 'scroll'})
                                      ]
                            ),
                   html.Div(id=id_consensus_tree_container,
