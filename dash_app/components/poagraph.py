@@ -320,10 +320,15 @@ def get_pangenome_graph(nodes_data, edges_data, jsonpangenome) -> go.Figure:
     for sequence in jsonpangenome.sequences:
         sequences_traces.extend(_get_pangenome_trace(sequence, nodes_data))
 
+    max_y = nodes_data['y_2'].max()
     return go.Figure(
         data = sequences_traces,
         layout = go.Layout(
-            legend=dict(x=-.1, y=1.2,)),
+            legend=dict(x=-.1, y=1.2,),
+            yaxis=dict(
+                range=[-10, 200]
+            ),
+        ),
 
         #marker color - jako tablica
 
@@ -332,6 +337,10 @@ def get_pangenome_graph(nodes_data, edges_data, jsonpangenome) -> go.Figure:
 
 def _get_pangenome_trace(sequence: Sequence, nodes_data) -> [go.Scattergl]:
     traces = []
+    max_x = nodes_data['x_2'].max()
+    min_x = nodes_data['x_2'].min()
+    marker_size = (max_x-min_x)/(len(nodes_data.index)*1.5)
+    print(marker_size)
     for path in sequence.nodes_ids:
         x = [nodes_data.loc[node_id, "x_2"] for node_id in path]
         y = [nodes_data.loc[node_id, "y_2"] for node_id in path]
@@ -340,7 +349,7 @@ def _get_pangenome_trace(sequence: Sequence, nodes_data) -> [go.Scattergl]:
                         y = y,
                         mode = 'markers',
                         marker = dict(
-                            width = 0.5
+                            size = 0.5
                             # line = dict(
                             #     width = 0,
                             # )
