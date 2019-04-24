@@ -12,7 +12,7 @@ from ..server import app
     [State(id_poagraph, 'elements')]
 )
 def update_poagraph(jsonified_poagraph_data: str, elements):
-    return []
+    # return []
     if not jsonified_poagraph_data:
         return []
     nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
@@ -43,6 +43,14 @@ def show_poagraph(jsonified_poagraph_data):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
+
+# @app.callback(
+#     Output('okno', 'children'),
+#     [Input(id_full_pangenome_graph, 'relayoutData')])
+# def display_selected_data(relayoutData):
+#     print(relayoutData)
+#     return relayoutData
 
 # @app.callback(
 #     Output(id_full_pangenome_graph, 'style'),

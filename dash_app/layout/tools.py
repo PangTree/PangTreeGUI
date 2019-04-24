@@ -162,7 +162,11 @@ def get_vis_tab_content():
                                               children=[dcc.Graph(
                                                   id=id_full_pangenome_graph,
                                                   style={'height': '400px', 'width': 'auto'},
-                                                  figure=[]
+                                                  figure=[],
+                                                  config={
+                                                      # 'displayModeBar': False,
+                                                      # 'dragmode': 'pan'
+                                                  }
                                               )],
                                               style={'overflow-x': 'scroll'})
                                      ]
