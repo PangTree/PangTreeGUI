@@ -23,8 +23,8 @@ class PoaGraph:
         self.nodes_df = pd.DataFrame.from_records([{
             'id': node.id,
             'base': node.base,
-            'x_poagraph': node.column_id * self.poagraph_node_width,
-            'y_poagraph': 5,
+            'x_poagraph': node.column_id * self.poagraph_node_width * 1.5,
+            'y_poagraph': -1,
             'x_pangenome': node.column_id,
             'y_pangenome': -1,
             'sequences_ids': [],
@@ -44,57 +44,19 @@ class PoaGraph:
                     if i < path_end:
                         self.nodes_df.at[node_id, 'to_right'].append(path[i+1])
 
-        # for sequence in jsonpangenome.sequences:
-        #     for path in sequence.nodes_ids:
-        #         for i, node_id in enumerate(path):
-        #             node = jsonpangenome.nodes[node_id]
-        #             if node.column_id in self.columns:
-        #                 self.columns[node.column_id].add(node_id)
-        #             else:
-        #                 self.columns[node.column_id] = {node_id}
-        #
-        #             if node_id in self.nodes:
-        #                 self.nodes[node_id].sequences_ids.append(sequence.sequence_int_id)
-        #             else:
-        #                 node = jsonpangenome.nodes[node_id]
-        #                 self.nodes[node_id] = NodeData(base=node.base,
-        #                                                x_detailed=node.column_id * self.detailed_node_width * 1.5,
-        #                                                y_detailed=-1,
-        #                                                x_pangenome=node.column_id,
-        #                                                y_pangenome=-1,
-        #                                                sequences_ids=[sequence.sequence_int_id],
-        #                                                consensus_ids=[]
-        #                                                )
-        #             if i < len(path) - 1:
-        #                 left_end = node_id
-        #                 right_end = path[i + 1]
-        #                 if left_end in self.edges:
-        #                     self.edges[left_end].to.append(right_end)
-        #                 else:
-        #                     self.edges[left_end] = EdgeData(to=[right_end], classes=[])
-        #                 if right_end in self.edges_reversed:
-        #                     self.edges_reversed[right_end].add(left_end)
-        #                 else:
-        #                     self.edges_reversed[right_end] = {left_end}
 
-    def calculate_poagraph_coordinates(self):
-        self.continuous_paths = self._find_continuous_paths()
-        self._update_x_detailed_for_contlocinuous_paths(self.continuous_paths)
-        self._update_y_detailed()
-
-    def _find_continuous_paths_old(self) -> List[List[int]]:
+    def _find_continuous_paths(self) -> List[List[int]]:
         continuous_paths = []
-        for node_id, node_data in self.nodes.items():
-            if node_id not in self.edges:
-                continue
-            following_nodes_ids = list(set(self.edges[node_id].to))
+
+        for node_id, node in self.nodes_df.iterrows():
+            following_nodes_ids = list(set(node.to_right))
             if len(following_nodes_ids) != 1:
                 continue
             single_following_node_id = following_nodes_ids[0]
-            other_incoming_nodes = list(set(self.edges_reversed[single_following_node_id]))
+            other_incoming_nodes = list(set(self.nodes_df.loc[single_following_node_id, 'to_left']))
             if len(other_incoming_nodes) != 1:
                 continue
-            self.edges[node_id].classes.append("s_short")
+            # self.edges[node_id].classes.append("s_short")
             path_was_extended = False
 
             for continuous_path in continuous_paths:
@@ -104,147 +66,9 @@ class PoaGraph:
                     break
             if not path_was_extended:
                 continuous_paths.append([node_id, single_following_node_id])
+
         return continuous_paths
 
-    def _find_continuous_paths(self) -> List[List[int]]:
-        continuous_paths = []
-        nodes_in_continuous_paths = self.nodes_df.loc[(self.nodes_df['to_left'].str.len() == 1) &
-                                                      (self.nodes_df['to_right'].str.len() == 1)]
-        for node_id, node in nodes_in_continuous_paths.iterrows():
-            print(node)
-
-        # for node_id, node_data in self.nodes.items():
-        #     if node_id not in self.edges:
-        #         continue
-        #     following_nodes_ids = list(set(self.edges[node_id].to))
-        #     if len(following_nodes_ids) != 1:
-        #         continue
-        #     single_following_node_id = following_nodes_ids[0]
-        #     other_incoming_nodes = list(set(self.edges_reversed[single_following_node_id]))
-        #     if len(other_incoming_nodes) != 1:
-        #         continue
-        #     self.edges[node_id].classes.append("s_short")
-        #     path_was_extended = False
-        #
-        #     for continuous_path in continuous_paths:
-        #         if continuous_path[-1] == node_id:
-        #             continuous_path.append(single_following_node_id)
-        #             path_was_extended = True
-        #             break
-        #     if not path_was_extended:
-        #         continuous_paths.append([node_id, single_following_node_id])
-        return continuous_paths
-
-    def _update_x_detailed_for_continuous_paths(self, continuous_paths):
-        for continuous_path in continuous_paths:
-            first_node_x = self.nodes[continuous_path[0]].x_detailed
-            last_node_id = self.nodes[continuous_path[-1]].x_detailed
-            middle_point = first_node_x + (last_node_id - first_node_x) / 2
-            new_first_node_x = middle_point - len(continuous_path) // 2 * self.detailed_node_width + self.detailed_node_width / 2
-            node_x = new_first_node_x
-            for node_id in continuous_path:
-                n = self.nodes[node_id]
-                self.nodes[node_id] = NodeData(n.base, node_x, n.y_detailed, n.x_2, n.y_2, n.sequences_ids, n.consensus_ids)
-                node_x += self.detailed_node_width
-
-    def _update_y_detailed(self):
-        def update_next_node_y(next_nodes, i, new_y):
-            n = self.nodes[next_nodes[i]]
-            if n.y_detailed == -1:
-                self.nodes[next_nodes[i]] = NodeData(n.base, n.x_detailed, new_y, n.x_2, n.y_2, n.sequences_ids, n.consensus_ids)
-
-        sorted_columns_ids = sorted(self.columns.keys())
-        for column_id in sorted_columns_ids:
-            nodes_ids = self.columns[column_id]
-            current_y = 0
-            column_y_values = []
-            for node_id in nodes_ids:
-                node = self.nodes[node_id]
-                if node.y_detailed != -1:
-                    new_y = node.y_detailed
-                else:
-                    while True:
-                        current_y += 20
-                        if current_y not in column_y_values:
-                            new_y = current_y
-                            column_y_values.append(current_y)
-                            break
-                    self.nodes[node_id] = NodeData(node.base, node.x_detailed, new_y, node.x_2, node.y_2, node.sequences_ids, node.consensus_ids)
-                if node_id in self.edges:
-                    next_nodes = [node_id for node_id in set(self.edges[node_id].to) if
-                                  column_id < len(self.columns) - 1 and node_id in self.columns[column_id + 1]]
-                    if len(next_nodes) == 1:
-                        update_next_node_y(next_nodes, 0, new_y)
-                    elif len(next_nodes) == 2:
-                        update_next_node_y(next_nodes, 0, new_y - 10)
-                        update_next_node_y(next_nodes, 1, new_y + 10)
-                    elif len(next_nodes) == 3:
-                        update_next_node_y(next_nodes, 0, new_y - 10)
-                        update_next_node_y(next_nodes, 1, new_y)
-                        update_next_node_y(next_nodes, 2, new_y + 10)
-                    elif len(next_nodes) == 4:
-                        update_next_node_y(next_nodes, 0, new_y - 25)
-                        update_next_node_y(next_nodes, 1, new_y - 10)
-                        update_next_node_y(next_nodes, 2, new_y + 10)
-                        update_next_node_y(next_nodes, 3, new_y - 25)
-
-    def calculate_pangenome_coordinates(self, jsonpangenome):
-        def update_y(node_id, value):
-            n = self.nodes[node_id]
-            self.nodes[node_id] = NodeData(base=n.base,
-                                           x_detailed=n.x_detailed, y_detailed=n.y_detailed,
-                                           x_pangenome=n.x_2, y_pangenome=value,
-                                           sequences_ids=n.sequences_ids,
-                                           consensus_ids=n.consensus_ids)
-
-        def update_x(node_id, value):
-            n = self.nodes[node_id]
-            self.nodes[node_id] = NodeData(base=n.base,
-                                           x_detailed=n.x_detailed, y_detailed=n.y_detailed,
-                                           x_pangenome=value, y_pangenome=n.y_2,
-                                           sequences_ids=n.sequences_ids,
-                                           consensus_ids=n.consensus_ids)
-
-        def find_out_y(continuous_path, cols_occupancy):
-            columns_occupied_y = [cols_occupancy[jsonpangenome.nodes[node_id].column_id] for node_id in continuous_path]
-            y_candidate = 0
-            while True:
-                if any([y_candidate == y and node_id not in continuous_path for co in columns_occupied_y for node_id, y in co.items()]):
-                    # y_candidate += self.node_width * 1.5
-                    y_candidate += self.detailed_node_width
-                else:
-                    for node_id in continuous_path:
-                        cols_occupancy[jsonpangenome.nodes[node_id].column_id][node_id] = y_candidate
-                    return y_candidate
-
-        cols_occupancy: Dict[int, Dict[int, int]] = {col_id: {} for col_id in self.columns}
-        for sequence in jsonpangenome.sequences:
-            for path in sequence.nodes_ids:
-                for i, node_id in enumerate(path):
-                    if self.nodes[node_id].x_2 == -1:
-                        update_x(node_id, jsonpangenome.nodes[node_id].column_id * self.scale)
-                    if self.nodes[node_id].y_2 == -1:
-                        col = jsonpangenome.nodes[node_id].column_id
-                        if len(cols_occupancy[col]) == 0:
-                            new_y_2 = 0
-                        else:
-                            new_y_2 = max([y for y in cols_occupancy[col].values()]) + self.scale *2
-                        cols_occupancy[col][node_id] = new_y_2
-                        update_y(node_id, new_y_2)
-
-        for continuous_path in self.continuous_paths:
-            first_node_x = self.nodes[continuous_path[0]].x_2
-            last_node_id = self.nodes[continuous_path[-1]].x_2
-
-            middle_point = first_node_x + (last_node_id - first_node_x) / 2
-            new_first_node_x = middle_point - len(continuous_path) // 2 * self.detailed_node_width + self.detailed_node_width / 2
-            node_x = new_first_node_x
-            path_y = find_out_y(continuous_path, cols_occupancy)
-            for node_id in continuous_path:
-                update_x(node_id, node_x)
-                n = self.nodes[node_id]
-                self.nodes[node_id] = NodeData(n.base, n.x_detailed, n.y_detailed, node_x, path_y, n.sequences_ids, n.consensus_ids)
-                node_x += self.detailed_node_width
 
     def set_pangenome_coordiantes(self):
         column_y_occupancy: Dict[int, List[int]] = {}
@@ -257,8 +81,50 @@ class PoaGraph:
                 column_y_occupancy[node.x_pangenome] = [new_y]
             self.nodes_df.at[node_id, 'y_pangenome'] = new_y
 
-    def set_poagraph_coordinates(self):
+
+    def set_poagraph_coordinates(self, jsonpangenome: PangenomeJSON):
         continuous_paths = self._find_continuous_paths()
+
+        def find_out_y(continuous_path, cols_occupancy):
+            columns_occupied_y = [cols_occupancy[jsonpangenome.nodes[node_id].column_id]
+                                  for node_id in continuous_path]
+            y_candidate = 0
+            while True:
+                if any([y_candidate == y and node_id not in continuous_path for co in columns_occupied_y for node_id, y in co.items()]):
+                    # y_candidate += self.node_width * 1.5
+                    y_candidate += self.poagraph_node_width * 1.5
+                else:
+                    for node_id in continuous_path:
+                        cols_occupancy[jsonpangenome.nodes[node_id].column_id][node_id] = y_candidate
+                    return y_candidate
+
+        cols_occupancy: Dict[int, Dict[int, int]] = {col_id: {} for col_id in self.nodes_df['x_pangenome']}
+        for sequence in jsonpangenome.sequences:
+            for path in sequence.nodes_ids:
+                for i, node_id in enumerate(path):
+                    # if self.nodes_df.at[node_id, 'x_poagraph'] == -1:
+                    #     update_x(node_id, jsonpangenome.nodes[node_id].column_id * self.scale)
+                    if self.nodes_df.at[node_id, 'y_poagraph'] == -1:
+                        col = jsonpangenome.nodes[node_id].column_id
+                        if len(cols_occupancy[col]) == 0:
+                            new_y_2 = 0
+                        else:
+                            new_y_2 = max([y for y in cols_occupancy[col].values()]) + self.poagraph_node_width * 1.5
+                        cols_occupancy[col][node_id] = new_y_2
+                        self.nodes_df.at[node_id, 'y_poagraph'] = new_y_2
+
+        for continuous_path in continuous_paths:
+            first_node_x = self.nodes_df.at[continuous_path[0], 'x_poagraph']
+            last_node_id = self.nodes_df.at[continuous_path[-1], 'x_poagraph']
+
+            middle_point = first_node_x + (last_node_id - first_node_x) / 2
+            new_first_node_x = middle_point - len(continuous_path) // 2 * self.poagraph_node_width + self.poagraph_node_width / 2
+            node_x = new_first_node_x
+            path_y = find_out_y(continuous_path, cols_occupancy)
+            for node_id in continuous_path:
+                self.nodes_df.at[node_id, 'x_poagraph'] = node_x
+                self.nodes_df.at[node_id, 'y_poagraph'] = path_y
+                node_x += self.poagraph_node_width
 
 
 def get_data(jsonpangenome: PangenomeJSON) -> Tuple[str, str]:
@@ -268,7 +134,7 @@ def get_data(jsonpangenome: PangenomeJSON) -> Tuple[str, str]:
     poagraph = PoaGraph(jsonpangenome)
 
     poagraph.set_pangenome_coordiantes()
-    poagraph.set_poagraph_coordinates()
+    poagraph.set_poagraph_coordinates(jsonpangenome)
 
     edges_data = {'e1': ['n1', 'n3', [0, 1], []],
                   'e2': ['n2', 'n3', [2], [0, 1]]}
@@ -283,12 +149,8 @@ def _get_cytoscape_node(id, label, x, y, cl):
 
 
 def get_poagraph_elements(nodes_data, min_x: Optional[int], max_x: Optional[int]) -> List[any]:
-    r = _get_pangenome_graph_x_range(nodes_data)
-
-    x_pangenome_max = nodes_data['x_pangenome'].max()
-    x_pangenome_min = nodes_data['x_pangenome'].min()
-
     if max_x is None or min_x is None:
+        r = _get_pangenome_graph_x_range(nodes_data)
         left_bound = r[1] // 3
         right_bound = r[1] // 3 * 2
     else:
@@ -303,7 +165,6 @@ def get_poagraph_elements(nodes_data, min_x: Optional[int], max_x: Optional[int]
                                  cl='s_node')
              for node_id, node_data in nodes_data.loc[(nodes_data["x_pangenome"] >= left_bound)
                                                       & (nodes_data["x_pangenome"] <= right_bound)].iterrows()]
-    print(min_x, max_x, [node['data']['id'] for node in nodes])
     return nodes
 
 
