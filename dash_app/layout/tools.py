@@ -159,7 +159,6 @@ def get_vis_tab_content():
                                                         ]),
                                      html.Div(id=id_full_pangenome_container,
                                               className="twelve columns section row",
-                                              # style={'background-color': 'red'},
                                               children=[dcc.Graph(
                                                   id=id_full_pangenome_graph,
                                                   style={'height': '400px', 'width': 'auto'},

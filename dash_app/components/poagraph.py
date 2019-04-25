@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List, Dict, Tuple, Set
+from typing import List, Dict, Tuple, Set, Optional
 import pandas as pd
 from poapangenome.output.PangenomeJSON import PangenomeJSON, Sequence
 import plotly.graph_objs as go
@@ -17,14 +17,14 @@ class PoaGraph:
         self.edges_reversed: Dict[int, Set[int]] = {}
         self.columns: Dict[int, Set[int]] = {}
         self.continuous_paths: List[List[int]] = []
-        # self.detailed_node_width: int = 10
-        self.pangenome_space = 1
+        self.poagraph_node_width: int = 10
+        self.pangenome_space: int = 1
 
         self.nodes_df = pd.DataFrame.from_records([{
             'id': node.id,
             'base': node.base,
-            'x_detailed': -1,
-            'y_detailed': -1,
+            'x_poagraph': node.column_id * self.poagraph_node_width,
+            'y_poagraph': 5,
             'x_pangenome': node.column_id,
             'y_pangenome': -1,
             'sequences_ids': [],
@@ -218,14 +218,6 @@ class PoaGraph:
                 node_x += self.detailed_node_width
 
     def set_pangenome_coordiantes(self):
-        def update_next_node_y(next_nodes, i, new_y):
-            self.nodes_df.at[next_nodes[i], "y_pangenome"] = new_y
-            # n = self.nodes[next_nodes[i]]
-            # if n.y_detailed == -1:
-            #     self.nodes[next_nodes[i]] = NodeData(n.base, n.x_detailed, n.y_detailed, n.x_pangenome, new_y, n.sequences_ids, n.consensus_ids)
-
-        # sorted_columns_ids = sorted(set(self.nodes_df['x_pangenome']))
-        # max_column_id = sorted_columns_ids[-1]
         column_y_occupancy: Dict[int, List[int]] = {}
         for node_id, node in self.nodes_df.iterrows():
             if node.x_pangenome in column_y_occupancy:
@@ -236,65 +228,17 @@ class PoaGraph:
                 column_y_occupancy[node.x_pangenome] = [new_y]
             self.nodes_df.at[node_id, 'y_pangenome'] = new_y
 
-        # for column_id in sorted_columns_ids:
-        #     nodes = self.nodes_df.loc[self.nodes_df['x_pangenome'] == column_id]
-        #     current_y = 0
-        #     column_y_values = []
-            # for node_id, node in nodes.iterrows():
-                # node = self.nodes_df.at[node_id]
-                # if node.y_pangenome != -1:
-                #     new_y = node.y_pangenome
-                # else:
-                #     while True:
-                #         current_y += self.pangenome_space
-                #         if current_y not in column_y_values:
-                #             new_y = current_y
-                #             column_y_values.append(current_y)
-                #             break
-                #     self.nodes_df.at[node_id, 'y_pangenome'] = new_y
-                # if node_id in self.edges:
-                # outgoing_nodes_ids = set(self.nodes_df.at[node_id, 'to_right'])
-                # if len(outgoing_nodes_ids) > 0:#node_id in self.nodes_df.loc[]:   df.loc[node_id in df['to_right'].isin(some_values)]
-                #     next_nodes = [node_id for node_id in set(outgoing_nodes_ids) if
-                #                   # node.x_pangenome < max_column_id and
-                #                   self.nodes_df.at[node_id, "x_pangenome"] == node.x_pangenome + 1]
-                #     # next_nodes = [node_id for node_id in set(self.edges[node_id].to) if
-                #     #               column_id < len(self.columns) - 1 and node_id in self.columns[column_id + 1]]
-                #     if len(next_nodes) == 1:
-                #         update_next_node_y(next_nodes, 0, new_y)
-                #     elif len(next_nodes) == 2:
-                #         update_next_node_y(next_nodes, 0, new_y - self.pangenome_space)
-                #         update_next_node_y(next_nodes, 1, new_y + self.pangenome_space)
-                #     elif len(next_nodes) == 3:
-                #         update_next_node_y(next_nodes, 0, new_y - self.pangenome_space)
-                #         update_next_node_y(next_nodes, 1, new_y)
-                #         update_next_node_y(next_nodes, 2, new_y + self.pangenome_space)
-                #     elif len(next_nodes) == 4:
-                #         update_next_node_y(next_nodes, 0, new_y - 2*self.pangenome_space)
-                #         update_next_node_y(next_nodes, 1, new_y - self.pangenome_space)
-                #         update_next_node_y(next_nodes, 2, new_y + self.pangenome_space)
-                #         update_next_node_y(next_nodes, 3, new_y + 2*self.pangenome_space)
-        print("pangenome done")
+    def set_poagraph_coordinates(self):
+        pass
 
 def get_data(jsonpangenome: PangenomeJSON) -> Tuple[str, str]:
     if not jsonpangenome.sequences:
         return "", ""
 
     poagraph = PoaGraph(jsonpangenome)
-    # poagraph.calculate_poagraph_coordinates()
-    # poagraph.calculate_pangenome_coordinates(jsonpangenome)
 
     poagraph.set_pangenome_coordiantes()
-
-    # df_nodes = pd.DataFrame.from_dict(poagraph.nodes,
-    #                                   orient='index',
-    #                                   columns=['base',
-    #                                            'x_detailed',
-    #                                            'y_detailed',
-    #                                            'x_pangenome',
-    #                                            'y_pangenome',
-    #                                            'sequences_ids',
-    #                                            'consensuses_ids'])
+    poagraph.set_poagraph_coordinates()
 
     edges_data = {'e1': ['n1', 'n3', [0, 1], []],
                   'e2': ['n2', 'n3', [2], [0, 1]]}
@@ -308,12 +252,20 @@ def get_node(id, label, x, y, cl):
     return {'data': {'id': id, 'label': f"{label} {id}"}, 'position': {'x': x, 'y': y}, 'classes': cl}
 
 
-def get_cytoscape_graph(nodes_data, edges_data) -> List[any]: #tu zwracam elements z cytoscape
+def get_cytoscape_graph(nodes_data, min_x: Optional[int], max_x: Optional[int]) -> List[any]:
+    if min_x is None or max_x is None:
+        max_x = nodes_data['x_pangenome'].max()
+    min_x = max_x // 3
+    max_x = max_x // 3 * 2
+
     nodes = [get_node(id=node_id,
                       label=node_data['base'],
-                      x=node_data['x_detailed'],
-                      y=node_data['y_detailed'],
-                      cl='s_node') for node_id, node_data in nodes_data.iterrows()]
+                      x=node_data['x_poagraph'],
+                      y=node_data['y_poagraph'],
+                      cl='s_node')
+             for node_id, node_data in nodes_data.loc[(nodes_data["x_pangenome"] >= min_x)
+                                                      & (nodes_data["x_pangenome"] <= max_x)].iterrows()]
+    print(min_x, max_x, [node['data']['id'] for node in nodes])
     return nodes
 
 
@@ -389,19 +341,22 @@ def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam el
     return nodes + c_nodes + edges
 
 
-def get_pangenome_graph(nodes_data, edges_data, jsonpangenome) -> go.Figure:
-    if len(jsonpangenome.sequences) == 0:
+def get_pangenome_graph_x_range(nodes_data: pd.DataFrame) -> List[int]:
+    max_x = nodes_data['x_pangenome'].max()
+    return [-2, min(max_x + 2, 1000)]
+
+
+def get_pangenome_figure(nodes_data: pd.DataFrame) -> go.Figure:
+    if nodes_data.empty:
         return None
+
     pangenome_trace = _get_pangenome_graph(nodes_data)
 
-    max_x = nodes_data['x_pangenome'].max()
-    x_range=[-2, min(max_x+2, 1000)]
-    y_range=[-3,10]
+    x_range = get_pangenome_graph_x_range(nodes_data)
+    y_range = [-3, 10]
     return go.Figure(
         data=[pangenome_trace],
         layout=go.Layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
             dragmode='pan',
             yaxis=dict(
                 range=y_range,
