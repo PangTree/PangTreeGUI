@@ -1,5 +1,5 @@
 from dash.dependencies import Input, Output, State
-
+from dash.exceptions import PreventUpdate
 from dash_app.components import multialignmentgraph, poagraph
 from ..components import jsontools
 from ..layout.layout_ids import *
@@ -8,17 +8,26 @@ from ..server import app
 
 @app.callback(
     Output(id_poagraph, 'elements'),
-    [Input(id_poagraph_hidden, 'children')],
+    [Input(id_poagraph_hidden, 'children'),
+     Input(id_full_pangenome_graph, 'relayoutData')],
     [State(id_poagraph, 'elements')]
 )
-def update_poagraph(jsonified_poagraph_data: str, elements):
+def update_poagraph(jsonified_poagraph_data: str, relayoutData, elements):
     # return []
     if not jsonified_poagraph_data:
         return []
-    nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
-    edges_data = jsontools.unjsonify_df(jsonified_poagraph_data[1]['props']['children'])
-    elements += poagraph.get_cytoscape_graph(nodes_data, edges_data)
-    return elements
+    try:
+        changed_x_range_0 = relayoutData['xaxis.range[0]']
+        changed_x_range_1 = relayoutData['xaxis.range[1]']
+    except:
+        raise PreventUpdate()
+
+    print(changed_x_range_0, changed_x_range_1)
+    # nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
+    # edges_data = jsontools.unjsonify_df(jsonified_poagraph_data[1]['props']['children'])
+    # elements += poagraph.get_cytoscape_graph(nodes_data, edges_data)
+    # return elements
+    return []
 
 
 @app.callback(
@@ -44,24 +53,3 @@ def show_poagraph(jsonified_poagraph_data):
     else:
         return {'display': 'none'}
 
-
-# @app.callback(
-#     Output('okno', 'children'),
-#     [Input(id_full_pangenome_graph, 'relayoutData')])
-# def display_selected_data(relayoutData):
-#     print(relayoutData)
-#     return relayoutData
-
-# @app.callback(
-#     Output(id_full_pangenome_graph, 'style'),
-#     [Input(id_poagraph_hidden, 'children')])
-# def show_poagraph(jsonified_poagraph_data):
-#     if not jsonified_poagraph_data:
-#         return []
-#     nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
-#     m = nodes_data['x_2'].max()
-#     if m < 1000:
-#         w = "auto"
-#     else:
-#         w = f'{10000}px'
-#     return {'width': w}
