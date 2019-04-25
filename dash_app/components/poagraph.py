@@ -82,7 +82,7 @@ class PoaGraph:
         self._update_x_detailed_for_contlocinuous_paths(self.continuous_paths)
         self._update_y_detailed()
 
-    def _find_continuous_paths(self) -> List[List[int]]:
+    def _find_continuous_paths_old(self) -> List[List[int]]:
         continuous_paths = []
         for node_id, node_data in self.nodes.items():
             if node_id not in self.edges:
@@ -104,6 +104,35 @@ class PoaGraph:
                     break
             if not path_was_extended:
                 continuous_paths.append([node_id, single_following_node_id])
+        return continuous_paths
+
+    def _find_continuous_paths(self) -> List[List[int]]:
+        continuous_paths = []
+        nodes_in_continuous_paths = self.nodes_df.loc[(self.nodes_df['to_left'].str.len() == 1) &
+                                                      (self.nodes_df['to_right'].str.len() == 1)]
+        for node_id, node in nodes_in_continuous_paths.iterrows():
+            print(node)
+
+        # for node_id, node_data in self.nodes.items():
+        #     if node_id not in self.edges:
+        #         continue
+        #     following_nodes_ids = list(set(self.edges[node_id].to))
+        #     if len(following_nodes_ids) != 1:
+        #         continue
+        #     single_following_node_id = following_nodes_ids[0]
+        #     other_incoming_nodes = list(set(self.edges_reversed[single_following_node_id]))
+        #     if len(other_incoming_nodes) != 1:
+        #         continue
+        #     self.edges[node_id].classes.append("s_short")
+        #     path_was_extended = False
+        #
+        #     for continuous_path in continuous_paths:
+        #         if continuous_path[-1] == node_id:
+        #             continuous_path.append(single_following_node_id)
+        #             path_was_extended = True
+        #             break
+        #     if not path_was_extended:
+        #         continuous_paths.append([node_id, single_following_node_id])
         return continuous_paths
 
     def _update_x_detailed_for_continuous_paths(self, continuous_paths):
@@ -229,7 +258,8 @@ class PoaGraph:
             self.nodes_df.at[node_id, 'y_pangenome'] = new_y
 
     def set_poagraph_coordinates(self):
-        pass
+        continuous_paths = self._find_continuous_paths()
+
 
 def get_data(jsonpangenome: PangenomeJSON) -> Tuple[str, str]:
     if not jsonpangenome.sequences:
@@ -248,23 +278,31 @@ def get_data(jsonpangenome: PangenomeJSON) -> Tuple[str, str]:
     return poagraph.nodes_df.to_json(), df_edges.to_json()
 
 
-def get_node(id, label, x, y, cl):
+def _get_cytoscape_node(id, label, x, y, cl):
     return {'data': {'id': id, 'label': f"{label} {id}"}, 'position': {'x': x, 'y': y}, 'classes': cl}
 
 
-def get_cytoscape_graph(nodes_data, min_x: Optional[int], max_x: Optional[int]) -> List[any]:
-    if min_x is None or max_x is None:
-        max_x = nodes_data['x_pangenome'].max()
-    min_x = max_x // 3
-    max_x = max_x // 3 * 2
+def get_poagraph_elements(nodes_data, min_x: Optional[int], max_x: Optional[int]) -> List[any]:
+    r = _get_pangenome_graph_x_range(nodes_data)
 
-    nodes = [get_node(id=node_id,
-                      label=node_data['base'],
-                      x=node_data['x_poagraph'],
-                      y=node_data['y_poagraph'],
-                      cl='s_node')
-             for node_id, node_data in nodes_data.loc[(nodes_data["x_pangenome"] >= min_x)
-                                                      & (nodes_data["x_pangenome"] <= max_x)].iterrows()]
+    x_pangenome_max = nodes_data['x_pangenome'].max()
+    x_pangenome_min = nodes_data['x_pangenome'].min()
+
+    if max_x is None or min_x is None:
+        left_bound = r[1] // 3
+        right_bound = r[1] // 3 * 2
+    else:
+        visible_axis_length = abs(max_x - min_x)
+        left_bound = min_x + visible_axis_length // 3
+        right_bound = min_x + visible_axis_length // 3 * 2
+
+    nodes = [_get_cytoscape_node(id=node_id,
+                                 label=node_data['base'],
+                                 x=node_data['x_poagraph'],
+                                 y=node_data['y_poagraph'],
+                                 cl='s_node')
+             for node_id, node_data in nodes_data.loc[(nodes_data["x_pangenome"] >= left_bound)
+                                                      & (nodes_data["x_pangenome"] <= right_bound)].iterrows()]
     print(min_x, max_x, [node['data']['id'] for node in nodes])
     return nodes
 
@@ -341,7 +379,7 @@ def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam el
     return nodes + c_nodes + edges
 
 
-def get_pangenome_graph_x_range(nodes_data: pd.DataFrame) -> List[int]:
+def _get_pangenome_graph_x_range(nodes_data: pd.DataFrame) -> List[int]:
     max_x = nodes_data['x_pangenome'].max()
     return [-2, min(max_x + 2, 1000)]
 
@@ -352,7 +390,7 @@ def get_pangenome_figure(nodes_data: pd.DataFrame) -> go.Figure:
 
     pangenome_trace = _get_pangenome_graph(nodes_data)
 
-    x_range = get_pangenome_graph_x_range(nodes_data)
+    x_range = _get_pangenome_graph_x_range(nodes_data)
     y_range = [-3, 10]
     return go.Figure(
         data=[pangenome_trace],

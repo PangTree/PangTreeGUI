@@ -30,7 +30,7 @@ def update_poagraph(jsonified_poagraph_data: str, relayoutData, elements):
     nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
     # edges_data = jsontools.unjsonify_df(jsonified_poagraph_data[1]['props']['children'])
     elements = []
-    elements += poagraph.get_cytoscape_graph(nodes_data, min_x, max_x)
+    elements += poagraph.get_poagraph_elements(nodes_data, min_x, max_x)
     return elements
 
 
