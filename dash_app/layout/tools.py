@@ -67,7 +67,8 @@ def get_vis_tab_content():
                            children=[html.Div(id=id_poagraph_container,
                                               className='twelve columns section row',
                                               children=[cyto.Cytoscape(id=id_poagraph,
-                                                                       layout={'name': 'preset'},
+                                                                       layout={'name': 'preset',
+                                                                               'border-color': 'red'},
                                                                        stylesheet=[
                                                                            {
                                                                                'selector': 'node',
@@ -108,7 +109,7 @@ def get_vis_tab_content():
                                                                                'style': {
                                                                                    'width': 'data(weight)',
                                                                                    'target-arrow-shape': 'triangle',
-                                                                                   'arrow-scale': 0.5,
+                                                                                   'arrow-scale': 0.2,
                                                                                    'curve-style': 'bezier'
                                                                                }
                                                                            },

@@ -145,7 +145,11 @@ def get_data(jsonpangenome: PangenomeJSON) -> Tuple[str, str]:
 
 
 def _get_cytoscape_node(id, label, x, y, cl):
-    return {'data': {'id': id, 'label': f"{label} {id}"}, 'position': {'x': x, 'y': y}, 'classes': cl}
+    return {'data': {'id': id, 'label': f"{label}"}, 'position': {'x': x, 'y': y}, 'classes': cl}
+
+
+def _get_cytoscape_edge(id, source, target, weight, cl):
+    return {'data': {'source': source, 'target': target, 'weight': weight}, 'classes': cl}
 
 
 def get_poagraph_elements(nodes_data, min_x: Optional[int], max_x: Optional[int]) -> List[any]:
@@ -158,14 +162,24 @@ def get_poagraph_elements(nodes_data, min_x: Optional[int], max_x: Optional[int]
         left_bound = min_x + visible_axis_length // 3
         right_bound = min_x + visible_axis_length // 3 * 2
 
+    nodes_to_display = nodes_data.loc[(nodes_data["x_pangenome"] >= left_bound)
+                                      & (nodes_data["x_pangenome"] <= right_bound)]
     nodes = [_get_cytoscape_node(id=node_id,
                                  label=node_data['base'],
                                  x=node_data['x_poagraph'],
                                  y=node_data['y_poagraph'],
                                  cl='s_node')
-             for node_id, node_data in nodes_data.loc[(nodes_data["x_pangenome"] >= left_bound)
-                                                      & (nodes_data["x_pangenome"] <= right_bound)].iterrows()]
-    return nodes
+             for node_id, node_data in nodes_to_display.iterrows()]
+    edges = []
+    for node_id, node in nodes_to_display.iterrows():
+        for target in set(node['to_right']):
+            e = _get_cytoscape_edge(id=len(edges),
+                                    source=node_id,
+                                    target=target,
+                                    weight=len(node['sequences_ids'])/10,
+                                    cl='s_edge')
+            edges.append(e)
+    return nodes + edges
 
 
 def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam elements z cytoscape
@@ -298,7 +312,7 @@ def _get_pangenome_graph(nodes_data) -> go.Scattergl:
     f = 2.*max(weights) / (desired_max ** 2)
     return go.Scattergl(
         x=nodes_data['x_pangenome'],
-        y=nodes_data['y_pangenome'],
+        y=nodes_data['y_pangenome']*(-1),
         hoverinfo='skip',
         mode='markers',
         marker=dict(
