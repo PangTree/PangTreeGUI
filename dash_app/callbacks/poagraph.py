@@ -13,8 +13,8 @@ from ..server import app
      Input(id_full_pangenome_graph, 'relayoutData')],
     [State(id_poagraph, 'elements')]
 )
-def update_poagraph(jsonified_poagraph_data: str, relayoutData, elements):
-    if not jsonified_poagraph_data:
+def update_poagraph(jsonified_pangenome_data: str, relayoutData, elements):
+    if not jsonified_pangenome_data:
         return []
     if len(elements) == 0:
         min_x = None
@@ -26,11 +26,15 @@ def update_poagraph(jsonified_poagraph_data: str, relayoutData, elements):
         except KeyError:
             raise PreventUpdate()
 
-    print("callback", relayoutData)
-    nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
+    # pangenome_graph = jsontools.unjsonify_dict(jsonified_pangenome_data)
+    # ['pangenome'])
+    # pangenome_graph = jsontools.unjsonify_df(jsonified_pangenome_data['poagraph_nodes'])
+    # pangenome_graph = jsontools.unjsonify_df(jsonified_pangenome_data['poagraph_edges'])
+    pangenome_graph_data = jsontools.unjsonify_dict(jsonified_pangenome_data[0]['props']['children'])
+    # nodes_data = jsontools.unjsonify_df(jsonified_poagraph_data[0]['props']['children'])
     # edges_data = jsontools.unjsonify_df(jsonified_poagraph_data[1]['props']['children'])
     elements = []
-    elements += poagraph.get_poagraph_elements(nodes_data, min_x, max_x)
+    # elements += poagraph.get_poagraph_elements(nodes_data, min_x, max_x)
     return elements
 
 
@@ -41,8 +45,9 @@ def update_poagraph(jsonified_poagraph_data: str, relayoutData, elements):
 def update_pangenome_graph(jsonified_pangenome_data: str):
     if not jsonified_pangenome_data:
         return []
-    nodes_data = jsontools.unjsonify_df(jsonified_pangenome_data[0]['props']['children'])
-    return poagraph.get_pangenome_figure(nodes_data)
+    pangenome_graph_data = jsonified_pangenome_data[0]['props']['children']
+    pangenome_graph = jsontools.unjsonify_dict(pangenome_graph_data)
+    return poagraph.get_pangenome_figure(pangenome_graph)
 
 @app.callback(
     Output("tools_poagraph_section", 'style'),

@@ -67,8 +67,9 @@ def get_vis_tab_content():
                            children=[html.Div(id=id_poagraph_container,
                                               className='twelve columns section row',
                                               children=[cyto.Cytoscape(id=id_poagraph,
-                                                                       layout={'name': 'preset',
-                                                                               'border-color': 'red'},
+                                                                       layout={
+                                                                           # 'name': 'preset',
+                                                                           'name': 'breadthfirst'},
                                                                        stylesheet=[
                                                                            {
                                                                                'selector': 'node',
@@ -162,7 +163,8 @@ def get_vis_tab_content():
                                               className="twelve columns section row",
                                               children=[dcc.Graph(
                                                   id=id_full_pangenome_graph,
-                                                  style={'height': '400px', 'width': 'auto'},
+                                                  style={'width': 'auto'},
+                                                  # style={'height': '400px', 'width': 'auto'},
                                                   figure=[],
                                                   config={
                                                       'displayModeBar': False,

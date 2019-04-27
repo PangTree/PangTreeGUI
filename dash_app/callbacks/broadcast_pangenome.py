@@ -15,8 +15,10 @@ def update_pangenome_parameters_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return ""
     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
-    parameters_data = parameters.get_data(jsonpangenome)
-    return jsontools.jsonify_dict(parameters_data)
+    columns_to_cut_width, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
+    return (html.Div(jsontools.jsonify_dict(columns_to_cut_width)),
+            html.Div(jsontools.jsonify_df(poagraph_nodes)),
+            html.Div(poagraph_edges))
 
 
 @app.callback(
@@ -62,8 +64,10 @@ def update_poagraph_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
-    nodes_data, edges_data = poagraph.get_data(jsonpangenome)
-    return html.Div(nodes_data), html.Div(edges_data)#jsontools.jsonify_dict(poagraph_data)
+    pangenome, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
+    return (html.Div(jsontools.jsonify_dict(pangenome)),
+           html.Div(jsontools.jsonify_df(poagraph_nodes)),
+           html.Div(poagraph_edges))
 
 @app.callback(
     Output(id_mafgraph_hidden, 'children'),
