@@ -1,5 +1,5 @@
 import json
-from typing import Dict, Union
+from typing import Dict, Union, Any
 
 import jsonpickle
 import pandas as pd
@@ -11,11 +11,11 @@ def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
     return PangenomeJSON.str_to_PangenomeJSON(jsonified_pangenome)
 
 
-def jsonify_dict(data: Dict) -> str:
+def jsonify_builtin_types(data: Any) -> str:
     return json.dumps(data)
 
 
-def unjsonify_dict(jsonified_data: str) -> Dict:
+def unjsonify_builtin_types(jsonified_data: str) -> Any:
     return json.loads(jsonified_data)
 
 

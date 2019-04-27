@@ -16,7 +16,7 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
     if not jsonified_full_consensustable or not jsonified_tree:
         return []
     full_consensustable_data = jsontools.unjsonify_df(jsonified_full_consensustable)
-    full_consensustree_data = jsontools.unjsonify_dict(jsonified_tree)
+    full_consensustree_data = jsontools.unjsonify_builtin_types(jsonified_tree)
     full_consensustree_tree = consensustree.dict_to_tree(full_consensustree_data)
     table_without_consensuses_smaller_than_slider = consensustable.remove_smaller_than_slider(full_consensustable_data,
                                                                                               full_consensustree_tree,
@@ -54,7 +54,7 @@ def color_consensuses_table_cells(jsonified_partial_consensustable, jsonified_co
     if not jsonified_partial_consensustable or not jsonified_consensus_tree:
         return []
     partial_consensustable_data = jsontools.unjsonify_df(jsonified_partial_consensustable)
-    consensustree_data = jsontools.unjsonify_dict(jsonified_consensus_tree)
+    consensustree_data = jsontools.unjsonify_builtin_types(jsonified_consensus_tree)
     tree = consensustree.dict_to_tree(consensustree_data)
 
     return consensustable.get_cells_styling(tree, partial_consensustable_data)

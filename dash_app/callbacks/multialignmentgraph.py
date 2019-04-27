@@ -13,7 +13,7 @@ from ..server import app
 def update_multialignmentgraph(jsonified_multialignmentgraph_data: str):
     if not jsonified_multialignmentgraph_data:
         return []
-    multialignmentgraph_data = jsontools.unjsonify_dict(jsonified_multialignmentgraph_data)
+    multialignmentgraph_data = jsontools.unjsonify_builtin_types(jsonified_multialignmentgraph_data)
     return multialignmentgraph.get_graph(multialignmentgraph_data)
 
 

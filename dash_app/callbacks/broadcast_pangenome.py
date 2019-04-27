@@ -1,24 +1,27 @@
+from typing import Dict, List
+
 from dash.dependencies import Input, Output, State
 
 from dash_app.components import parameters, consensustable, consensustree, multialignmentgraph, poagraph
 import dash_html_components as html
 import dash_app.components.jsontools as jsontools
 from ..layout.layout_ids import *
+from ..components import poagraph as poagraph_component
 
 from ..server import app
 
-@app.callback(
-    Output(id_pangenome_parameters_hidden, 'children'),
-    [Input(id_pangenome_hidden, 'children')]
-)
-def update_pangenome_parameters_hidden(jsonified_pangenome):
-    if not jsonified_pangenome:
-        return ""
-    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
-    columns_to_cut_width, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
-    return (html.Div(jsontools.jsonify_dict(columns_to_cut_width)),
-            html.Div(jsontools.jsonify_df(poagraph_nodes)),
-            html.Div(poagraph_edges))
+# @app.callback(
+#     Output(id_pangenome_parameters_hidden, 'children'),
+#     [Input(id_pangenome_hidden, 'children')]
+# )
+# def update_pangenome_parameters_hidden(jsonified_pangenome):
+#     if not jsonified_pangenome:
+#         return ""
+#     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+#     columns_to_cut_width, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
+#     return (html.Div(jsontools.jsonify_dict(columns_to_cut_width)),
+#             html.Div(jsontools.jsonify_dict(poagraph_nodes)),
+#             html.Div(poagraph_edges))
 
 
 @app.callback(
@@ -42,20 +45,9 @@ def update_consensustree_hidden(jsonified_pangenome):
         return []
     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
     consensustree_dict = consensustree.get_consensustree_dict(jsonpangenome)
-    return jsontools.jsonify_dict(consensustree_dict)
+    return jsontools.jsonify_builtin_types(consensustree_dict)
 
-# @app.callback(
-#     Output(id_multialignmentgraph_hidden, 'children'),
-#     [Input(id_pangenome_hidden, 'children')],
-#     [State(id_show_vis, "value")]
-# )
-# def update_multialignmentgraph_hidden(jsonified_pangenome, show_vis_value):
-#     if not jsonified_pangenome or show_vis_value == "NO":
-#         return []
-#     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
-#     pangraph_data = multialignmentgraph.get_data(jsonpangenome)
-#     return jsontools.jsonify_dict(pangraph_data)
-#
+
 @app.callback(
     Output(id_poagraph_hidden, 'children'),
     [Input(id_pangenome_hidden, 'children')],
@@ -65,9 +57,34 @@ def update_poagraph_hidden(jsonified_pangenome):
         return []
     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
     pangenome, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
-    return (html.Div(jsontools.jsonify_dict(pangenome)),
-           html.Div(jsontools.jsonify_df(poagraph_nodes)),
-           html.Div(poagraph_edges))
+    return [html.Div(jsontools.jsonify_builtin_types(pangenome)),
+            html.Div(jsontools.jsonify_builtin_types(poagraph_nodes)),
+            html.Div(jsontools.jsonify_builtin_types(poagraph_edges))]
+
+
+@app.callback(
+    Output(id_poagraph, 'stylesheet'),
+    [Input(id_pangenome_hidden, 'children')],
+    [State(id_poagraph_container, 'children')]
+)
+def update_poagraph_stylesheet(jsonified_pangenome: str, stylesheet: List) -> List:
+    if not jsonified_pangenome:
+        return {}
+    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    if not jsonpangenome.consensuses:
+        return {}
+    colors = poagraph.get_distinct_colors(len(jsonpangenome.consensuses))
+    s = poagraph_component.get_poagraph_stylesheet()
+    for i, consensus in enumerate(jsonpangenome.consensuses):
+        s.append(
+            {
+                'selector': f'.c{consensus.name}',
+                'style': {
+                    'line-color': f'rgb{colors[i]}',
+                }
+            }
+        )
+    return s
 
 @app.callback(
     Output(id_mafgraph_hidden, 'children'),

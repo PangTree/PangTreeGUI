@@ -12,7 +12,7 @@ from ..server import app
 def update_pangenome_parameters(jsonified_params):
     if not jsonified_params:
         return []
-    parameters = jsontools.unjsonify_dict(jsonified_params)
+    parameters = jsontools.unjsonify_builtin_types(jsonified_params)
     params_info = []
     for param_name, param_value in parameters.items():
         params_info.append(html.P(f"{param_name}: {param_value}"))
