@@ -74,6 +74,20 @@ def to_consensusnode_details_content(jsonified_consensus_details_table):
     return data_rows
 
 @app.callback(
+    Output(id_consensus_node_details_distribution, 'src'),
+    [Input(id_consensus_tree_graph, 'clickData'),
+     Input(id_full_consensustable_hidden, 'children')]
+)
+def to_consensus_node_details_distribution(tree_click_data, jsonified_full_consensustable):
+    if not jsonified_full_consensustable or not tree_click_data:
+        return []
+    clicked_node = tree_click_data['points'][0]
+    node_id = clicked_node['pointIndex']
+    full_consensustable = jsontools.unjsonify_df(jsonified_full_consensustable)
+    distribution_figure = consensustable.get_node_distribution_fig(node_id, full_consensustable)
+    return distribution_figure
+
+@app.callback(
     Output(id_consensus_node_details_table, 'columns'),
     [Input(id_consensus_node_details_table_hidden, 'children')]
 )
@@ -91,6 +105,17 @@ def show_consensus_tree_container(jsonified_current_consensustree):
         return {'display': 'block'}
     else:
         return {'display': 'none'}
+
+
+@app.callback(
+    Output('tree_info', 'style'),
+    [Input(id_consensus_tree_graph, 'clickData')])
+def show_consensus_tree_container(click_data):
+    if click_data:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
 
 @app.callback(
     Output(id_leaf_info_dropdown, 'options'),

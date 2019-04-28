@@ -65,16 +65,27 @@ def get_vis_tab_content():
                                         className='nine columns section')]
                            ),
                   html.Div(id="tools_poagraph_section",
-                           style={'display': 'none'},
                            children=[html.Div(id=id_poagraph_container,
                                               className='twelve columns section row',
-                                              children=[cyto.Cytoscape(id=id_poagraph,
+                                              children=[html.Div(id=id_poagraph_node_info),
+                                                        cyto.Cytoscape(id=id_poagraph,
                                                                        layout={
                                                                            'name': 'preset'},
                                                                        stylesheet=poagraph_component.get_poagraph_stylesheet(),
                                                                        elements=[
                                                                        ],
-                                                                       style={'width': 'auto', 'height': '500px'}, )
+                                                                       style={'width': 'auto', 'height': '500px'},
+                                                                       # zoom=1,
+                                                                       # minZoom=0.9,
+                                                                       # maxZoom=1.1,
+                                                                       # panningEnabled=False,
+                                                                       # userPanningEnabled=False,
+                                                                       boxSelectionEnabled=False,
+                                                                       autoungrabify=True,
+                                                                       autolock=True,
+                                                                       autounselectify=True
+                                                                       )
+
                                                         ]),
                                      html.Div(id=id_full_pangenome_container,
                                               className="twelve columns section row",
@@ -149,6 +160,9 @@ def get_vis_tab_content():
                                                html.H5("Consensus tree node details:"),
                                                html.H5(
                                                    id=id_consensus_node_details_header
+                                               ),
+                                               html.Img(
+                                                   id=id_consensus_node_details_distribution,
                                                ),
                                                dash_table.DataTable(
                                                    id=id_consensus_node_details_table,

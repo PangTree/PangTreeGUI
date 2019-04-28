@@ -14,6 +14,7 @@ CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
 class PoaGraph:
     poagraph_node_width: int = 10
     pangenome_space: int = 1
+    pangenome_x_range: List[int] = None
 
     def __init__(self, jsonpangenome: PangenomeJSON):
         self.nodes_df = pd.DataFrame.from_records([{
@@ -147,8 +148,14 @@ class PoaGraph:
                 node_x += PoaGraph.poagraph_node_width * 2/3
 
     def get_poagraph_elements(self, jsonpangenome: PangenomeJSON) -> Tuple[List[CytoscapeNode], List[CytoscapeEdge]]:
-        def _get_cytoscape_node(id, label, x, y, cl) -> CytoscapeNode:
-            return {'data': {'id': id, 'label': f"{label}"}, 'position': {'x': x, 'y': y}, 'classes': cl}
+        def _get_cytoscape_node(id, label, x, y, cl, sequences_ids, consensus_ids, column_id) -> CytoscapeNode:
+            return {'data': {'id': id,
+                             'label': f"{label}",
+                             'sequences_ids': sequences_ids,
+                             'consensus_ids': consensus_ids,
+                             'column_id': column_id},
+                    'position': {'x': x, 'y': y},
+                    'classes': cl}
 
         def _get_cytoscape_edge(id, source, target, weight, cl) -> CytoscapeEdge:
             return {'data': {'label': cl, 'source': source, 'target': target, 'weight': weight}, 'classes': cl}
@@ -157,13 +164,20 @@ class PoaGraph:
                                      label=node_data['base'],
                                      x=node_data['x_poagraph'],
                                      y=node_data['y_poagraph'],
-                                     cl='s_node')
+                                     cl='s_node',
+                                     sequences_ids=node_data['sequences_ids'],
+                                     consensus_ids=node_data['consensus_ids'],
+                                     column_id=node_data['column_id'])
                  for node_id, node_data in self.nodes_df.iterrows()] + \
                 [_get_cytoscape_node(id=node_id,
                                      label='',
                                      x=node_data['x_poagraph'],
                                      y=node_data['y_poagraph'],
-                                     cl='c_node')
+                                     cl='c_node',
+                                     sequences_ids=[],
+                                     consensus_ids=[],
+                                     column_id=node_data['column_id']
+                                     )
                  for node_id, node_data in self.nodes_df.iterrows()]
 
         edges = []
@@ -214,24 +228,33 @@ def get_poagraph_elements(nodes: List[CytoscapeNode],
                           min_x: Optional[int],
                           max_x: Optional[int]) -> List[any]:
     if max_x is None or min_x is None:
-        r = _get_pangenome_graph_x_range([n['position']['x'] for n in nodes])
-        left_bound = r[1] // 3
-        right_bound = r[1] // 3 * 2
+        # if PoaGraph.pangenome_x_range is None:
+        #     raise Exception("Cannot draw poagraph.")
+        # r = PoaGraph.pangenome_x_range
+        r = _get_pangenome_graph_x_range([n['data']['column_id'] for n in nodes])
+        left_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3)
+        right_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3 * 2)
     else:
         visible_axis_length = abs(max_x - min_x)
         left_bound = PoaGraph.pangenome_x_to_poagraph_x(min_x + visible_axis_length // 3)
         right_bound = PoaGraph.pangenome_x_to_poagraph_x(min_x + visible_axis_length // 3 * 2)
 
     nodes = [node for node in nodes if node['position']['x'] >= left_bound and node['position']['x'] <= right_bound]
-    # edges = []
+    nodes_ids = [node["data"]["id"] for node in nodes]
+    edges = [edge for edge in edges if edge['data']['source'] in nodes_ids and edge['data']['target'] in nodes_ids]
     return nodes + edges
     # nodes_to_display = nodes_data.loc[(nodes_data["column_id"] >= left_bound)
     #                                   & (nodes_data["column_id"] <= right_bound)]
 
 
 def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam elements z cytoscape
-    def get_node(id, label, x, y, cl):
-        return {'data': {'id': id, 'label': label}, 'position': {'x': x, 'y': y}, 'classes': cl}
+    def get_node(id, label, x, y, cl, sequences_ids, consensuses_ids):
+        return {'data': {'id': id,
+                         'label': label,
+                         'sequences_ids': sequences_ids,
+                         'consensuses_ids': consensuses_ids},
+                'position': {'x': x, 'y': y},
+                'classes': cl}
 
     def get_c_node(id, x, y, cl):
         return {'data': {'id': id}, 'position': {'x': x, 'y': y}, 'classes': cl}
@@ -303,7 +326,7 @@ def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam el
 
 def _get_pangenome_graph_x_range(column_ids: List[int]) -> List[int]:
     max_x = max(column_ids)
-    return [-2, min(max_x + 2, 10000)]
+    return [-2, min(max_x + 2, 2000)]
 
 
 def get_pangenome_figure(pangenome_graph_data: Dict[str, int]) -> go.Figure:
@@ -312,7 +335,7 @@ def get_pangenome_figure(pangenome_graph_data: Dict[str, int]) -> go.Figure:
 
     pangenome_trace = _get_cut_width_graph(pangenome_graph_data)
 
-    x_range = _get_pangenome_graph_x_range(pangenome_trace.x)
+    PoaGraph.pangenome_x_range =_get_pangenome_graph_x_range(pangenome_trace.x)
     max_y = max(pangenome_trace.y)
     y_range = [0, max_y+1]
     return go.Figure(
@@ -325,7 +348,7 @@ def get_pangenome_figure(pangenome_graph_data: Dict[str, int]) -> go.Figure:
                 tickvals=[i for i in range(max_y+1)]
             ),
             xaxis=dict(
-                range=x_range,
+                range=PoaGraph.pangenome_x_range,
                 showgrid=False,
                 zeroline=False,
                 showline=False,
@@ -413,7 +436,7 @@ def get_poagraph_stylesheet():
                 'text-halign': 'center',
                 'text-valign': 'center',
                 'font-size': '5px',
-                'shape': 'circle',
+                # 'shape': 'circle',
             }
         },
         {
@@ -444,7 +467,7 @@ def get_poagraph_stylesheet():
             'style': {
                 'opacity': 0.5,
                 'curve-style': 'haystack',
-                'haystack-radius': 0.7,
+                'haystack-radius': 0.3,
                 'width': 'data(weight)',
                 # 'label': 'data(label)'
             }

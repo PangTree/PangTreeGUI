@@ -33,6 +33,7 @@ id_consensus_tree_slider = 'consensus_tree_slider'
 id_consensus_node_details_table_hidden="consensus_node_details_table_hidden"
 id_consensus_node_details_header="consensus_node_details_header"
 id_consensus_node_details_table= "consensus_node_details_table"
+id_consensus_node_details_distribution = "consensus_node_details_distribution"
 
 id_multialignmentgraph_container = "multialignmentgraph_container"
 id_multialignmentgraph_hidden = 'pangraph_hidden'
@@ -48,3 +49,5 @@ id_show_vis = "show_vis"
 
 id_full_pangenome_container = "full_pangenome_container"
 id_full_pangenome_graph = "full_pangenome_graph"
+
+id_poagraph_node_info = "poagraph_node_info"

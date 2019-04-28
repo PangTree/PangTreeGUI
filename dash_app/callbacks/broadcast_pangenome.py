@@ -64,26 +64,40 @@ def update_poagraph_hidden(jsonified_pangenome):
 
 @app.callback(
     Output(id_poagraph, 'stylesheet'),
-    [Input(id_pangenome_hidden, 'children')],
+    [Input(id_pangenome_hidden, 'children'),
+     Input(id_partial_consensustable_hidden, 'children')],
     [State(id_poagraph_container, 'children')]
 )
-def update_poagraph_stylesheet(jsonified_pangenome: str, stylesheet: List) -> List:
-    if not jsonified_pangenome:
+def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_consensustable, stylesheet: List) -> List:
+    if not jsonified_pangenome or not jsonified_partial_consensustable:
         return {}
     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
     if not jsonpangenome.consensuses:
         return {}
+    partial_consensustable_data = jsontools.unjsonify_df(jsonified_partial_consensustable)
+    current_consensuses_names = [column_name for column_name in list(partial_consensustable_data) if "CONSENSUS" in column_name]
     colors = poagraph.get_distinct_colors(len(jsonpangenome.consensuses))
     s = poagraph_component.get_poagraph_stylesheet()
     for i, consensus in enumerate(jsonpangenome.consensuses):
-        s.append(
-            {
-                'selector': f'.c{consensus.name}',
-                'style': {
-                    'line-color': f'rgb{colors[i]}',
+        if consensus.name in current_consensuses_names:
+            s.append(
+                {
+                    'selector': f'.c{consensus.name}',
+                    'style': {
+                        'line-color': f'rgb{colors[i]}',
+                    }
                 }
-            }
-        )
+            )
+        else:
+            s.append(
+                {
+                    'selector': f'.c{consensus.name}',
+                    'style': {
+                        'line-color': f'rgb{colors[i]}',
+                        'display': 'none'
+                    }
+                }
+            )
     return s
 
 @app.callback(
