@@ -40,6 +40,10 @@ id_multialignmentgraph_hidden = 'pangraph_hidden'
 id_multialignmentgraph = "multialignmentgraph"
 
 id_mafgraph_hidden = 'mafgraph_hidden'
+id_mafgraph = "mafgraph"
+id_mafgraph_container = "mafgraph_container"
+id_mafgraph_graph = "mafgraph_graph"
+
 
 id_poagraph_hidden = 'poagraph_hidden'
 id_poagraph_container = "poagraph_container"

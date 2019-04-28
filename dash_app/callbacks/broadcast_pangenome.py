@@ -2,26 +2,13 @@ from typing import Dict, List
 
 from dash.dependencies import Input, Output, State
 
-from dash_app.components import parameters, consensustable, consensustree, multialignmentgraph, poagraph
+from dash_app.components import parameters, consensustable, consensustree, multialignmentgraph, poagraph, mafgraph
 import dash_html_components as html
 import dash_app.components.jsontools as jsontools
 from ..layout.layout_ids import *
 from ..components import poagraph as poagraph_component
 
 from ..server import app
-
-# @app.callback(
-#     Output(id_pangenome_parameters_hidden, 'children'),
-#     [Input(id_pangenome_hidden, 'children')]
-# )
-# def update_pangenome_parameters_hidden(jsonified_pangenome):
-#     if not jsonified_pangenome:
-#         return ""
-#     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
-#     columns_to_cut_width, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
-#     return (html.Div(jsontools.jsonify_dict(columns_to_cut_width)),
-#             html.Div(jsontools.jsonify_dict(poagraph_nodes)),
-#             html.Div(poagraph_edges))
 
 
 @app.callback(
@@ -105,5 +92,9 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
     [Input(id_pangenome_hidden, 'children')]
 )
 def update_mafgraph_hidden(jsonified_pangenome):
-    return "Pełne dane o mafgraph"
-
+    if not jsonified_pangenome:
+        return []
+    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    mafgraph_nodes, mafgraph_edges = mafgraph.get_graph_elements(jsonpangenome)
+    return [html.Div(jsontools.jsonify_builtin_types(mafgraph_nodes)),
+            html.Div(jsontools.jsonify_builtin_types(mafgraph_edges))]

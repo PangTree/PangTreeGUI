@@ -1,7 +1,6 @@
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from dash_app.components import multialignmentgraph, poagraph
-import dash_html_components as html
+from dash_app.components import poagraph
 from ..components import jsontools
 from ..layout.layout_ids import *
 
@@ -27,8 +26,6 @@ def update_poagraph(jsonified_pangenome_data: str, relayoutData, elements):
         except KeyError:
             min_x = None
             max_x = None
-            # print("Aa")
-            # raise PreventUpdate()
 
     nodes = jsontools.unjsonify_builtin_types(jsonified_pangenome_data[1]['props']['children'])
     edges = jsontools.unjsonify_builtin_types(jsonified_pangenome_data[2]['props']['children'])

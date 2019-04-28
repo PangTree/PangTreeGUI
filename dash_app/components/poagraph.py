@@ -20,6 +20,7 @@ class PoaGraph:
         self.nodes_df = pd.DataFrame.from_records([{
             'id': node.id,
             'base': node.base,
+            'aligned_to': node.aligned_to,
             'x_poagraph': node.column_id * PoaGraph.poagraph_node_width * 1.5,
             'y_poagraph': -1,
             'column_id': node.column_id,
@@ -180,6 +181,7 @@ class PoaGraph:
                                      )
                  for node_id, node_data in self.nodes_df.iterrows()]
 
+
         edges = []
         for node_id, node in self.nodes_df.iterrows():
             for target in set(node['to_right']):
@@ -196,7 +198,12 @@ class PoaGraph:
                                         weight=0,
                                         cl='s_edge')
                     edges.append(tricky_edge)
-
+        edges.extend([_get_cytoscape_edge(id='',
+                                      source=node_id,
+                                      target= node_data['aligned_to'],
+                                      weight=1,
+                                      cl='s_edge_aligned')
+                  for node_id, node_data in self.nodes_df.iterrows()])
         if jsonpangenome.consensuses:
             for consensus in jsonpangenome.consensuses:
                 for i in range(len(consensus.nodes_ids)-1):
@@ -500,7 +507,7 @@ def get_poagraph_stylesheet():
             'selector': '.s_edge_aligned',
             'style': {
                 'line-style': 'dashed',
-                'width': '1px'
+                'width': '0.5'
             }
         },
     ]

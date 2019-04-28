@@ -5,6 +5,7 @@ import dash_cytoscape as cyto
 from dash_app.layout.layout_ids import *
 from .css_styles import colors3 as colors
 from ..components import poagraph as poagraph_component
+from ..components import mafgraph as mafgraph_component
 
 
 def get_tools_tab_content():
@@ -64,6 +65,20 @@ def get_vis_tab_content():
                                html.Div(id=id_pangenome_info,
                                         className='nine columns section')]
                            ),
+                  html.Div(id=id_mafgraph,
+                           children=[
+                               html.Div(id=id_mafgraph_container,
+                                        className='twelve columns section row',
+                                        children=[cyto.Cytoscape(id=id_mafgraph_graph,
+                                                                 elements=[],
+                                                                 layout={'name': 'cose'},
+                                                                 style={'width': 'auto', 'height': '300px'},
+                                                                 stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
+                                                                 # autolock=True,
+                                                                 boxSelectionEnabled=False,
+                                                                 autoungrabify=True,
+                                                                 autounselectify=True)])
+                           ]),
                   html.Div(id="tools_poagraph_section",
                            children=[html.Div(id=id_poagraph_container,
                                               className='twelve columns section row',

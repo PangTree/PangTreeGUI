@@ -13,4 +13,5 @@ from .callbacks import broadcast_pangenome
 from .callbacks import consensustable
 from .callbacks import consensustree
 # from .callbacks import multialignmentgraph
+from .callbacks import mafgraph
 from .callbacks import poagraph

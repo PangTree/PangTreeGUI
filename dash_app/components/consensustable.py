@@ -1,6 +1,5 @@
 import base64
 import io
-import os
 from collections import deque
 from typing import List, Dict
 import matplotlib.pyplot as plt
@@ -8,13 +7,10 @@ from poapangenome.consensus.ConsensusTree import ConsensusNodeID
 from poapangenome.output.PangenomeJSON import PangenomeJSON
 from dash_app.components import consensustree
 from dash_app.layout.css_styles import colors
-# from fileformats.json.JSONPangenome import JSONPangenome
 import pandas as pd
 import networkx as nx
-import plotly.figure_factory as ff
-import numpy as np
 import seaborn as sns
-from io import StringIO
+
 
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
     if not jsonpangenome.sequences:
@@ -41,14 +37,18 @@ def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
         consensus_df = consensus_df.append(row, ignore_index=True)
     return consensus_df
 
+
 def get_mapped_compatibility(compatibility: float) -> str:
     return "{:.{}f}".format(compatibility, 4)
+
 
 def get_consensus_column_name(consensus_id: ConsensusNodeID) -> str:
     return f"CONSENSUS{consensus_id}"
 
+
 def get_metadata_list(full_consensustable: pd.DataFrame) -> List[str]:
     return [colname for colname in list(full_consensustable) if "CONSENSUS" not in colname]
+
 
 def remove_smaller_than_slider(full_consensustable_data: pd.DataFrame, tree: nx.DiGraph, slider_value: float) -> pd.DataFrame:
     consensuses_ids_to_hide = []

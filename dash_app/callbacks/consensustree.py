@@ -110,7 +110,7 @@ def show_consensus_tree_container(jsonified_current_consensustree):
 @app.callback(
     Output('tree_info', 'style'),
     [Input(id_consensus_tree_graph, 'clickData')])
-def show_consensus_tree_container(click_data):
+def show_consensus_tree_info(click_data):
     if click_data:
         return {'display': 'block'}
     else:
