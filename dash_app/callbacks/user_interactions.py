@@ -1,5 +1,5 @@
 import shutil
-from base64 import b64decode
+
 from pathlib import Path
 import jsonpickle
 
@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
 from dash_app.layout import about, tools, package, authors
 import json
-
+from ..components import jsontools
 
 
 @app.callback(
@@ -48,7 +48,7 @@ def call_pang(last_clicked_jsonified: str,
               ) -> str:
     last_clicked = json.loads(last_clicked_jsonified)
     if last_clicked["action"] == 'load':
-        return get_jsonified_pangenome_from_jsonpangenomefile(pangenome_contents)
+        return jsontools.decode_content(pangenome_contents)
 
 
 # @app.callback(
@@ -111,10 +111,10 @@ def call_pang(last_clicked_jsonified: str,
 #         return ""
 
 
-def get_jsonified_pangenome_from_jsonpangenomefile(jsonpangenomefile_stream) -> str:
-    content_type, content_string = jsonpangenomefile_stream.split(',')
-    jsonified_pangenome = b64decode(content_string).decode('ascii')
-    return jsonified_pangenome
+# def get_jsonified_pangenome_from_jsonpangenomefile(jsonpangenomefile_stream) -> str:
+#     content_type, content_string = jsonpangenomefile_stream.split(',')
+#     jsonified_pangenome = b64decode(content_string).decode('ascii')
+#     return jsonified_pangenome
 
 
 def run_pangenome_algorithm() -> str:
@@ -139,8 +139,3 @@ def get_jsonified_pangenome_from_jsonpangenome(jsonpangenome: PangenomeJSON.Pang
     # return jsonpickle.encode(jsonpangenome)
 
 
-def decode_content(content: str) -> str:
-    if not content:
-        return ''
-    content_string = content.split(',')[1]
-    return b64decode(content_string).decode('ascii')

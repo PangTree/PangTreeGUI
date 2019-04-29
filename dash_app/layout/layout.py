@@ -29,7 +29,7 @@ def get_layout(get_url_function):
                 value='tools',
                 className='custom-tab',
                 selected_className='custom-tab--selected',
-                children=tools.get_tools_tab_content()
+                children=tools.get_tools_tab_content(get_url_function)
             ),
             dcc.Tab(
                 label='Python Package',

@@ -55,3 +55,8 @@ id_full_pangenome_container = "full_pangenome_container"
 id_full_pangenome_graph = "full_pangenome_graph"
 
 id_poagraph_node_info = "poagraph_node_info"
+
+id_process_tab_content = "process_tab_content"
+
+id_multalignment_upload_state = "multalignment_upload_state"
+id_multalignment_upload_state_img = "multalignment_upload_state_img"

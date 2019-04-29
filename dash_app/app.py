@@ -15,3 +15,4 @@ from .callbacks import consensustree
 # from .callbacks import multialignmentgraph
 from .callbacks import mafgraph
 from .callbacks import poagraph
+from .callbacks import processing

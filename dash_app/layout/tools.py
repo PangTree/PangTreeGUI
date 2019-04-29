@@ -8,33 +8,97 @@ from ..components import poagraph as poagraph_component
 from ..components import mafgraph as mafgraph_component
 
 
-def get_tools_tab_content():
+def get_tools_tab_content(get_url_function):
     return html.Div(className="tab-content",
                     children=[
                         html.Div(id="tools_intro",
                                  children=[]),
-                        dcc.Tabs(id="tabs-tools", value='vis', children=[
+                        dcc.Tabs(id="tabs-tools", value='process', children=[
                             dcc.Tab(label='Multialignment processing',
                                     value='process',
                                     className='tools-tab',
                                     selected_className='tools-tab--selected',
-                                    children=get_process_tab_content()),
+                                    children=get_process_tab_content(get_url_function)),
                             dcc.Tab(label='Visualisation',
                                     value='vis',
                                     className='tools-tab',
                                     selected_className='tools-tab--selected',
                                     children=get_vis_tab_content())
                         ], className='tools-tabs',
-                                 )
+                                 ),
+
                     ])
 
 
-def get_process_tab_content():
-    return html.Div(
-        html.Button(id=id_pang_button,
-                    children="Process",
-                    className='button-primary form_item')
-    )
+def get_process_tab_content(get_url_function):
+    return [html.Div(
+        id=id_process_tab_content,
+        children=[
+            html.Div(className="params_section",
+                     children=[html.H4("PoaGraph Construction"),
+                               html.Div(className="param",
+                                        children=[html.Div("Data type", className="two columns param_name"),
+                                                  dcc.RadioItems(
+                                                      options=[
+                                                          {'label': 'Nucleotides', 'value': 'N'},
+                                                          {'label': 'Proteins', 'value': 'P'},
+                                                      ],
+                                                      value='N'
+                                                      , className="seven columns"
+                                                  ),
+                                                  html.Div(
+                                                      "Type of aligned sequences provided in the uploaded multialignment file.",
+                                                      className="param_description three columns")]),
+                               html.Div(className="param",
+                                        children=[html.Div("Multialignment file", className="two columns param_name"),
+
+                                                  html.Div(
+                                                      children=[
+                                                          dcc.Store(id=id_multalignment_upload_state),
+                                                          html.Div(dcc.Upload(id="multialignment_upload",
+                                                                              multiple=False,
+                                                                              children=[
+                                                                                  html.Img(
+                                                                                      src=get_url_function(
+                                                                                          'alignment.png'),
+                                                                                      className='one column file_upload_img',
+                                                                                      style={'width': '50px',
+                                                                                             'margin': '5px'}
+                                                                                  ),
+                                                                                  html.Div(html.A(
+                                                                                      'Drag & drop MAF file or choose file...'),
+                                                                                      className="ten columns")
+                                                                              ]),
+                                                                   className="twelve columns file_upload"),
+                                                          html.Div(
+                                                              id=id_multalignment_upload_state_img,
+                                                              className='one column',
+                                                              style={'visibility': 'hidden', 'width': 'auto'}
+                                                          )
+                                                      ],
+                                                      className="seven columns"
+                                                  ),
+                                                  html.Div(
+                                                      children=["Multialignment file. Accepted formats: ", html.A(
+                                                          href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+                                                          target="_blank", children="maf"), ", ", html.A(
+                                                          href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+                                                          target="_blank", children="po"), ". See example file: ",
+                                                                html.A(
+                                                                    href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
+                                                                    target="_blank", children="example1.maf")],
+                                                      className="param_description three columns")])
+                               ]),
+            html.Div(className="params_section",
+                     children=[html.H4("Consensus Tree Generation")]),
+            html.Div(className="params_section",
+                     children=[html.H4("Output Options")]),
+
+            html.Button(id=id_pang_button,
+                        children="Process",
+                        className='button-primary form_item'),
+        ]
+    )]
 
 
 def get_vis_tab_content():
@@ -108,7 +172,7 @@ def get_vis_tab_content():
                                                   id=id_full_pangenome_graph,
                                                   style={'width': 'auto'},
                                                   # style={'height': '400px', 'width': 'auto'},
-                                                  figure=[],
+                                                  figure={},
                                                   config={
                                                       'displayModeBar': False,
                                                   }

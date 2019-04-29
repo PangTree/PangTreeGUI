@@ -27,7 +27,7 @@ def update_current_tree_state(jsonified_full_consensustree):
      Input(id_full_consensustable_hidden, 'children')])
 def to_consensustree_graph(jsonified_current_consensustree, slider_value, leaf_info, jsonified_full_consensustable):
     if not jsonified_current_consensustree or not jsonified_full_consensustable:
-        return []
+        return {}
     current_consensustree_data = jsontools.unjsonify_builtin_types(jsonified_current_consensustree)
     current_consensustree_tree = consensustree.dict_to_tree(current_consensustree_data)
     full_consensustable_data = jsontools.unjsonify_df(jsonified_full_consensustable)
@@ -80,7 +80,7 @@ def to_consensusnode_details_content(jsonified_consensus_details_table):
 )
 def to_consensus_node_details_distribution(tree_click_data, jsonified_full_consensustable):
     if not jsonified_full_consensustable or not tree_click_data:
-        return []
+        return ""
     clicked_node = tree_click_data['points'][0]
     node_id = clicked_node['pointIndex']
     full_consensustable = jsontools.unjsonify_df(jsonified_full_consensustable)

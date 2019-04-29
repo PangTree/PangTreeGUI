@@ -1,6 +1,6 @@
 import json
 from typing import Dict, Union, Any
-
+from base64 import b64decode
 import jsonpickle
 import pandas as pd
 from poapangenome.output import PangenomeJSON
@@ -25,3 +25,10 @@ def jsonify_df(df: pd.DataFrame) -> str:
 
 def unjsonify_df(jsonified_df: str) -> pd.DataFrame:
     return pd.read_json(jsonified_df)
+
+
+def decode_content(content: str) -> str:
+    if not content:
+        return ''
+    content_string = content.split(',')[1]
+    return b64decode(content_string).decode('ascii')

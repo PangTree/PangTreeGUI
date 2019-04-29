@@ -22,4 +22,5 @@ colors3 = {
     'light_accent': "rgba(100, 131, 129, 1)"
 }
 
-external_css = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_css = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
+                'https://use.fontawesome.com/releases/v5.8.1/css/all.css']

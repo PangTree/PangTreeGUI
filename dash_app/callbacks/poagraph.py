@@ -40,7 +40,7 @@ def update_poagraph(jsonified_pangenome_data: str, relayoutData, elements):
 )
 def update_pangenome_graph(jsonified_pangenome_data: str):
     if not jsonified_pangenome_data:
-        return []
+        return {}
     pangenome_graph_data = jsonified_pangenome_data[0]['props']['children']
     pangenome_graph = jsontools.unjsonify_builtin_types(pangenome_graph_data)
     return poagraph.get_pangenome_figure(pangenome_graph)
