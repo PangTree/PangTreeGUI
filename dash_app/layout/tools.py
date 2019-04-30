@@ -141,6 +141,29 @@ def get_process_tab_content(get_url_function):
                                                          ),
                                                          html.Div(
                                                              "Provide zip with fasta files or single fasta file. It must contain full sequeneces which are not fully represented in provided MAF file.",
+                                                             className="param_description three columns")]),
+                                            html.Div(className="param",
+                                                     id=id_missing_symbol_param,
+                                                     style={"display": "none"},
+                                                     children=[
+                                                         html.Div("Missing symbol for unknown nucleotides/proteins",
+                                                                  className="two columns param_name"),
+                                                         html.Div(
+                                                             children=[
+                                                                 html.Div(children=[
+
+                                                                                         dcc.Input(id=id_missing_symbol_input,
+                                                                                                   maxLength=1,
+                                                                                                   minLength=1,
+                                                                                                   type="text",
+                                                                                                   value='?')
+                                                                                     ])
+
+                                                             ],
+                                                             className="seven columns"
+                                                         ),
+                                                         html.Div(
+                                                             "Any single character is accepted but it must be present in BLOSUM file. Default BLOSUM file uses '?'.",
                                                              className="param_description three columns")])
                                         ])]),
             html.Div(className="params_section",

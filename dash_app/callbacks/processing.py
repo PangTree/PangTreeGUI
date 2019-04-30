@@ -120,3 +120,23 @@ def show_fasta_upload(fasta_privider_choice, fasta_upload_style):
     else:
         fasta_upload_style["display"] = "none"
         return fasta_upload_style
+
+
+@app.callback(Output(id_missing_symbol_param, 'style'),
+              [Input(id_fasta_provider_choice, "value")],
+              [State(id_missing_symbol_param, 'style')])
+def show_fasta_upload(fasta_privider_choice, missing_symbol_param_style):
+    if fasta_privider_choice == "Symbol":
+        missing_symbol_param_style["display"] = "block"
+        return missing_symbol_param_style
+    else:
+        missing_symbol_param_style["display"] = "none"
+        return missing_symbol_param_style
+
+@app.callback(Output(id_missing_symbol_input, 'required'),
+              [Input(id_fasta_provider_choice, "value")])
+def show_fasta_upload(fasta_privider_choice):
+    if fasta_privider_choice == "Symbol":
+        return True
+    else:
+        return False

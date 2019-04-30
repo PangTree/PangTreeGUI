@@ -68,3 +68,6 @@ id_fasta_upload_state_info = "fasta_upload_state_info"
 id_session_state = "session_state"
 id_fasta_upload_param = "fasta_upload_param"
 id_fasta_provider_choice = "fasta_provider_choice"
+
+id_missing_symbol_input = "missing_symbol_input"
+id_missing_symbol_param = "missing_symbol_param"
