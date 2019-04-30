@@ -36,6 +36,10 @@ from io import StringIO
 #             'wordBreak': 'break-all'
 #         })
 #     ])
+from pathlib import Path
+
+from poapangenome.datamodel.fasta_providers.FastaProvider import FastaProviderException
+from poapangenome.datamodel.fasta_providers.FromFile import FromFile
 from poapangenome.datamodel.input_types import Maf, InputError, Po
 
 
@@ -52,4 +56,12 @@ def multialignment_file_is_valid(multialignment_content: str, filename: str) -> 
             return str(e)
     else:
         return "Only po and maf file are accepted. The extension must be present in filename."
+    return ""
+
+
+def fasta_file_is_valid(fasta_path: Path) -> str:
+    try:
+        _ = FromFile(fasta_path)
+    except FastaProviderException as e:
+        return str(e)
     return ""

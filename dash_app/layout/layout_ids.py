@@ -59,4 +59,12 @@ id_poagraph_node_info = "poagraph_node_info"
 id_process_tab_content = "process_tab_content"
 
 id_multalignment_upload_state = "multalignment_upload_state"
-id_multalignment_upload_state_img = "multalignment_upload_state_img"
+id_multalignment_upload_state_info = "multalignment_upload_state_img"
+
+id_maf_specific_params = "maf_specific_params"
+id_fasta_upload_state = "fasta_upload_state"
+id_fasta_upload_state_info = "fasta_upload_state_info"
+
+id_session_state = "session_state"
+id_fasta_upload_param = "fasta_upload_param"
+id_fasta_provider_choice = "fasta_provider_choice"

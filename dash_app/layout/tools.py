@@ -34,6 +34,7 @@ def get_process_tab_content(get_url_function):
     return [html.Div(
         id=id_process_tab_content,
         children=[
+            dcc.Store(id=id_session_state),
             html.Div(className="params_section",
                      children=[html.H4("PoaGraph Construction"),
                                html.Div(className="param",
@@ -69,11 +70,10 @@ def get_process_tab_content(get_url_function):
                                                                                       'Drag & drop MAF file or choose file...'),
                                                                                       className="ten columns")
                                                                               ]),
-                                                                   className="twelve columns file_upload"),
+                                                                   className="file_upload"),
                                                           html.Div(
-                                                              id=id_multalignment_upload_state_img,
-                                                              className='one column',
-                                                              style={'visibility': 'hidden', 'width': 'auto'}
+                                                              id=id_multalignment_upload_state_info,
+                                                              style={'visibility': 'hidden', 'width': 'auto', 'margin-top': '5px'}
                                                           )
                                                       ],
                                                       className="seven columns"
@@ -87,8 +87,62 @@ def get_process_tab_content(get_url_function):
                                                                 html.A(
                                                                     href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
                                                                     target="_blank", children="example1.maf")],
-                                                      className="param_description three columns")])
-                               ]),
+                                                      className="param_description three columns")]),
+                               html.Div(className="param_group",
+                                        id=id_maf_specific_params,
+                                        style={"display": "none", "overflow":"auto" },
+                                        children=[
+                                            html.Div(className="param",
+                                                     children=[
+                                                         html.Div("Missing nucleotides source", className="two columns param_name"),
+                                                         dcc.RadioItems(
+                                                             id=id_fasta_provider_choice,
+                                                             options=[
+                                                                 {'label': "NCBI", 'value': 'NCBI'},
+                                                                 {'label': 'Fasta File', 'value': 'File'},
+                                                                 {'label': 'Custom symbol', 'value': 'Symbol'},
+                                                             ],
+                                                             value='NCBI'
+                                                             , className="seven columns"
+                                                         ),
+                                                         html.Div(
+                                                             "MAF file may not inlcude full sequences. Specify source of missing nucleotides/proteins.",
+                                                             className="param_description three columns")]),
+                                            html.Div(className="param",
+                                                     id=id_fasta_upload_param,
+                                                     style={"display": "none"},
+                                                     children=[
+                                                         html.Div("Missing symbols file source",
+                                                                  className="two columns param_name"),
+                                                         html.Div(
+                                                             children=[
+                                                                 dcc.Store(id=id_fasta_upload_state),
+                                                                 html.Div(dcc.Upload(id="fasta_upload",
+                                                                                     multiple=False,
+                                                                                     children=[
+                                                                                         html.I(
+                                                                                             className='one column file_upload_img fas fa-align-left fa-3x',
+                                                                                             style={'line-height': 'inherit',
+                                                                                                    'padding-left': '5px',
+                                                                                                    }
+                                                                                         ),
+                                                                                         html.Div(html.A(
+                                                                                             'Drag & drop FASTA/ZIP file or choose file...'),
+                                                                                             className="ten columns")
+                                                                                     ]),
+                                                                          className="file_upload"),
+                                                                 html.Div(
+                                                                     id=id_fasta_upload_state_info,
+                                                                     style={'visibility': 'hidden', 'width': 'auto',
+                                                                            'margin-top': '5px'}
+                                                                 )
+                                                             ],
+                                                             className="seven columns"
+                                                         ),
+                                                         html.Div(
+                                                             "Provide zip with fasta files or single fasta file. It must contain full sequeneces which are not fully represented in provided MAF file.",
+                                                             className="param_description three columns")])
+                                        ])]),
             html.Div(className="params_section",
                      children=[html.H4("Consensus Tree Generation")]),
             html.Div(className="params_section",
