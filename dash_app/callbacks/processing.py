@@ -140,3 +140,50 @@ def show_fasta_upload(fasta_privider_choice):
         return True
     else:
         return False
+
+@app.callback(Output(id_hbmin_param, 'style'),
+              [Input(id_tree_algorithm_choice, "value")],
+              [State(id_hbmin_param, 'style')])
+def show_hbmin_param(tree_algorithm_choice, hbmin_param_style):
+    if tree_algorithm_choice == "poa":
+        hbmin_param_style["display"] = "block"
+    else:
+        hbmin_param_style["display"] = "none"
+    return hbmin_param_style
+
+@app.callback(Output(id_tree_specific_params, 'style'),
+              [Input(id_tree_algorithm_choice, "value")],
+              [State(id_tree_specific_params, 'style')])
+def show_tree_params(tree_algorithm_choice, tree_params_style):
+    if tree_algorithm_choice == "tree":
+        tree_params_style["display"] = "block"
+    else:
+        tree_params_style["display"] = "none"
+    return tree_params_style
+
+@app.callback(Output(id_hbmin, 'required'),
+              [Input(id_tree_algorithm_choice, "value")])
+def make_hbmin_required(tree_algorithm_choice):
+    if tree_algorithm_choice == "poa":
+        return True
+    else:
+        return False
+
+
+@app.callback(Output(id_stop, 'required'),
+              [Input(id_tree_algorithm_choice, "value")])
+def make_stop_required(tree_algorithm_choice):
+    if tree_algorithm_choice == "tree":
+        return True
+    else:
+        return False
+
+
+@app.callback(Output(id_p, 'required'),
+              [Input(id_tree_algorithm_choice, "value")])
+def make_stop_required(tree_algorithm_choice):
+    if tree_algorithm_choice == "tree":
+        return True
+    else:
+        return False
+

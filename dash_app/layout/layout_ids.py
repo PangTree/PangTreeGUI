@@ -71,3 +71,17 @@ id_fasta_provider_choice = "fasta_provider_choice"
 
 id_missing_symbol_input = "missing_symbol_input"
 id_missing_symbol_param = "missing_symbol_param"
+
+id_hbmin_param = "hbmin_param"
+
+
+id_tree_algorithm_choice = "tree_algorithm_choice"
+id_hbmin = "hbmin"
+
+id_tree_specific_params = "tree_specific_params"
+id_p = "p"
+id_stop = "stop"
+id_p_param = "p_param"
+id_stop_param = "stop_param"
+
+id_output_configuration="id_output_configuration"
