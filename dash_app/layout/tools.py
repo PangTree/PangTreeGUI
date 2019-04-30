@@ -50,44 +50,94 @@ def get_process_tab_content(get_url_function):
                                                   html.Div(
                                                       "Type of aligned sequences provided in the uploaded multialignment file.",
                                                       className="param_description three columns")]),
+
                                html.Div(className="param",
-                                        children=[html.Div("Multialignment file", className="two columns param_name"),
+                                        id=id_metadata_upload_param,
+                                        children=[
+                                            html.Div("Metadata CSV",
+                                                     className="two columns param_name"),
+                                            html.Div(
+                                                children=[
+                                                    dcc.Store(id=id_metadata_upload_state),
+                                                    html.Div(dcc.Upload(id="metadata_upload",
+                                                                        multiple=False,
+                                                                        children=[
+                                                                            html.I(
+                                                                                className='one column file_upload_img fas fa-file-csv fa-3x',
+                                                                                style={
+                                                                                    'line-height': 'inherit',
+                                                                                    'padding-left': '5px',
+                                                                                }
+                                                                            ),
+                                                                            html.Div(html.A(
+                                                                                'Drag & drop CSV metadata file or choose file...'),
+                                                                                className="ten columns")
+                                                                        ]),
+                                                             className="file_upload"),
+                                                    html.Div(
+                                                        id=id_metadata_upload_state_info,
+                                                        style={'visibility': 'hidden',
+                                                               'width': 'auto',
+                                                               'margin-top': '5px'}
+                                                    )
+                                                ],
+                                                className="seven columns"
+                                            ),
+                                            html.Div(
+                                                [
+                                                    "Provide csv with metadata about the sequences that enhance the visualisation. 'seqid' column is obligatory and must match sequences ids present in MULTIALIGNMENT file. Other columns are optional. Example file: ",
+                                                    html.A(
+                                                        href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
+                                                        target="_blank", children="example1.maf")],
+                                                className="param_description three columns")]),
+
+                               html.Div(className="param",
+                                        children=[html.Div("Multialignment file",
+                                                           className="two columns param_name"),
 
                                                   html.Div(
                                                       children=[
-                                                          dcc.Store(id=id_multalignment_upload_state),
-                                                          html.Div(dcc.Upload(id="multialignment_upload",
-                                                                              multiple=False,
-                                                                              children=[
-                                                                                  html.Img(
-                                                                                      src=get_url_function(
-                                                                                          'alignment.png'),
-                                                                                      className='one column file_upload_img',
-                                                                                      style={'width': '50px',
-                                                                                             'margin': '5px'}
-                                                                                  ),
-                                                                                  html.Div(html.A(
-                                                                                      'Drag & drop MAF file or choose file...'),
-                                                                                      className="ten columns")
-                                                                              ]),
-                                                                   className="file_upload"),
+                                                          dcc.Store(
+                                                              id=id_multalignment_upload_state),
+                                                          html.Div(
+                                                              dcc.Upload(id="multialignment_upload",
+                                                                         multiple=False,
+                                                                         children=[
+                                                                             html.I(
+                                                                                 className='one column file_upload_img fas fa-align-justify fa-3x',
+                                                                                 style={
+                                                                                     'line-height': 'inherit',
+                                                                                     'padding-left': '5px',
+                                                                                 }
+                                                                             ),
+                                                                             html.Div(html.A(
+                                                                                 'Drag & drop MAF file or choose file...'),
+                                                                                 className="ten columns")
+                                                                         ]),
+                                                              className="file_upload"),
                                                           html.Div(
                                                               id=id_multalignment_upload_state_info,
-                                                              style={'visibility': 'hidden', 'width': 'auto',
+                                                              style={'visibility': 'hidden',
+                                                                     'width': 'auto',
                                                                      'margin-top': '5px'}
                                                           )
                                                       ],
                                                       className="seven columns"
                                                   ),
                                                   html.Div(
-                                                      children=["Multialignment file. Accepted formats: ", html.A(
-                                                          href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
-                                                          target="_blank", children="maf"), ", ", html.A(
-                                                          href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
-                                                          target="_blank", children="po"), ". See example file: ",
-                                                                html.A(
-                                                                    href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
-                                                                    target="_blank", children="example1.maf")],
+                                                      children=[
+                                                          "Multialignment file. Accepted formats: ",
+                                                          html.A(
+                                                              href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+                                                              target="_blank", children="maf"), ", ",
+                                                          html.A(
+                                                              href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+                                                              target="_blank", children="po"),
+                                                          ". See example file: ",
+                                                          html.A(
+                                                              href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
+                                                              target="_blank",
+                                                              children="example1.maf")],
                                                       className="param_description three columns")]),
                                html.Div(className="param_group",
                                         id=id_maf_specific_params,
@@ -101,8 +151,10 @@ def get_process_tab_content(get_url_function):
                                                              id=id_fasta_provider_choice,
                                                              options=[
                                                                  {'label': "NCBI", 'value': 'NCBI'},
-                                                                 {'label': 'Fasta File', 'value': 'File'},
-                                                                 {'label': 'Custom symbol', 'value': 'Symbol'},
+                                                                 {'label': 'Fasta File',
+                                                                  'value': 'File'},
+                                                                 {'label': 'Custom symbol',
+                                                                  'value': 'Symbol'},
                                                              ],
                                                              value='NCBI'
                                                              , className="seven columns"
@@ -119,24 +171,26 @@ def get_process_tab_content(get_url_function):
                                                          html.Div(
                                                              children=[
                                                                  dcc.Store(id=id_fasta_upload_state),
-                                                                 html.Div(dcc.Upload(id="fasta_upload",
-                                                                                     multiple=False,
-                                                                                     children=[
-                                                                                         html.I(
-                                                                                             className='one column file_upload_img fas fa-align-left fa-3x',
-                                                                                             style={
-                                                                                                 'line-height': 'inherit',
-                                                                                                 'padding-left': '5px',
-                                                                                             }
-                                                                                         ),
-                                                                                         html.Div(html.A(
-                                                                                             'Drag & drop FASTA/ZIP file or choose file...'),
-                                                                                             className="ten columns")
-                                                                                     ]),
-                                                                          className="file_upload"),
+                                                                 html.Div(
+                                                                     dcc.Upload(id="fasta_upload",
+                                                                                multiple=False,
+                                                                                children=[
+                                                                                    html.I(
+                                                                                        className='one column file_upload_img fas fa-align-left fa-3x',
+                                                                                        style={
+                                                                                            'line-height': 'inherit',
+                                                                                            'padding-left': '5px',
+                                                                                        }
+                                                                                    ),
+                                                                                    html.Div(html.A(
+                                                                                        'Drag & drop FASTA/ZIP file or choose file...'),
+                                                                                        className="ten columns")
+                                                                                ]),
+                                                                     className="file_upload"),
                                                                  html.Div(
                                                                      id=id_fasta_upload_state_info,
-                                                                     style={'visibility': 'hidden', 'width': 'auto',
+                                                                     style={'visibility': 'hidden',
+                                                                            'width': 'auto',
                                                                             'margin-top': '5px'}
                                                                  )
                                                              ],
@@ -149,8 +203,9 @@ def get_process_tab_content(get_url_function):
                                                      id=id_missing_symbol_param,
                                                      style={"display": "none"},
                                                      children=[
-                                                         html.Div("Missing symbol for unknown nucleotides/proteins",
-                                                                  className="two columns param_name"),
+                                                         html.Div(
+                                                             "Missing symbol for unknown nucleotides/proteins",
+                                                             className="two columns param_name"),
                                                          html.Div(children=[
 
                                                              dcc.Input(id=id_missing_symbol_input,
@@ -170,8 +225,48 @@ def get_process_tab_content(get_url_function):
                      style={"overflow": "auto"},
                      children=[html.H4("Consensus Tree Generation"),
                                html.Div(className="param",
+                                        children=[html.Div("BLOSUM file",
+                                                           className="two columns param_name"),
+
+                                                  html.Div(
+                                                      children=[
+                                                          dcc.Store(
+                                                              id=id_blosum_upload_state),
+                                                          html.Div(
+                                                              dcc.Upload(id="blosum_upload",
+                                                                         multiple=False,
+                                                                         children=[
+                                                                             html.I(
+                                                                                 className='one column file_upload_img fas fa-table fa-3x',
+                                                                                 style={
+                                                                                     'line-height': 'inherit',
+                                                                                     'padding-left': '5px',
+                                                                                 }
+                                                                             ),
+                                                                             html.Div(html.A(
+                                                                                 'Drag & drop BLOSUM file or choose file...'),
+                                                                                 className="ten columns")
+                                                                         ]),
+                                                              className="file_upload"),
+                                                          html.Div(
+                                                              id=id_blosum_upload_state_info,
+                                                              style={'visibility': 'hidden',
+                                                                     'width': 'auto',
+                                                                     'margin-top': '5px'}
+                                                          )
+                                                      ],
+                                                      className="seven columns"
+                                                  ),
+                                                  html.Div(
+                                                      children=[
+                                                          "BLOSUM file. This parameter is optional as default BLOSUM file is ", html.A(
+                                                              href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat",
+                                                              target="_blank", children="BLOSUM80")],
+                                                      className="param_description three columns")]),
+                               html.Div(className="param",
                                         children=[
-                                            html.Div("Algorithm", className="two columns param_name"),
+                                            html.Div("Algorithm",
+                                                     className="two columns param_name"),
                                             dcc.RadioItems(
                                                 id=id_tree_algorithm_choice,
                                                 options=[
@@ -187,8 +282,9 @@ def get_process_tab_content(get_url_function):
                                                     html.A(
                                                         "Lee et al.",
                                                         href="https://doi.org/10.1093/bioinformatics/18.3.452"),
-                                                    " and 'Tree' algorithm described ", html.A("here",
-                                                                                               href="https://github.com/meoke/pang#idea-and-algorithm-description")],
+                                                    " and 'Tree' algorithm described ",
+                                                    html.A("here",
+                                                           href="https://github.com/meoke/pang#idea-and-algorithm-description")],
                                                 className="param_description three columns")]),
                                html.Div(className="param",
                                         id=id_hbmin_param,
@@ -249,27 +345,46 @@ def get_process_tab_content(get_url_function):
                                         ])
                                ]),
             html.Div(className="params_section",
-                     children=[html.H4("Output Configuation"),
+                     children=[html.H4("Output Configuration"),
                                html.Div(
                                    className="param",
                                    children=[dcc.Checklist(
                                        id=id_output_configuration,
                                        options=[
-                                           {'label': 'FASTA (all sequences and consensuses in fasta format)',
-                                            'value': 'fasta'},
+                                           {
+                                               'label': 'FASTA (all sequences and consensuses in fasta format)',
+                                               'value': 'fasta'},
                                            {'label': 'PO (poagraph in PO format)', 'value': 'po'},
                                        ],
-                                       values=['MTL', 'SF'],
+                                       values=['fasta', 'po'],
                                        className="nine columns"
                                    ),
                                        html.Div(
                                            children=[html.P("Output of the program will contain:"),
                                                      html.Ul(children=[
-                                                         html.Li("JSON that can be used as Visualisation input."),
+                                                         html.Li(
+                                                             "JSON that can be used as Visualisation input."),
                                                          html.Li("LOG file"),
                                                          html.Li(
                                                              "Intermediate PO files produced by consensus algorithm.")]),
-                                                     html.P("but also additional output can be produced.")],
+                                                     html.P(
+                                                         "but also additional output can be produced.")],
+                                           className="param_description three columns"
+                                       )]
+                               ),
+                               html.Div(
+                                   className="param",
+                                   children=[dcc.Checklist(
+                                       id=id_jump_to_vis,
+                                       options=[
+                                           {'label': 'Jump to visualisation after processing',
+                                            'value': 'jump'},
+                                       ],
+                                       values=['jump'],
+                                       className="nine columns"
+                                   ),
+                                       html.Div(
+                                           "Immediately after processing jump to Visualisation tab and load the processing result.",
                                            className="param_description three columns"
                                        )]
                                )
