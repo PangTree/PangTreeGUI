@@ -68,14 +68,16 @@ def run_pangenome(run_processing_btn_click, session_state):
 
     current_processing_output_dir_name = jsontools.get_child_path(output_dir, jsontools.get_current_time())
     jsontools.create_dir(current_processing_output_dir_name)
+    current_processing_short_name = "/".join(str(current_processing_output_dir_name).split("/")[-2:])
     #copy all needed file etc. from contents controls to the folder
     # call poapangenome with output as this folder
     jsonpangenome = None # tu będzie wynik poapangenome
     # z tego folderu zrobić potem zip
     current_processing_output_zip = jsontools.dir_to_zip(current_processing_output_dir_name)
+    current_processing_short_name = "/".join(str(current_processing_output_zip).split("/")[-2:])
     return {"output_dir": str(output_dir),
-            "last_output_zip": str(current_processing_output_zip),
-            "jsonpangenome": ""}
+            "last_output_zip": current_processing_short_name,
+            "jsonpangenome": "paulin"}
 
 # @app.callback(
 #     Output(id_pangenome_hidden, 'children'),

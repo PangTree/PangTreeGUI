@@ -1,3 +1,8 @@
+import io
+import os
+from pathlib import Path
+
+import flask
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_html_components as html
@@ -276,3 +281,57 @@ def show_metadata_upload_info(metadata_upload_state_data, current_style):
     else:
         current_style["visibility"] = "visible"
         return current_style
+
+@app.callback(Output(id_processing_result, "style"),
+              [Input(id_session_state, 'data')],
+              [State(id_processing_result, "style")])
+def show_processing_result(session_state_data, processing_result_style):
+    if session_state_data is None or "jsonpangenome" not in session_state_data:
+        raise PreventUpdate
+    if len(session_state_data["jsonpangenome"]):
+        processing_result_style["display"] = "block"
+    return processing_result_style
+
+
+@app.callback(Output("tabs-tools", "value"),
+              [Input(id_go_to_vis_tab, "n_clicks_timestamp")])
+def jump_to_vis_tab(go_to_vis_tab_click):
+    if go_to_vis_tab_click > 0:
+        return "vis"
+    raise PreventUpdate()
+
+@app.callback(Output(id_download_processing_result, "href"),
+              [Input(id_session_state, 'data')])
+def update_download_result_content(session_state_data):
+    if session_state_data is None:
+        raise PreventUpdate()
+    if not "last_output_zip" in session_state_data:
+        return ""
+    return f'/export/pang?n={session_state_data["last_output_zip"]}'
+
+@app.server.route('/export/pang')
+def export_pang_result_zip():
+
+    zip_short_path = flask.request.args.get('n')
+    zip_full_path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath(
+        "../../users_temp_data/").joinpath(zip_short_path)
+
+    with open(zip_full_path, 'rb') as f:
+        data = io.BytesIO(f.read())
+    data.seek(0)
+
+    result_id = zip_short_path.split("/")[1]
+    return flask.send_file(
+        data,
+        mimetype='application/zip',
+        attachment_filename=f'result_{result_id}.zip',
+        as_attachment=True,
+        cache_timeout=0
+    )
+
+@app.callback(Output(id_processing_result_text, "children"),
+              [Input(id_session_state, 'data')])
+def show_output_description(session_state_data):
+    if session_state_data is None or len(session_state_data) == 0:
+        raise PreventUpdate()
+    return str(session_state_data["jsonpangenome"])

@@ -86,8 +86,6 @@ id_stop_param = "stop_param"
 
 id_output_configuration="id_output_configuration"
 
-id_jump_to_vis = "jump_to_vis"
-
 id_metadata_upload_param = "metadata_upload_param"
 
 id_metadata_upload_state = "metadata_upload_state"
@@ -96,3 +94,8 @@ id_metadata_upload_state_info = "metadata_upload_state_info"
 
 id_blosum_upload_state_info = "blosum_upload_state_info"
 id_blosum_upload_state = "blosum_upload_state"
+
+id_processing_result = "processing_result"
+id_processing_result_text = "processing_result_text"
+id_go_to_vis_tab = "go_to_vis_tab"
+id_download_processing_result = "download_processing_result"

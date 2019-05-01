@@ -372,29 +372,18 @@ def get_process_tab_content(get_url_function):
                                            className="param_description three columns"
                                        )]
                                ),
-                               html.Div(
-                                   className="param",
-                                   children=[dcc.Checklist(
-                                       id=id_jump_to_vis,
-                                       options=[
-                                           {'label': 'Jump to visualisation after processing',
-                                            'value': 'jump'},
-                                       ],
-                                       values=['jump'],
-                                       className="nine columns"
-                                   ),
-                                       html.Div(
-                                           "Immediately after processing jump to Visualisation tab and load the processing result.",
-                                           className="param_description three columns"
-                                       )]
-                               )
-
                                ]),
 
             html.Button(id=id_pang_button,
                         children="Process",
                         className='button-primary form_item',
                         n_clicks_timestamp=0),
+            html.Div(id=id_processing_result,
+                     style={"width": "auto", "display": "none"},
+                     children=["Rezultat", html.Div(id=id_processing_result_text),
+                               html.Div(style={'width': 'auto'}, children=[html.A("Download result files", className="six columns", id=id_download_processing_result, style={"padding-right": '10px'}),
+                               html.Button("Go to visualisation", id=id_go_to_vis_tab, n_clicks_timestamp=0, className="six columns", style={"padding-left": '10px'})])
+                               ])
         ]
     )]
 
