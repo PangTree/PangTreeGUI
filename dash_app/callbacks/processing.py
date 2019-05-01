@@ -5,6 +5,8 @@ from ..server import app
 from ..layout.layout_ids import *
 from ..components import processing
 from ..components import jsontools
+from io import StringIO
+
 
 @app.callback(Output(id_multalignment_upload_state, 'data'),
               [Input('multialignment_upload', 'contents')],
@@ -24,7 +26,7 @@ def validate_multialignment(file_content, file_name):
 @app.callback(Output(id_maf_specific_params, 'style'),
               [Input(id_multalignment_upload_state, 'data')],
               [State(id_maf_specific_params, 'style')])
-def validate_multialignment(multialignment_upload_state_data, maf_specific_group_style):
+def show_maf_specific_params(multialignment_upload_state_data, maf_specific_group_style):
     if multialignment_upload_state_data is None or "maf" not in multialignment_upload_state_data["filename"]:
         raise PreventUpdate()
     else:
@@ -48,7 +50,7 @@ def show_multiaignment_validation_result(multialignment_upload_state_data):
 @app.callback(Output(id_multalignment_upload_state_info, 'style'),
               [Input(id_multalignment_upload_state, 'data')],
               [State(id_multalignment_upload_state_info, 'style')])
-def validate_multialignment(multialignment_upload_state_data, current_style):
+def show_multialignment(multialignment_upload_state_data, current_style):
     if multialignment_upload_state_data is None or len(multialignment_upload_state_data) == 0:
         raise PreventUpdate()
     else:
@@ -103,7 +105,7 @@ def show_fasta_validation_result(fasta_upload_state_data):
 @app.callback(Output(id_fasta_upload_state_info, 'style'),
               [Input(id_fasta_upload_state, 'data')],
               [State(id_fasta_upload_state_info, 'style')])
-def update_fasta_upload_info(fasta_upload_state_data, current_style):
+def show_fasta_upload_info(fasta_upload_state_data, current_style):
     if fasta_upload_state_data is None or len(fasta_upload_state_data) == 0:
         raise PreventUpdate()
     else:
@@ -133,13 +135,6 @@ def show_fasta_upload(fasta_privider_choice, missing_symbol_param_style):
         missing_symbol_param_style["display"] = "none"
         return missing_symbol_param_style
 
-@app.callback(Output(id_missing_symbol_input, 'required'),
-              [Input(id_fasta_provider_choice, "value")])
-def show_fasta_upload(fasta_privider_choice):
-    if fasta_privider_choice == "Symbol":
-        return True
-    else:
-        return False
 
 @app.callback(Output(id_hbmin_param, 'style'),
               [Input(id_tree_algorithm_choice, "value")],
@@ -187,3 +182,97 @@ def make_stop_required(tree_algorithm_choice):
     else:
         return False
 
+
+@app.callback(Output(id_blosum_upload_state, 'data'),
+              [Input('blosum_upload', 'contents'),
+               Input(id_missing_symbol_input, 'value'),
+               Input(id_fasta_provider_choice, "value")],
+              [State('blosum_upload', 'filename')])
+def validate_blosum(file_content, missing_symbol, fasta_provider_choice, file_name):
+    if file_content is None and missing_symbol is None:
+        return None
+    if fasta_provider_choice == "Symbol" and missing_symbol != "":
+        symbol = missing_symbol
+    else:
+        symbol = '?'
+
+    if file_content is None:
+        blosum_file_content=jsontools.read_file_to_stream(processing.get_default_blosum_path())
+        file_source_info = "default BLOSUM file"
+    else:
+        blosum_file_content = StringIO(jsontools.decode_content(file_content))
+        file_source_info = f"provided BLOSUM file: {file_name}"
+
+    error_message = processing.blosum_file_is_valid(blosum_file_content, symbol)
+    if len(error_message) == 0:
+        validation_message = f"The {file_source_info} is correct and contains symbol for missing nucleotides/proteins: {symbol}."
+        return {"is_correct": True, "filename": file_name, "symbol": symbol, "validation_message": validation_message}
+    else:
+        validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/proteins: {symbol}. Reason: {error_message}"
+        return {"is_correct": False, "filename": file_name, "symbol": symbol, "validation_message": validation_message}
+
+
+@app.callback(Output(id_blosum_upload_state_info, 'children'),
+              [Input(id_blosum_upload_state, 'data')])
+def show_blosum_validation_result(blosum_upload_state_data):
+    if blosum_upload_state_data is None or len(blosum_upload_state_data) == 0:
+        raise PreventUpdate()
+    else:
+        validation_message = blosum_upload_state_data["validation_message"]
+        if blosum_upload_state_data["is_correct"]:
+            return [html.I(className="fas fa-check-circle correct"), html.P(f"{validation_message}", style={"display": "inline", "margin-left": "10px"})]
+        else:
+            return [html.I(className="fas fa-exclamation-circle incorrect"),
+                    html.P(f"{validation_message}", style={"display": "inline", "margin-left": "10px"})]
+
+
+@app.callback(Output(id_blosum_upload_state_info, 'style'),
+              [Input(id_blosum_upload_state, 'data')],
+              [State(id_blosum_upload_state_info, 'style')])
+def show_blosum_upload_info(blosum_upload_state_data, current_style):
+    if blosum_upload_state_data is None or len(blosum_upload_state_data) == 0:
+        raise PreventUpdate()
+    else:
+        current_style["visibility"] = "visible"
+        return current_style
+
+
+@app.callback(Output(id_metadata_upload_state, 'data'),
+              [Input('metadata_upload', 'contents')],
+              [State('metadata_upload', 'filename'),
+               State(id_session_state, 'data')])
+def validate_metadata_file(file_content, file_name, session_state):
+    if file_content is None or file_name is None:
+        return None
+    else:
+        file_content = StringIO(jsontools.decode_content(file_content))
+        error_message = processing.metadata_file_is_valid(file_content)
+        if len(error_message) == 0:
+            return {"is_correct": True, "filename": file_name, "error": error_message}
+        else:
+            return {"is_correct": False, "filename": file_name, "error": error_message}
+
+
+@app.callback(Output(id_metadata_upload_state_info, 'children'),
+              [Input(id_metadata_upload_state, 'data')])
+def show_metadata_validation_result(metadata_upload_state_data):
+    if metadata_upload_state_data is None or len(metadata_upload_state_data) == 0:
+        raise PreventUpdate()
+    else:
+        if metadata_upload_state_data["is_correct"]:
+            filename = metadata_upload_state_data["filename"]
+            return [html.I(className="fas fa-check-circle correct"), html.P(f"File {filename} uploaded.", style={"display": "inline", "margin-left": "10px"})]
+        else:
+            return [html.I(className="fas fa-exclamation-circle incorrect"),
+                    html.P(metadata_upload_state_data["error"], style={"display": "inline", "margin-left": "10px"})]
+
+
+@app.callback(Output(id_metadata_upload_state_info, 'style'),
+              [Input(id_metadata_upload_state, 'data')],
+              [State(id_metadata_upload_state_info, 'style')])
+def show_metadata_upload_info(metadata_upload_state_data, current_style):
+    if metadata_upload_state_data is None or len(metadata_upload_state_data) == 0:
+        raise PreventUpdate()
+    else:
+        current_style["visibility"] = "visible"
+        return current_style

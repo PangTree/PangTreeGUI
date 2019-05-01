@@ -261,7 +261,7 @@ def get_process_tab_content(get_url_function):
                                                       children=[
                                                           "BLOSUM file. This parameter is optional as default BLOSUM file is ", html.A(
                                                               href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat",
-                                                              target="_blank", children="BLOSUM80")],
+                                                              target="_blank", children="BLOSUM80"), ". The BLOSUM file must contain '?' or custom symbol for missing nucleotides/proteins if specified."],
                                                       className="param_description three columns")]),
                                html.Div(className="param",
                                         children=[
@@ -393,7 +393,8 @@ def get_process_tab_content(get_url_function):
 
             html.Button(id=id_pang_button,
                         children="Process",
-                        className='button-primary form_item'),
+                        className='button-primary form_item',
+                        n_clicks_timestamp=0),
         ]
     )]
 

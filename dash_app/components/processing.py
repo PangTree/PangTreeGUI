@@ -1,4 +1,6 @@
+import os
 from io import StringIO
+from . import jsontools
 
 # def parse_contents(contents, filename, date):
 #     content_type, content_string = contents.split(',')
@@ -38,9 +40,10 @@ from io import StringIO
 #     ])
 from pathlib import Path
 
+from poapangenome.consensus.input_types import Blosum, ConsensusInputError
 from poapangenome.datamodel.fasta_providers.FastaProvider import FastaProviderException
 from poapangenome.datamodel.fasta_providers.FromFile import FromFile
-from poapangenome.datamodel.input_types import Maf, InputError, Po
+from poapangenome.datamodel.input_types import Maf, InputError, Po, MissingSymbol, MetadataCSV
 
 
 def multialignment_file_is_valid(multialignment_content: str, filename: str) -> str:
@@ -65,3 +68,26 @@ def fasta_file_is_valid(fasta_path: Path) -> str:
     except FastaProviderException as e:
         return str(e)
     return ""
+
+
+def blosum_file_is_valid(file_content: Path, missing_symbol: str) -> str:
+    try:
+        _ = Blosum(file_content, None, MissingSymbol(missing_symbol))
+    except ConsensusInputError as e:
+        return str(e)
+    return ""
+
+def metadata_file_is_valid(file_content: Path) -> str:
+    try:
+        _ = MetadataCSV(file_content, None)
+    except InputError as e:
+        return str(e)
+    return ""
+
+def get_default_blosum_path():
+    parent_dir = Path(os.path.dirname(os.path.abspath(__file__)) + '/')
+    return jsontools.get_child_path(parent_dir, "../dependencies/blosum80.mat")
+    # blosum_content = jsontools.get_file_content_stringio(default_blosum_path)
+    # return Blosum(blosum_content, default_blosum_path, missing_base_symbol)
+
+

@@ -1,4 +1,5 @@
 import os
+import shutil
 from datetime import datetime
 import json
 from pathlib import Path
@@ -8,6 +9,7 @@ import jsonpickle
 import pandas as pd
 from poapangenome.output import PangenomeJSON
 import uuid
+from io import StringIO
 
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
     # return jsonpickle.decode(jsonified_pangenome)
@@ -79,3 +81,13 @@ def save_to_file(filecontent: str, filename: Path, mode: Optional[str] = 'w') ->
 
     with open(filename, mode) as output:
         output.write(filecontent)
+
+def read_file_to_stream(path: Path):
+    with open(path) as in_file:
+        filecontent = in_file.read()
+    return StringIO(filecontent)
+
+
+def dir_to_zip(dir_name: Path):
+    shutil.make_archive(dir_name, 'zip', dir_name)
+    return Path(str(dir_name) + ".zip")

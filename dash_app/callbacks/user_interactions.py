@@ -5,6 +5,7 @@ import jsonpickle
 
 import dash_html_components as html
 import dash_core_components as dcc
+from dash.exceptions import PreventUpdate
 from poapangenome.output import PangenomeJSON
 from ..server import app
 from dash.dependencies import Input, Output, State
@@ -50,6 +51,31 @@ def call_pang(last_clicked_jsonified: str,
     if last_clicked["action"] == 'load':
         return jsontools.decode_content(pangenome_contents)
 
+@app.callback(
+    Output(id_session_state, 'data'),
+    [Input(id_pang_button, 'n_clicks_timestamp')],
+    [State(id_session_state, 'data')]
+)
+def run_pangenome(run_processing_btn_click, session_state):
+    if run_processing_btn_click == 0:
+        raise PreventUpdate()
+    if session_state is None:
+        session_state = {}
+    if "output_dir" not in session_state:
+        output_dir = jsontools.create_output_dir()
+    else:
+        output_dir = Path(session_state["output_dir"])
+
+    current_processing_output_dir_name = jsontools.get_child_path(output_dir, jsontools.get_current_time())
+    jsontools.create_dir(current_processing_output_dir_name)
+    #copy all needed file etc. from contents controls to the folder
+    # call poapangenome with output as this folder
+    jsonpangenome = None # tu będzie wynik poapangenome
+    # z tego folderu zrobić potem zip
+    current_processing_output_zip = jsontools.dir_to_zip(current_processing_output_dir_name)
+    return {"output_dir": str(output_dir),
+            "last_output_zip": str(current_processing_output_zip),
+            "jsonpangenome": ""}
 
 # @app.callback(
 #     Output(id_pangenome_hidden, 'children'),
