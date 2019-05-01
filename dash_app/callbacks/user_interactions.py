@@ -1,12 +1,23 @@
 import shutil
-
+from io import StringIO
 from pathlib import Path
+from typing import Dict, List
+
 import jsonpickle
 
 import dash_html_components as html
 import dash_core_components as dcc
 from dash.exceptions import PreventUpdate
+from poapangenome.consensus.input_types import Blosum, Hbmin, Stop, P
+from poapangenome.datamodel.DataType import DataType
+from poapangenome.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
+from poapangenome.datamodel.fasta_providers.FromFile import FromFile
+from poapangenome.datamodel.fasta_providers.FromNCBI import FromNCBI
+from poapangenome.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
 from poapangenome.output import PangenomeJSON
+from poapangenome.output.PangenomeJSON import to_json
+
+from dash_app.components import processing
 from ..server import app
 from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
@@ -40,23 +51,76 @@ def update_last_clicked_info(pang_n_clicks: int, load_pangenome_n_clicks: int, l
                                "action": "load"}
     return json.dumps(new_clicked_info)
 
+# Usunac poniższe!
+# @app.callback(
+#     Output(id_pangenome_hidden, 'children'),
+#     [Input(id_last_clicked_hidden, 'children')],
+#     [State(id_pangenome_upload, 'contents')])
+# def call_pang(last_clicked_jsonified: str,
+#               pangenome_contents,
+#               ) -> str:
+#     last_clicked = json.loads(last_clicked_jsonified)
+#     if last_clicked["action"] == 'load':
+#         return jsontools.decode_content(pangenome_contents)
+
+
 @app.callback(
     Output(id_pangenome_hidden, 'children'),
-    [Input(id_last_clicked_hidden, 'children')],
-    [State(id_pangenome_upload, 'contents')])
-def call_pang(last_clicked_jsonified: str,
-              pangenome_contents,
-              ) -> str:
-    last_clicked = json.loads(last_clicked_jsonified)
-    if last_clicked["action"] == 'load':
-        return jsontools.decode_content(pangenome_contents)
+    [Input(id_pangenome_upload, 'contents')])
+def load_visualisation(pangenome_content: str) -> str:
+    if not pangenome_content:
+        raise PreventUpdate()
+    if pangenome_content.startswith("data:application/json;base64"):
+        return jsontools.decode_content(pangenome_content)
+    return pangenome_content
+
+@app.callback(Output(id_pangenome_upload, 'contents'),
+              [Input(id_go_to_vis_tab, 'n_clicks_timestamp')],
+              [State(id_session_state, 'data')])
+def load_pang_result_to_visualisation(go_to_vis_timestamp, session_state_data):
+    if not go_to_vis_timestamp:
+        raise PreventUpdate()
+    return session_state_data["jsonpangenome"]
 
 @app.callback(
     Output(id_session_state, 'data'),
     [Input(id_pang_button, 'n_clicks_timestamp')],
-    [State(id_session_state, 'data')]
+    [State(id_session_state, 'data'),
+     State(id_data_type, "value"),
+     State(id_multialignment_upload, "contents"),
+     State(id_multialignment_upload, "filename"),
+     State(id_fasta_provider_choice, "value"),
+     State(id_fasta_upload, "contents"),
+     State(id_fasta_upload, "filename"),
+     State(id_missing_symbol_input, "value"),
+     State(id_blosum_upload, "contents"),
+     State(id_blosum_upload, "filename"),
+     State(id_tree_algorithm_choice, "value"),
+     State(id_output_configuration, "values"),
+     State(id_metadata_upload, "contents"),
+     State(id_metadata_upload, "filename"),
+     State(id_hbmin, "value"),
+     State(id_stop, "value"),
+     State(id_p, "value")],
 )
-def run_pangenome(run_processing_btn_click, session_state):
+def run_pangenome(run_processing_btn_click,
+                  session_state: Dict,
+                  datatype: str,
+                  multialignment_content: str,
+                  multialignment_filename: str,
+                  fasta_provider_choice: str,
+                  fasta_content: str,
+                  fasta_filename: str,
+                  missing_symbol: str,
+                  blosum_contents: str,
+                  blosum_filename: str,
+                  consensus_choice: str,
+                  output_config: List[str],
+                  metadata_content: str,
+                  metadata_filename: str,
+                  hbmin_value: float,
+                  stop_value: float,
+                  p_value: float):
     if run_processing_btn_click == 0:
         raise PreventUpdate()
     if session_state is None:
@@ -68,16 +132,65 @@ def run_pangenome(run_processing_btn_click, session_state):
 
     current_processing_output_dir_name = jsontools.get_child_path(output_dir, jsontools.get_current_time())
     jsontools.create_dir(current_processing_output_dir_name)
-    current_processing_short_name = "/".join(str(current_processing_output_dir_name).split("/")[-2:])
+
+    if "maf" in multialignment_filename:
+        multialignment = Maf(StringIO(jsontools.decode_content(multialignment_content)), filename=multialignment_filename)
+    elif "po" in multialignment_filename:
+        multialignment = Po(StringIO(jsontools.decode_content(multialignment_content)), filename=multialignment_filename)
+    else:
+        session_state["error"] = "Cannot create Poagraph. Only MAF and PO files are supported."
+        return session_state
+
+    missing_symbol = MissingSymbol(missing_symbol) if missing_symbol != "" else MissingSymbol()
+
+    fasta_path = None
+    if fasta_provider_choice == "ncbi":
+        fasta_provider = FromNCBI(use_cache=True)
+    elif fasta_provider_choice == "file":
+        fasta_path = jsontools.get_child_path(current_processing_output_dir_name, fasta_filename)
+        save_mode = "wb" if "zip" in fasta_filename else "w"
+        jsontools.save_to_file(fasta_content, fasta_path, save_mode)
+        fasta_provider = FromFile(fasta_path)
+    else:
+        fasta_provider = ConstSymbolProvider(missing_symbol)
+
+    if not blosum_contents:
+        blosum_path = processing.get_default_blosum_path()
+        blosum_contents = jsontools.read_file_to_stream(blosum_path)
+    else:
+        blosum_path = jsontools.get_child_path(current_processing_output_dir_name, blosum_filename)
+        blosum_contents = jsontools.decode_content(blosum_contents)
+        jsontools.save_to_file(blosum_contents, blosum_path)
+        blosum_contents = StringIO(blosum_contents)
+    blosum = Blosum(blosum_contents, blosum_path, missing_symbol)
+
+    metadata = MetadataCSV(StringIO(jsontools.decode_content(metadata_content)), metadata_filename) if metadata_content else None
+    pangenomejson = processing.run_poapangenome(output_dir=current_processing_output_dir_name,
+                                                datatype=DataType[datatype],
+                                                multialignment=multialignment,
+                                                fasta_provider=fasta_provider,
+                                                blosum=blosum,
+                                                consensus_choice=consensus_choice,
+                                                output_po=True if "po" in output_config else False,
+                                                output_fasta=True if "fasta" in output_config else False,
+                                                missing_symbol=missing_symbol,
+                                                metadata=metadata,
+                                                hbmin=Hbmin(hbmin_value) if hbmin_value else None,
+                                                stop=Stop(stop_value) if stop_value else None,
+                                                p=P(p_value) if p_value else None,
+                                                fasta_path=fasta_filename if fasta_filename else None)
+    pangenome_json_str = to_json(pangenomejson)
+
+
+
     #copy all needed file etc. from contents controls to the folder
     # call poapangenome with output as this folder
-    jsonpangenome = None # tu będzie wynik poapangenome
     # z tego folderu zrobić potem zip
     current_processing_output_zip = jsontools.dir_to_zip(current_processing_output_dir_name)
     current_processing_short_name = "/".join(str(current_processing_output_zip).split("/")[-2:])
     return {"output_dir": str(output_dir),
             "last_output_zip": current_processing_short_name,
-            "jsonpangenome": "paulin"}
+            "jsonpangenome": pangenome_json_str}
 
 # @app.callback(
 #     Output(id_pangenome_hidden, 'children'),

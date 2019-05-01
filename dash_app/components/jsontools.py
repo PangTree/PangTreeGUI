@@ -68,6 +68,12 @@ def get_current_time() -> str:
     return datetime.now().strftime('%m_%d__%H_%M_%S')
 
 
+def get_child_dir(parent_dir_path: Path, child_dir_name: str) -> Path:
+    child_dir_path = get_child_path(parent_dir_path, child_dir_name)
+    create_dir(child_dir_path)
+    return child_dir_path
+
+
 def create_dir(dir_path: Path):
         dir_path.mkdir()
 

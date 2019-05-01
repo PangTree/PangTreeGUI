@@ -335,3 +335,5 @@ def show_output_description(session_state_data):
     if session_state_data is None or len(session_state_data) == 0:
         raise PreventUpdate()
     return str(session_state_data["jsonpangenome"])
+
+

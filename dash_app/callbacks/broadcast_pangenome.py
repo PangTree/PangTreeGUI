@@ -94,6 +94,7 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
 def update_mafgraph_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
+    print("rysuj!!!!!!!!!")
     jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
     mafgraph_nodes, mafgraph_edges = mafgraph.get_graph_elements(jsonpangenome)
     return [html.Div(jsontools.jsonify_builtin_types(mafgraph_nodes)),

@@ -99,3 +99,11 @@ id_processing_result = "processing_result"
 id_processing_result_text = "processing_result_text"
 id_go_to_vis_tab = "go_to_vis_tab"
 id_download_processing_result = "download_processing_result"
+
+id_data_type="data_type"
+id_multialignment_upload = "multialignment_upload"
+
+id_blosum_upload = "blosum_upload"
+id_metadata_upload = "metadata_upload"
+
+id_fasta_upload = "fasta_upload"

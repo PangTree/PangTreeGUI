@@ -40,11 +40,12 @@ def get_process_tab_content(get_url_function):
                                html.Div(className="param",
                                         children=[html.Div("Data type", className="two columns param_name"),
                                                   dcc.RadioItems(
+                                                      id=id_data_type,
                                                       options=[
-                                                          {'label': 'Nucleotides', 'value': 'N'},
-                                                          {'label': 'Proteins', 'value': 'P'},
+                                                          {'label': 'Nucleotides', 'value': 'Nucleotides'},
+                                                          {'label': 'Proteins', 'value': 'Proteins'},
                                                       ],
-                                                      value='N'
+                                                      value='Nucleotides'
                                                       , className="seven columns"
                                                   ),
                                                   html.Div(
@@ -59,7 +60,7 @@ def get_process_tab_content(get_url_function):
                                             html.Div(
                                                 children=[
                                                     dcc.Store(id=id_metadata_upload_state),
-                                                    html.Div(dcc.Upload(id="metadata_upload",
+                                                    html.Div(dcc.Upload(id=id_metadata_upload,
                                                                         multiple=False,
                                                                         children=[
                                                                             html.I(
@@ -100,7 +101,7 @@ def get_process_tab_content(get_url_function):
                                                           dcc.Store(
                                                               id=id_multalignment_upload_state),
                                                           html.Div(
-                                                              dcc.Upload(id="multialignment_upload",
+                                                              dcc.Upload(id=id_multialignment_upload,
                                                                          multiple=False,
                                                                          children=[
                                                                              html.I(
@@ -172,7 +173,7 @@ def get_process_tab_content(get_url_function):
                                                              children=[
                                                                  dcc.Store(id=id_fasta_upload_state),
                                                                  html.Div(
-                                                                     dcc.Upload(id="fasta_upload",
+                                                                     dcc.Upload(id=id_fasta_upload,
                                                                                 multiple=False,
                                                                                 children=[
                                                                                     html.I(
@@ -233,7 +234,7 @@ def get_process_tab_content(get_url_function):
                                                           dcc.Store(
                                                               id=id_blosum_upload_state),
                                                           html.Div(
-                                                              dcc.Upload(id="blosum_upload",
+                                                              dcc.Upload(id=id_blosum_upload,
                                                                          multiple=False,
                                                                          children=[
                                                                              html.I(
