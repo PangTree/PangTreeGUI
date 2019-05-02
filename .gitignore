@@ -106,3 +106,4 @@ venv.bak/
 /example_inputs/*
 /.idea/*
 /users_temp_data/*
+*.xml
