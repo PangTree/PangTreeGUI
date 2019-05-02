@@ -13,4 +13,14 @@ colors2 = {
     'accent': "rgba(126, 178, 54, 1)"
 }
 
-external_css = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+
+colors3 = {
+    'error': "rgba(220, 87, 44, 1)",
+    'dark_background': 'rgba(19, 42, 19, 1)',
+    'text': 'rgba(70, 78, 71, 1)',
+    'bright_background': 'rgba(255, 255, 255, 1)',
+    'light_accent': "rgba(100, 131, 129, 1)"
+}
+
+external_css = ['https://codepen.io/chriddyp/pen/bWLwgP.css',
+                'https://use.fontawesome.com/releases/v5.8.1/css/all.css']

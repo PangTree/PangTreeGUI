@@ -17,8 +17,8 @@
     line-height: 60px;
     border: 1px black dashed;
     border-radius: 5px;
-    //text-align: center;
-    margin: 10px;
+    text-align: center;
+    /*margin: 10px;*/
 }
 
 #example_data_dropdown{
@@ -35,6 +35,40 @@
     border-color: rgba(49, 55, 21, 1);
 }
 
-/*.tab-content{*/
-/*    margin: 1%;*/
-/*}*/
+.param{
+    width: auto;
+    height: 100%;
+    display: flex;
+    margin-top: 2%;
+}
+
+.param_description{
+    border-left: blueviolet solid thin;
+    padding-left: 2%;
+}
+
+.param_name{
+    font-weight: bold;
+    text-align: right;
+}
+
+.params_section{
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 5px;
+    margin: 5px;
+    border-radius: 25px;
+}
+
+#process_tab_content{
+    background-color: lightgreen;
+    padding: 1%;
+    border-radius: 25px;
+}
+
+.correct{
+    color: greenyellow;
+}
+
+.incorrect{
+    color: red;
+}

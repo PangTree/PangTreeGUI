@@ -1,13 +1,16 @@
+import base64
+import io
 from collections import deque
 from typing import List, Dict
-
+import matplotlib.pyplot as plt
 from poapangenome.consensus.ConsensusTree import ConsensusNodeID
 from poapangenome.output.PangenomeJSON import PangenomeJSON
 from dash_app.components import consensustree
 from dash_app.layout.css_styles import colors
-# from fileformats.json.JSONPangenome import JSONPangenome
 import pandas as pd
 import networkx as nx
+import seaborn as sns
+
 
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
     if not jsonpangenome.sequences:
@@ -34,14 +37,18 @@ def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
         consensus_df = consensus_df.append(row, ignore_index=True)
     return consensus_df
 
+
 def get_mapped_compatibility(compatibility: float) -> str:
     return "{:.{}f}".format(compatibility, 4)
+
 
 def get_consensus_column_name(consensus_id: ConsensusNodeID) -> str:
     return f"CONSENSUS{consensus_id}"
 
+
 def get_metadata_list(full_consensustable: pd.DataFrame) -> List[str]:
     return [colname for colname in list(full_consensustable) if "CONSENSUS" not in colname]
+
 
 def remove_smaller_than_slider(full_consensustable_data: pd.DataFrame, tree: nx.DiGraph, slider_value: float) -> pd.DataFrame:
     consensuses_ids_to_hide = []
@@ -88,8 +95,24 @@ def get_cells_styling(tree: nx.DiGraph, partial_consensustable_data: pd.DataFram
         styling_conditions.append(get_cell_styling_dict(consensus_colname, get_mapped_compatibility(consensus_mincomp)))
     return styling_conditions
 
+
 def get_cell_styling_dict(consensus_colname, mincomp):
     return {
         'if': {'column_id': f'{consensus_colname}',
                'filter': f'{consensus_colname} >= "{mincomp}"'},
         'backgroundColor': colors['warm_background']}
+
+
+def get_node_distribution_fig(node_id: ConsensusNodeID, full_consensustable: pd.DataFrame):
+    x = full_consensustable[get_consensus_column_name(node_id)]
+
+    plt.figure()
+    sns.kdeplot(x, shade=True, bw=.01, color="olive")
+    plt.title("Compatibility distribution")
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    encoded_plot = base64.b64encode(buf.read())
+    buf.close()
+    return f"data:image/jpg;base64,{encoded_plot.decode('utf-8')}"
+
