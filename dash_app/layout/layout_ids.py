@@ -6,9 +6,7 @@ id_visualisation = 'visualisation'
 
 id_hidenn_divs = "hidenn_divs"
 
-id_last_clicked_hidden = 'last_clicked_hidden'
 id_pang_button = 'pang_button'
-id_load_pangenome_button = 'load_pangenome_button'
 id_pangenome_upload = 'pangenome_upload'
 
 id_pangenome_hidden = 'pangenome_hidden'
@@ -35,15 +33,10 @@ id_consensus_node_details_header="consensus_node_details_header"
 id_consensus_node_details_table= "consensus_node_details_table"
 id_consensus_node_details_distribution = "consensus_node_details_distribution"
 
-id_multialignmentgraph_container = "multialignmentgraph_container"
-id_multialignmentgraph_hidden = 'pangraph_hidden'
-id_multialignmentgraph = "multialignmentgraph"
-
 id_mafgraph_hidden = 'mafgraph_hidden'
 id_mafgraph = "mafgraph"
 id_mafgraph_container = "mafgraph_container"
 id_mafgraph_graph = "mafgraph_graph"
-
 
 id_poagraph_hidden = 'poagraph_hidden'
 id_poagraph_container = "poagraph_container"

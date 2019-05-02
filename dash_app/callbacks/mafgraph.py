@@ -1,4 +1,4 @@
-from dash_app.components import jsontools
+from dash_app.components import tools
 from ..server import app
 from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
@@ -13,8 +13,8 @@ def update_poagraph(jsonified_mafgraph_elements: str, elements):
     if not jsonified_mafgraph_elements:
         return []
 
-    nodes = jsontools.unjsonify_builtin_types(jsonified_mafgraph_elements[0]['props']['children'])
-    edges = jsontools.unjsonify_builtin_types(jsonified_mafgraph_elements[1]['props']['children'])
+    nodes = tools.unjsonify_builtin_types(jsonified_mafgraph_elements[0]['props']['children'])
+    edges = tools.unjsonify_builtin_types(jsonified_mafgraph_elements[1]['props']['children'])
     elements = []
     elements.extend(nodes)
     elements.extend(edges)

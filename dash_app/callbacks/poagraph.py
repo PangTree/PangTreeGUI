@@ -1,7 +1,7 @@
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_app.components import poagraph
-from ..components import jsontools
+from ..components import tools
 from ..layout.layout_ids import *
 
 from ..server import app
@@ -27,8 +27,8 @@ def update_poagraph(jsonified_pangenome_data: str, relayoutData, elements):
             min_x = None
             max_x = None
 
-    nodes = jsontools.unjsonify_builtin_types(jsonified_pangenome_data[1]['props']['children'])
-    edges = jsontools.unjsonify_builtin_types(jsonified_pangenome_data[2]['props']['children'])
+    nodes = tools.unjsonify_builtin_types(jsonified_pangenome_data[1]['props']['children'])
+    edges = tools.unjsonify_builtin_types(jsonified_pangenome_data[2]['props']['children'])
     elements = []
     elements += poagraph.get_poagraph_elements(nodes, edges, min_x, max_x)
     return elements
@@ -42,7 +42,7 @@ def update_pangenome_graph(jsonified_pangenome_data: str):
     if not jsonified_pangenome_data:
         return {}
     pangenome_graph_data = jsonified_pangenome_data[0]['props']['children']
-    pangenome_graph = jsontools.unjsonify_builtin_types(pangenome_graph_data)
+    pangenome_graph = tools.unjsonify_builtin_types(pangenome_graph_data)
     return poagraph.get_pangenome_figure(pangenome_graph)
 
 @app.callback(

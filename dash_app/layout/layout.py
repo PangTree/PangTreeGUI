@@ -52,9 +52,6 @@ def get_layout(get_url_function):
                     id=id_pangenome_hidden
                 ),
                 html.Div(
-                    id=id_last_clicked_hidden
-                ),
-                html.Div(
                     id=id_full_consensustable_hidden
                 ),
                 html.Div(
@@ -71,9 +68,6 @@ def get_layout(get_url_function):
                 ),
                 html.Div(
                     id=id_consensus_node_details_table_hidden
-                ),
-                html.Div(
-                    id=id_multialignmentgraph_hidden
                 ),
                 html.Div(
                     id=id_poagraph_hidden

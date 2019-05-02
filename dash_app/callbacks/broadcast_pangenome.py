@@ -2,9 +2,9 @@ from typing import Dict, List
 
 from dash.dependencies import Input, Output, State
 
-from dash_app.components import parameters, consensustable, consensustree, multialignmentgraph, poagraph, mafgraph
+from dash_app.components import parameters, consensustable, consensustree, poagraph, mafgraph
 import dash_html_components as html
-import dash_app.components.jsontools as jsontools
+import dash_app.components.tools as tools
 from ..layout.layout_ids import *
 from ..components import poagraph as poagraph_component
 
@@ -18,9 +18,9 @@ from ..server import app
 def update_full_consensustable_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
-    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     consensustable_data = consensustable.get_full_table_data(jsonpangenome)
-    return jsontools.jsonify_df(consensustable_data)
+    return tools.jsonify_df(consensustable_data)
 
 
 @app.callback(
@@ -30,9 +30,9 @@ def update_full_consensustable_hidden(jsonified_pangenome):
 def update_consensustree_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
-    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     consensustree_dict = consensustree.get_consensustree_dict(jsonpangenome)
-    return jsontools.jsonify_builtin_types(consensustree_dict)
+    return tools.jsonify_builtin_types(consensustree_dict)
 
 
 @app.callback(
@@ -42,11 +42,11 @@ def update_consensustree_hidden(jsonified_pangenome):
 def update_poagraph_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
-    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     pangenome, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
-    return [html.Div(jsontools.jsonify_builtin_types(pangenome)),
-            html.Div(jsontools.jsonify_builtin_types(poagraph_nodes)),
-            html.Div(jsontools.jsonify_builtin_types(poagraph_edges))]
+    return [html.Div(tools.jsonify_builtin_types(pangenome)),
+            html.Div(tools.jsonify_builtin_types(poagraph_nodes)),
+            html.Div(tools.jsonify_builtin_types(poagraph_edges))]
 
 
 @app.callback(
@@ -58,10 +58,10 @@ def update_poagraph_hidden(jsonified_pangenome):
 def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_consensustable, stylesheet: List) -> List:
     if not jsonified_pangenome or not jsonified_partial_consensustable:
         return []
-    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     if not jsonpangenome.consensuses:
         return []
-    partial_consensustable_data = jsontools.unjsonify_df(jsonified_partial_consensustable)
+    partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
     current_consensuses_names = [column_name for column_name in list(partial_consensustable_data) if "CONSENSUS" in column_name]
     colors = poagraph.get_distinct_colors(len(jsonpangenome.consensuses))
     s = poagraph_component.get_poagraph_stylesheet()
@@ -94,8 +94,7 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
 def update_mafgraph_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
-    print("rysuj!!!!!!!!!")
-    jsonpangenome = jsontools.unjsonify_jsonpangenome(jsonified_pangenome)
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     mafgraph_nodes, mafgraph_edges = mafgraph.get_graph_elements(jsonpangenome)
-    return [html.Div(jsontools.jsonify_builtin_types(mafgraph_nodes)),
-            html.Div(jsontools.jsonify_builtin_types(mafgraph_edges))]
+    return [html.Div(tools.jsonify_builtin_types(mafgraph_nodes)),
+            html.Div(tools.jsonify_builtin_types(mafgraph_edges))]

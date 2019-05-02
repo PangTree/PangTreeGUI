@@ -1,6 +1,5 @@
 import io
 import os
-from pathlib import Path
 
 import flask
 from dash.dependencies import Input, Output, State
@@ -8,10 +7,204 @@ from dash.exceptions import PreventUpdate
 import dash_html_components as html
 from ..server import app
 from ..layout.layout_ids import *
-from ..components import processing
-from ..components import jsontools
-from io import StringIO
+from ..components import tools
+from poapangenome.consensus.input_types import Blosum, Hbmin, Stop, P
+from poapangenome.datamodel.DataType import DataType
+from poapangenome.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
+from poapangenome.datamodel.fasta_providers.FromFile import FromFile
+from poapangenome.datamodel.fasta_providers.FromNCBI import FromNCBI
+from poapangenome.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
+from poapangenome.output.PangenomeJSON import to_json
 
+from dash_app.components import processing
+from io import StringIO
+from pathlib import Path
+from typing import Dict, List
+
+
+# RUN POAPANGENOME
+
+@app.callback(
+    Output(id_session_state, 'data'),
+    [Input(id_pang_button, 'n_clicks_timestamp')],
+    [State(id_session_state, 'data'),
+     State(id_data_type, "value"),
+     State(id_multialignment_upload, "contents"),
+     State(id_multialignment_upload, "filename"),
+     State(id_fasta_provider_choice, "value"),
+     State(id_fasta_upload, "contents"),
+     State(id_fasta_upload, "filename"),
+     State(id_missing_symbol_input, "value"),
+     State(id_blosum_upload, "contents"),
+     State(id_blosum_upload, "filename"),
+     State(id_tree_algorithm_choice, "value"),
+     State(id_output_configuration, "values"),
+     State(id_metadata_upload, "contents"),
+     State(id_metadata_upload, "filename"),
+     State(id_hbmin, "value"),
+     State(id_stop, "value"),
+     State(id_p, "value")],
+)
+def run_pangenome(run_processing_btn_click,
+                  session_state: Dict,
+                  datatype: str,
+                  multialignment_content: str,
+                  multialignment_filename: str,
+                  fasta_provider_choice: str,
+                  fasta_content: str,
+                  fasta_filename: str,
+                  missing_symbol: str,
+                  blosum_contents: str,
+                  blosum_filename: str,
+                  consensus_choice: str,
+                  output_config: List[str],
+                  metadata_content: str,
+                  metadata_filename: str,
+                  hbmin_value: float,
+                  stop_value: float,
+                  p_value: float):
+    if run_processing_btn_click == 0:
+        raise PreventUpdate()
+    if session_state is None:
+        session_state = {}
+    if "output_dir" not in session_state:
+        output_dir = tools.create_output_dir()
+    else:
+        output_dir = Path(session_state["output_dir"])
+
+    current_processing_output_dir_name = tools.get_child_path(output_dir, tools.get_current_time())
+    tools.create_dir(current_processing_output_dir_name)
+
+    if "maf" in multialignment_filename:
+        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)), filename=multialignment_filename)
+    elif "po" in multialignment_filename:
+        multialignment = Po(StringIO(tools.decode_content(multialignment_content)), filename=multialignment_filename)
+    else:
+        session_state["error"] = "Cannot create Poagraph. Only MAF and PO files are supported."
+        return session_state
+
+    missing_symbol = MissingSymbol(missing_symbol) if missing_symbol != "" else MissingSymbol()
+
+    fasta_path = None
+    if fasta_provider_choice == "ncbi":
+        fasta_provider = FromNCBI(use_cache=True)
+    elif fasta_provider_choice == "file":
+        fasta_path = tools.get_child_path(current_processing_output_dir_name, fasta_filename)
+        save_mode = "wb" if "zip" in fasta_filename else "w"
+        tools.save_to_file(fasta_content, fasta_path, save_mode)
+        fasta_provider = FromFile(fasta_path)
+    else:
+        fasta_provider = ConstSymbolProvider(missing_symbol)
+
+    if not blosum_contents:
+        blosum_path = processing.get_default_blosum_path()
+        blosum_contents = tools.read_file_to_stream(blosum_path)
+    else:
+        blosum_path = tools.get_child_path(current_processing_output_dir_name, blosum_filename)
+        blosum_contents = tools.decode_content(blosum_contents)
+        tools.save_to_file(blosum_contents, blosum_path)
+        blosum_contents = StringIO(blosum_contents)
+    blosum = Blosum(blosum_contents, blosum_path, missing_symbol)
+
+    metadata = MetadataCSV(StringIO(tools.decode_content(metadata_content)), metadata_filename) if metadata_content else None
+    pangenomejson = processing.run_poapangenome(output_dir=current_processing_output_dir_name,
+                                                datatype=DataType[datatype],
+                                                multialignment=multialignment,
+                                                fasta_provider=fasta_provider,
+                                                blosum=blosum,
+                                                consensus_choice=consensus_choice,
+                                                output_po=True if "po" in output_config else False,
+                                                output_fasta=True if "fasta" in output_config else False,
+                                                missing_symbol=missing_symbol,
+                                                metadata=metadata,
+                                                hbmin=Hbmin(hbmin_value) if hbmin_value else None,
+                                                stop=Stop(stop_value) if stop_value else None,
+                                                p=P(p_value) if p_value else None,
+                                                fasta_path=fasta_filename if fasta_filename else None)
+    pangenome_json_str = to_json(pangenomejson)
+
+
+
+    #copy all needed file etc. from contents controls to the folder
+    # call poapangenome with output as this folder
+    # z tego folderu zrobić potem zip
+    current_processing_output_zip = tools.dir_to_zip(current_processing_output_dir_name)
+    current_processing_short_name = "/".join(str(current_processing_output_zip).split("/")[-2:])
+    return {"output_dir": str(output_dir),
+            "last_output_zip": current_processing_short_name,
+            "jsonpangenome": pangenome_json_str}
+
+
+# SHOW RESULTS
+
+@app.callback(Output(id_processing_result, "style"),
+              [Input(id_session_state, 'data')],
+              [State(id_processing_result, "style")])
+def show_processing_result(session_state_data, processing_result_style):
+    if session_state_data is None or "jsonpangenome" not in session_state_data:
+        raise PreventUpdate
+    if len(session_state_data["jsonpangenome"]):
+        processing_result_style["display"] = "block"
+    return processing_result_style
+
+
+@app.callback(Output("tabs-tools", "value"),
+              [Input(id_go_to_vis_tab, "n_clicks_timestamp")])
+def jump_to_vis_tab(go_to_vis_tab_click):
+    if go_to_vis_tab_click > 0:
+        return "vis"
+    raise PreventUpdate()
+
+
+@app.callback(Output(id_processing_result_text, "children"),
+              [Input(id_session_state, 'data')])
+def show_output_description(session_state_data):
+    if session_state_data is None or len(session_state_data) == 0:
+        raise PreventUpdate()
+    return str(session_state_data["jsonpangenome"])
+
+
+@app.callback(Output(id_pangenome_upload, 'contents'),
+              [Input(id_go_to_vis_tab, 'n_clicks_timestamp')],
+              [State(id_session_state, 'data')])
+def put_poapangenome_result_to_visualisation(go_to_vis_timestamp, session_state_data):
+    if not go_to_vis_timestamp:
+        raise PreventUpdate()
+    return session_state_data["jsonpangenome"]
+
+
+# DOWNLOAD RESULTS
+
+@app.callback(Output(id_download_processing_result, "href"),
+              [Input(id_session_state, 'data')])
+def update_download_result_content(session_state_data):
+    if session_state_data is None:
+        raise PreventUpdate()
+    if not "last_output_zip" in session_state_data:
+        return ""
+    return f'/export/pang?n={session_state_data["last_output_zip"]}'
+
+@app.server.route('/export/pang')
+def export_pang_result_zip():
+
+    zip_short_path = flask.request.args.get('n')
+    zip_full_path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath(
+        "../../users_temp_data/").joinpath(zip_short_path)
+
+    with open(zip_full_path, 'rb') as f:
+        data = io.BytesIO(f.read())
+    data.seek(0)
+
+    result_id = zip_short_path.split("/")[1]
+    return flask.send_file(
+        data,
+        mimetype='application/zip',
+        attachment_filename=f'result_{result_id}.zip',
+        as_attachment=True,
+        cache_timeout=0
+    )
+
+# FORM VALIDATION
 
 @app.callback(Output(id_multalignment_upload_state, 'data'),
               [Input('multialignment_upload', 'contents')],
@@ -20,7 +213,7 @@ def validate_multialignment(file_content, file_name):
     if file_content is None or file_name is None:
         return None
     else:
-        file_content = jsontools.decode_content(file_content)
+        file_content = tools.decode_content(file_content)
         error_message = processing.multialignment_file_is_valid(file_content, file_name)
         if len(error_message) == 0:
             return {"is_correct": True, "filename": file_name, "error": error_message}
@@ -37,6 +230,7 @@ def show_maf_specific_params(multialignment_upload_state_data, maf_specific_grou
     else:
         maf_specific_group_style["display"] = "block"
         return maf_specific_group_style
+
 
 @app.callback(Output(id_multalignment_upload_state_info, 'children'),
               [Input(id_multalignment_upload_state, 'data')])
@@ -72,20 +266,20 @@ def validate_fasta(file_content, file_name, session_state):
         return None
     else:
         if "zip" in file_name:
-            file_content = jsontools.decode_zip_content(file_content)
+            file_content = tools.decode_zip_content(file_content)
         else:
-            file_content = jsontools.decode_content(file_content)
+            file_content = tools.decode_content(file_content)
 
         if session_state is None:
-            output_dir = jsontools.create_output_dir()
+            output_dir = tools.create_output_dir()
             session_state = {"output_dir": output_dir}
         else:
             output_dir = session_state["output_dir"]
-        fasta_path = jsontools.get_child_path(output_dir, file_name)
+        fasta_path = tools.get_child_path(output_dir, file_name)
         if "zip" in file_name:
-            jsontools.save_to_file(file_content, fasta_path, 'wb')
+            tools.save_to_file(file_content, fasta_path, 'wb')
         else:
-            jsontools.save_to_file(file_content, fasta_path)
+            tools.save_to_file(file_content, fasta_path)
         error_message = processing.fasta_file_is_valid(fasta_path)
         if len(error_message) == 0:
             return {"is_correct": True, "filename": file_name, "error": error_message}
@@ -202,10 +396,10 @@ def validate_blosum(file_content, missing_symbol, fasta_provider_choice, file_na
         symbol = '?'
 
     if file_content is None:
-        blosum_file_content=jsontools.read_file_to_stream(processing.get_default_blosum_path())
+        blosum_file_content=tools.read_file_to_stream(processing.get_default_blosum_path())
         file_source_info = "default BLOSUM file"
     else:
-        blosum_file_content = StringIO(jsontools.decode_content(file_content))
+        blosum_file_content = StringIO(tools.decode_content(file_content))
         file_source_info = f"provided BLOSUM file: {file_name}"
 
     error_message = processing.blosum_file_is_valid(blosum_file_content, symbol)
@@ -250,7 +444,7 @@ def validate_metadata_file(file_content, file_name, session_state):
     if file_content is None or file_name is None:
         return None
     else:
-        file_content = StringIO(jsontools.decode_content(file_content))
+        file_content = StringIO(tools.decode_content(file_content))
         error_message = processing.metadata_file_is_valid(file_content)
         if len(error_message) == 0:
             return {"is_correct": True, "filename": file_name, "error": error_message}
@@ -281,59 +475,4 @@ def show_metadata_upload_info(metadata_upload_state_data, current_style):
     else:
         current_style["visibility"] = "visible"
         return current_style
-
-@app.callback(Output(id_processing_result, "style"),
-              [Input(id_session_state, 'data')],
-              [State(id_processing_result, "style")])
-def show_processing_result(session_state_data, processing_result_style):
-    if session_state_data is None or "jsonpangenome" not in session_state_data:
-        raise PreventUpdate
-    if len(session_state_data["jsonpangenome"]):
-        processing_result_style["display"] = "block"
-    return processing_result_style
-
-
-@app.callback(Output("tabs-tools", "value"),
-              [Input(id_go_to_vis_tab, "n_clicks_timestamp")])
-def jump_to_vis_tab(go_to_vis_tab_click):
-    if go_to_vis_tab_click > 0:
-        return "vis"
-    raise PreventUpdate()
-
-@app.callback(Output(id_download_processing_result, "href"),
-              [Input(id_session_state, 'data')])
-def update_download_result_content(session_state_data):
-    if session_state_data is None:
-        raise PreventUpdate()
-    if not "last_output_zip" in session_state_data:
-        return ""
-    return f'/export/pang?n={session_state_data["last_output_zip"]}'
-
-@app.server.route('/export/pang')
-def export_pang_result_zip():
-
-    zip_short_path = flask.request.args.get('n')
-    zip_full_path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath(
-        "../../users_temp_data/").joinpath(zip_short_path)
-
-    with open(zip_full_path, 'rb') as f:
-        data = io.BytesIO(f.read())
-    data.seek(0)
-
-    result_id = zip_short_path.split("/")[1]
-    return flask.send_file(
-        data,
-        mimetype='application/zip',
-        attachment_filename=f'result_{result_id}.zip',
-        as_attachment=True,
-        cache_timeout=0
-    )
-
-@app.callback(Output(id_processing_result_text, "children"),
-              [Input(id_session_state, 'data')])
-def show_output_description(session_state_data):
-    if session_state_data is None or len(session_state_data) == 0:
-        raise PreventUpdate()
-    return str(session_state_data["jsonpangenome"])
-
 

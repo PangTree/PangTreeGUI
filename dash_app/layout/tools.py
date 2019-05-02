@@ -88,8 +88,8 @@ def get_process_tab_content(get_url_function):
                                                 [
                                                     "Provide csv with metadata about the sequences that enhance the visualisation. 'seqid' column is obligatory and must match sequences ids present in MULTIALIGNMENT file. Other columns are optional. Example file: ",
                                                     html.A(
-                                                        href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
-                                                        target="_blank", children="example1.maf")],
+                                                        href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
+                                                        target="_blank", children="metadata.csv")],
                                                 className="param_description three columns")]),
 
                                html.Div(className="param",
@@ -138,7 +138,7 @@ def get_process_tab_content(get_url_function):
                                                           html.A(
                                                               href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
                                                               target="_blank",
-                                                              children="example1.maf")],
+                                                              children="example.maf")],
                                                       className="param_description three columns")]),
                                html.Div(className="param_group",
                                         id=id_maf_specific_params,
@@ -405,9 +405,6 @@ def get_vis_tab_content():
                                             options=[{'label': 'Ebola', 'value': 'Ebola'}],
                                             value='Ebola',
                                             className='five columns form_item'),
-                               html.Button(id=id_load_pangenome_button,
-                                           children=["Load pangenome"],
-                                           className='button-primary form_item')
                            ]
                            ),
                   html.Div(id="tools_info_section",

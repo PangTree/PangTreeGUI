@@ -13,7 +13,7 @@ from poapangenome.output.PangenomeJSON import to_PangenomeJSON, to_json, Pangeno
 from poapangenome.output.PangenomePO import poagraph_to_PangenomePO
 from poapangenome.tools import logprocess
 
-from . import jsontools
+from . import tools
 import time
 
 from pathlib import Path
@@ -65,7 +65,7 @@ def metadata_file_is_valid(file_content: Path) -> str:
 
 def get_default_blosum_path():
     parent_dir = Path(os.path.dirname(os.path.abspath(__file__)) + '/')
-    return jsontools.get_child_path(parent_dir, "../dependencies/blosum80.mat")
+    return tools.get_child_path(parent_dir, "../dependencies/blosum80.mat")
 
 
 def run_poapangenome(output_dir: Path,
@@ -93,7 +93,7 @@ def run_poapangenome(output_dir: Path,
     elif isinstance(multialignment, Po):
         poagraph = Poagraph.build_from_po(multialignment, metadata)
 
-    consensus_output_dir = jsontools.get_child_dir(output_dir, "consensus")
+    consensus_output_dir = tools.get_child_dir(output_dir, "consensus")
     consensus_tree = None
     if consensus_choice == 'poa':
         consensus_tree = simple_tree_generator.get_simple_consensus_tree(poagraph,
@@ -113,14 +113,14 @@ def run_poapangenome(output_dir: Path,
 
     if output_po:
         pangenome_po = poagraph_to_PangenomePO(poagraph)
-        jsontools.save_to_file(pangenome_po, jsontools.get_child_path(output_dir, "poagraph.po"))
+        tools.save_to_file(pangenome_po, tools.get_child_path(output_dir, "poagraph.po"))
 
     if output_fasta:
         sequences_fasta = poagraph_to_fasta(poagraph)
-        jsontools.save_to_file(sequences_fasta, jsontools.get_child_path(output_dir, "sequences.fasta"))
+        tools.save_to_file(sequences_fasta, tools.get_child_path(output_dir, "sequences.fasta"))
         if consensus_tree:
             consensuses_fasta = consensuses_tree_to_fasta(poagraph, consensus_tree)
-            jsontools.save_to_file(consensuses_fasta, jsontools.get_child_path(output_dir, "consensuses.fasta"))
+            tools.save_to_file(consensuses_fasta, tools.get_child_path(output_dir, "consensuses.fasta"))
 
     end = time.time()
 
@@ -153,5 +153,5 @@ def run_poapangenome(output_dir: Path,
                                      dagmaf=dagmaf,
                                      consensuses_tree=consensus_tree)
     pangenome_json_str = to_json(pangenomejson)
-    jsontools.save_to_file(pangenome_json_str, jsontools.get_child_path(output_dir, "pangenome.json"))
+    tools.save_to_file(pangenome_json_str, tools.get_child_path(output_dir, "pangenome.json"))
     return pangenomejson
