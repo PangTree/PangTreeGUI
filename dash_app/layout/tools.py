@@ -3,7 +3,6 @@ import dash_core_components as dcc
 import dash_table
 import dash_cytoscape as cyto
 from dash_app.layout.layout_ids import *
-from .css_styles import colors3 as colors
 from ..components import poagraph as poagraph_component
 from ..components import mafgraph as mafgraph_component
 

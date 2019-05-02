@@ -5,7 +5,6 @@ import math
 import pandas as pd
 from poapangenome.output.PangenomeJSON import PangenomeJSON, Sequence
 import plotly.graph_objs as go
-from ..layout.css_styles import colors3 as colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
@@ -434,7 +433,7 @@ def get_poagraph_stylesheet():
         {
             'selector': '.s_node',
             'style': {
-                'background-color': colors['light_accent'],
+                'background-color': "pink",#colors['light_accent'],
                 # 'border-color': 'green',
                 # 'border-width': '0.5px',
                 'content': 'data(label)',

@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from poapangenome.consensus.ConsensusTree import ConsensusNodeID
 from poapangenome.output.PangenomeJSON import PangenomeJSON
 from dash_app.components import consensustree
-from dash_app.layout.css_styles import colors
 import pandas as pd
 import networkx as nx
 import seaborn as sns
@@ -100,7 +99,8 @@ def get_cell_styling_dict(consensus_colname, mincomp):
     return {
         'if': {'column_id': f'{consensus_colname}',
                'filter': f'{consensus_colname} >= "{mincomp}"'},
-        'backgroundColor': colors['warm_background']}
+        'backgroundColor': "brown"#colors['warm_background'
+    }
 
 
 def get_node_distribution_fig(node_id: ConsensusNodeID, full_consensustable: pd.DataFrame):

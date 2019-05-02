@@ -2,7 +2,6 @@ from typing import Dict, Union, Any, Tuple, List
 
 from poapangenome.output.PangenomeJSON import PangenomeJSON
 
-from ..layout.css_styles import colors3 as colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
@@ -18,8 +17,8 @@ def get_mafgraph_stylesheet():
         {
             'selector': '.maf_node',
             'style': {
-                'background-color': colors['light_accent'],
-                'border-color': colors['dark_background'],
+                'background-color': 'red',#colors['light_accent'],
+                'border-color': "blue",#colors['dark_background'],
                 'border-width': '0.5px',
                 'content': 'data(label)',
                 # 'height': '10px',

@@ -3,7 +3,7 @@ id_title = 'title'
 id_body = 'body'
 id_program = 'program'
 id_visualisation = 'visualisation'
-
+id_container_div = "container_div"
 id_hidenn_divs = "hidenn_divs"
 
 id_pang_button = 'pang_button'
@@ -100,3 +100,6 @@ id_blosum_upload = "blosum_upload"
 id_metadata_upload = "metadata_upload"
 
 id_fasta_upload = "fasta_upload"
+
+id_url = "url"
+id_page_content = "id_page_content"

@@ -1,0 +1,32 @@
+/*html, body {*/
+/*  height: 100%;*/
+/*  margin: 0;*/
+/*  background-color: var(--main-bg-color);*/
+/*}*/
+
+/*#container_div{*/
+/*    margin-left: 5%;*/
+/*    margin-right: 5%;*/
+/*    height: 100% !important;*/
+/*    background-color: var(--light-bg-color);*/
+/*}*/
+
+/*#react-entry-point, #data-reactroot, #_dash-app-content, #_dash-global-error-container, #_dash-global-error-container:first-child{*/
+/*    height: 100%;*/
+/*}*/
+
+/*:root{*/
+/*    --main-bg-color: rgb(252,255,255);*/
+/*    --light-bg-color: rgb(179,207,226);*/
+/*    --dark-bg-color: rgb(80,133,165);*/
+/*    --info-color: rgb(80,133,165);*/
+/*    --accent-color: rgb(255,137,48);*/
+/*    --error-color: rgb(150,3,26);*/
+/*    --correct-color: rgb(105,120,101);*/
+/*}*/
+
+
+/*.form_item{*/
+/*    margin-left: 10px;*/
+/*    width: 100%;*/
+/*}*/

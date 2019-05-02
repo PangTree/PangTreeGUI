@@ -6,7 +6,6 @@ import plotly.graph_objs as go
 import pandas as pd
 
 from poapangenome.consensus.ConsensusTree import ConsensusNodeID
-from dash_app.layout.css_styles import colors
 from poapangenome.output.PangenomeJSON import PangenomeJSON, ConsensusNode
 import networkx as nx
 from networkx.readwrite import json_graph
