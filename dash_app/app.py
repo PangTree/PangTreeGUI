@@ -3,7 +3,7 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from .server import app
-from .layout import layout_ids, index_page
+from .layout import layout_ids, pages
 
 app.title = 'PoaPangenome'
 
@@ -72,9 +72,9 @@ def display_page(pathname):
     elif pathname == '/package':
         return package
     elif pathname == '/contact':
-        return contact
+        return pages.contact()
     else:
-        return index_page.get_layout()
+        return pages.index()
 
 # from .callbacks import visualisation
 # from .callbacks import broadcast_pangenome

@@ -1,8 +1,42 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 
+def contact():
+    return dbc.Container(
+        # dbc.CardDeck(
+            [
+                dbc.Card(
+                    [
+                        # dbc.CardHeader("Header"),
+                        dbc.CardBody(
+                            [
+                                dbc.CardTitle("Norbert Dojer, PhD.", className="text-info"),
+                                dbc.CardText(html.P("dojer@mimuw.edu.pl")),
+                            ]
+                        ),
+                    ],
+                    outline=True,
+                    color="info",
+                    className="first_container_item"
+                ),
+                dbc.Card(
+                    [
+                        dbc.CardBody(
+                            [
+                                dbc.CardTitle("Paulina Dziadkiewicz, B.Sc.", className="text-info"),
+                                dbc.CardText("pedziadkiewicz@gmail.com"),
+                            ]
+                        )
+                    ],
+                    outline=True,
+                    color="info",
+                )
+            ]
+        # ),
+        # className="first_container_item"
+    )
 
-def get_layout():
+def index():
     return dbc.Container(
         html.Div([
             dbc.Jumbotron(children=[dbc.Row(
