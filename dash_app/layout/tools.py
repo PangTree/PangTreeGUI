@@ -36,20 +36,20 @@ def get_process_tab_content(get_url_function):
             dcc.Store(id=id_session_state),
             html.Div(className="params_section",
                      children=[html.H4("PoaGraph Construction"),
-                               html.Div(className="param",
-                                        children=[html.Div("Data type", className="two columns param_name"),
-                                                  dcc.RadioItems(
-                                                      id=id_data_type,
-                                                      options=[
-                                                          {'label': 'Nucleotides', 'value': 'Nucleotides'},
-                                                          {'label': 'Proteins', 'value': 'Proteins'},
-                                                      ],
-                                                      value='Nucleotides'
-                                                      , className="seven columns"
-                                                  ),
-                                                  html.Div(
-                                                      "Type of aligned sequences provided in the uploaded multialignment file.",
-                                                      className="param_description three columns")]),
+                               # html.Div(className="param",
+                               #          children=[html.Div("Data type", className="two columns param_name"),
+                               #                    dcc.RadioItems(
+                               #                        id=id_data_type,
+                               #                        options=[
+                               #                            {'label': 'Nucleotides', 'value': 'Nucleotides'},
+                               #                            {'label': 'Proteins', 'value': 'Proteins'},
+                               #                        ],
+                               #                        value='Nucleotides'
+                               #                        , className="seven columns"
+                               #                    ),
+                               #                    html.Div(
+                               #                        "Type of aligned sequences provided in the uploaded multialignment file.",
+                               #                        className="param_description three columns")]),
 
                                html.Div(className="param",
                                         id=id_metadata_upload_param,

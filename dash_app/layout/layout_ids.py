@@ -58,7 +58,7 @@ id_maf_specific_params = "maf_specific_params"
 id_fasta_upload_state = "fasta_upload_state"
 id_fasta_upload_state_info = "fasta_upload_state_info"
 
-id_session_state = "session_state"
+
 id_fasta_upload_param = "fasta_upload_param"
 id_fasta_provider_choice = "fasta_provider_choice"
 
@@ -93,7 +93,7 @@ id_processing_result_text = "processing_result_text"
 id_go_to_vis_tab = "go_to_vis_tab"
 id_download_processing_result = "download_processing_result"
 
-id_data_type="data_type"
+
 id_multialignment_upload = "multialignment_upload"
 
 id_blosum_upload = "blosum_upload"
@@ -101,5 +101,16 @@ id_metadata_upload = "metadata_upload"
 
 id_fasta_upload = "fasta_upload"
 
+
+# Index
 id_url = "url"
 id_page_content = "id_page_content"
+
+# Tools - PoaPangenome
+id_session_state = "session_state"
+
+id_data_type_edit = "data_type_edit"
+id_data_type_edit_help = "data_type_edit_help"
+
+id_metadata_upload_edit = "metadata_upload_edit"
+id_metadata_upload_edit_help = "metadata_upload_edit_help"
