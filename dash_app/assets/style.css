@@ -35,7 +35,18 @@
     margin: 5px 0px;
 }
 
-.first_container_item{
-    margin-top: 5%
+.container:first-child{
+    margin-top: 2%
 }
 
+.logo{
+    color: green;
+}
+
+/*.code_row{*/
+/*    padding-top: 10px;*/
+/*}*/
+
+div>.jumbotron{
+    margin-top: 10px;
+}

@@ -15,7 +15,7 @@ def get_page_content(get_url_function):
             dbc.NavItem(dbc.NavLink("Python Packahe", href="/package")),
             dbc.NavItem(dbc.NavLink("Python Packahe", href="/contact")),
         ],
-        brand="PoaPangenome",
+        brand="Pangenome Tools",
         brand_href="#",
         sticky="top",
     )

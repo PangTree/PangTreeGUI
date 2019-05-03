@@ -24,7 +24,7 @@ app.layout = html.Div(
                  dbc.Row(
                      [
                          dbc.Col(html.Img(src="assets/favicon.ico", height="30px")),
-                         dbc.Col(dbc.NavbarBrand("PoaPangenome", className="ml-2")),
+                         dbc.Col(dbc.NavbarBrand("Pangenome Tools", className="ml-2")),
                      ],
                      align="center",
                      no_gutters=True,
@@ -42,7 +42,7 @@ app.layout = html.Div(
                  className="ml-auto flex-nowrap mt-3 mt-md-0",
                  align="center"), id="navbar-collapse", navbar=True)
          ],
-         sticky="top"
+         sticky="top",
      ),
      html.Div(id=layout_ids.id_page_content)])
 # children=layout.get_page_content(app.get_asset_url))])
@@ -68,9 +68,9 @@ def toggle_navbar_collapse(n, is_open):
               [Input(layout_ids.id_url, 'pathname')])
 def display_page(pathname):
     if pathname == '/tools':
-        return tools
+        return pages.tools()
     elif pathname == '/package':
-        return package
+        return pages.package()
     elif pathname == '/contact':
         return pages.contact()
     else:
