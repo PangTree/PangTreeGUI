@@ -185,7 +185,8 @@ def tools():
                     ),
                 ], outline=True
             ), className="col-md-2 offset-md-1"),
-                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"), className="col-md-1 my-auto text-center"),
+                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
+                        className="col-md-1 my-auto text-center"),
                 dbc.Col(html.H2(dbc.Badge("PoaPangenome", className="badge-success badge-pill")),
                         className="col-md-2 my-auto"),
                 dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
@@ -206,7 +207,8 @@ def tools():
                         ),
                     ]
                 ), className="col-md-2 my-auto"),
-                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"), className="col-md-1 my-auto text-center"),
+                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
+                        className="col-md-1 my-auto text-center"),
                 dbc.Col(html.H2(dbc.Badge("PangViz", className="badge-success badge-pill badge-block")),
                         className="col-md-2 my-auto"),
             ]
@@ -220,107 +222,115 @@ def tools():
     ])
 
 
+_data_type_form = dbc.FormGroup(
+    [
+        dbc.Label("Data Type", html_for=id_data_type_edit, width=3, className="poapangenome_label"),
+        dbc.Col([dbc.RadioItems(value="Nucleotides", options=[{"label": "Nucleotides", "value": "Nucleotides"},
+                                                              {"label": "Proteins", "value": "Proteins"}],
+                                id=id_data_type_edit),
+                 dbc.FormText(
+                     "Type of aligned sequences provided in the uploaded multialignment file.",
+                     color="secondary",
+                 )], width=6)
+    ],
+    row=True
+)
+
+_metadata_upload_form = html.Div(dbc.FormGroup(
+    [
+        dbc.Label("Sequences metadata", html_for=id_metadata_upload_edit, width=3, className="poapangenome_label"),
+        dbc.Col([dcc.Upload(id=id_metadata_upload,
+                            multiple=False,
+                            children=[
+                                dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-3x"),
+                                                 className="col-md-2 my-auto"),
+                                         html.P(
+                                             "Drag & drop CSV metadata file or choose file...",
+                                             className="col-md-10")])
+
+                            ], className="file_upload"),
+                 dcc.Store(id=id_metadata_upload_state),
+                 dbc.FormText(
+                     [
+                         "Provide csv with metadata about the sequences that enhance"
+                         " the visualisation. 'seqid' column is obligatory and must match"
+                         " sequences ids present in MULTIALIGNMENT file. "
+                         "Other columns are optional. Example file: ",
+                         html.A(
+                             href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
+                             target="_blank", children="metadata.csv")],
+                     color="secondary",
+                 )
+                 ], width=6),
+        dbc.Label(id=id_metadata_upload_state_info, width=3, className="poapangenome_label")
+    ],
+    row=True
+))
+
+_poapangenome_form = dbc.Form([_data_type_form, _metadata_upload_form])
+
 _poapangenome_tab_content = html.Div([
     dcc.Store(id=id_session_state),
     dbc.Row([
         dbc.Col(
             [
                 html.H3("Task Parameters"),
-                dbc.Row(
-                    [dbc.Label("Data Type", html_for=id_data_type_edit, className="col-sm-2 col-form-label"),
-                     dbc.Col([dbc.RadioItems(value="Nucleotides", options=[
-                         {"label": "Nucleotides", "value": "Nucleotides"},
-                         {"label": "Proteins", "value": "Proteins"}
-                     ], className="form-control-plaintext", id=id_data_type_edit),
-                              html.Small("Type of aligned sequences provided in the uploaded multialignment file.",
-                                         id=id_data_type_edit_help, className="form-text text-muted")
-                              ],
-                             className="col-sm-10")], className="param_row"),
-
-                dbc.Row(
-                    [dbc.Label("Sequences metadata", html_for=id_metadata_upload_edit,
-                               className="col-sm-2 col-form-label"),
-                     dbc.Col([
-                         dcc.Upload(id=id_metadata_upload,
-                                    multiple=False,
-                                    children=[
-dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-3x"),
-                                                                className="col-md-2 my-auto"),
-                                                        html.P(
-                                                            "Drag & drop CSV metadata file or choose file...",
-                                                            className="col-md-10")])
-
-                                        # dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-3x"), className="col-md-2 offset-md-1 my-auto"),
-                                        #          dbc.Col("ah", className="col-md-9 my-auto")], className="my-auto")
-                                        # html.I(
-                                        #     className='fas fa-file-csv fa-3x',
-                                            # style={
-                                            #     'line-height': 'inherit',
-                                            #     'padding-left': '5px',
-                                            # }
-                                        # ),
-                                        # html.Div(html.A(
-                                        #     'Drag & drop CSV metadata file or choose file...'),
-                                        #     className="ten columns")
-                                    ], className="file_upload"),
-                         html.Small([
-                             "Provide csv with metadata about the sequences that enhance"
-                             " the visualisation. 'seqid' column is obligatory and must match"
-                             " sequences ids present in MULTIALIGNMENT file. "
-                             "Other columns are optional. Example file: ",
-                             html.A(
-                                 href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
-                                 target="_blank", children="metadata.csv")],
-                             id=id_metadata_upload_edit_help, className="form-text text-muted")
-                     ],
-                         className="col-sm-10")], className="param_row"),
-
-            ], className="col-md-4 offset-md-1"),
+                _poapangenome_form,
+            ], className="col-md-6 offset-md-1"),
         dbc.Col([
             html.H3("Example Input Data"),
-            dbc.CardDeck(
+            dbc.Card(
                 [
-                    dbc.Card(
-                        [
-                            dbc.CardHeader("Fabricated"),
-                            dbc.CardBody(
-                                [
-                                    dbc.CardText(["This dataset is very small and consists of fabricated sequences."
-                                                 "Its aim is to demonstrate how the processing and visualisation works",
-                                                  html.Button("a", className="btn btn-primary btn-block dataset")]),
-                                ]
-                            ),
-                        ]
-                    ),
-                    dbc.Card(
-                        [
-                            dbc.CardHeader("Ebola"),
-                            dbc.CardBody(
-                                [
-                                    dbc.CardText(["This dataset orginates from ", html.A("UCSC Ebola Portal",
-                                                                                         href="https://genome.ucsc.edu/ebolaPortal/",
-                                                                                         target="_blank")]),
-                                ]
-                            )
-                        ],
-                    ),
-                    dbc.Card(
-                        [
-                            dbc.CardHeader("Balibase"),
-                            dbc.CardBody(
-                                [
-                                    dbc.CardText(["This is a multiplwe protein sequence alignment. It is based on ", html.A("BAliBASE 4", href="http://www.lbgi.fr/balibase/", target="_align")]),
-                                ]
-                            ),
-                        ],
-                    ),
+                    dbc.CardHeader(
+                        dbc.Button("Fabricated", id="collapse_fabricated_button",
+                                   className="mb-3 btn-block my-auto opac-button")),
+                    dbc.Collapse(
+                        id="fabricated_collapse",
+                        children=
+                        dbc.CardBody(
+                            [
+                                dbc.CardText(["This dataset is very small and consists of fabricated sequences."
+                                              "Its aim is to demonstrate how the processing and visualisation works",
+                                              html.Button("a", className="btn btn-primary btn-block dataset")]),
+                            ]
+                        )),
                 ]
-            )
+            ),
+            dbc.Card(
+                [
+                    dbc.CardHeader(
+                        dbc.Button("Ebola", id="collapse-ebola-button",
+                                   className="mb-3 btn-block my-auto opac-button")),
+                    dbc.Collapse(
+                        id="ebola_collapse",
+                        children=dbc.CardBody(
+                            [
+                                dbc.CardText(["This dataset orginates from ", html.A("UCSC Ebola Portal",
+                                                                                     href="https://genome.ucsc.edu/ebolaPortal/",
+                                                                                     target="_blank")]),
+                            ]
+                        ))
+                ],
+            ),
+            dbc.Card(
+                [
+                    dbc.CardHeader(
+                        dbc.Button("Balibase", id="collapse-balibase-button",
+                                   className="mb-3 btn-block my-auto opac-button")),
+                    dbc.Collapse(
+                        id="balibase_collapse",
+                        children=dbc.CardBody(
+                            [
+                                dbc.CardText(["This is a multiplwe protein sequence alignment. It is based on ",
+                                              html.A("BAliBASE 4", href="http://www.lbgi.fr/balibase/",
+                                                     target="_align")]),
+                            ]
+                        )),
+                ],
+            ),
 
-        ], className="col-md-4 offset-md-1")
-        # ]
-    ])
-    # dbc.Row("wyniki")
+        ], className="col-md-3 offset-md-1")
+    ], className="poapangenome_content")
 ])
 
 _pangviz_tab_content = html.Div("b")

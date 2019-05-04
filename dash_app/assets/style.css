@@ -58,3 +58,29 @@ div>.jumbotron{
 .dataset{
     margin-top: 10px;
 }
+
+.opac-button{
+ background-color: rgba(0,0,0,0);
+    border: none;
+    color: black;
+}
+
+.poapangenome_content{
+    margin: 20px 5px 5px 0px;
+}
+
+.poapangenome_label{
+    align-self: flex-start !important;
+}
+
+.hide{
+    visibility: hidden;
+}
+
+.correct{
+    color: var(--success)
+}
+
+.incorrect{
+    color: var(--danger)
+}
