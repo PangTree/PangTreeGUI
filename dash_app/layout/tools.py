@@ -51,94 +51,94 @@ def get_process_tab_content(get_url_function):
                                #                        "Type of aligned sequences provided in the uploaded multialignment file.",
                                #                        className="param_description three columns")]),
 
-                               html.Div(className="param",
-                                        id=id_metadata_upload_param,
-                                        children=[
-                                            html.Div("Metadata CSV",
-                                                     className="two columns param_name"),
-                                            html.Div(
-                                                children=[
-                                                    dcc.Store(id=id_metadata_upload_state),
-                                                    html.Div(dcc.Upload(id=id_metadata_upload,
-                                                                        multiple=False,
-                                                                        children=[
-                                                                            html.I(
-                                                                                className='one column file_upload_img fas fa-file-csv fa-3x',
-                                                                                style={
-                                                                                    'line-height': 'inherit',
-                                                                                    'padding-left': '5px',
-                                                                                }
-                                                                            ),
-                                                                            html.Div(html.A(
-                                                                                'Drag & drop CSV metadata file or choose file...'),
-                                                                                className="ten columns")
-                                                                        ]),
-                                                             className="file_upload"),
-                                                    html.Div(
-                                                        id=id_metadata_upload_state_info,
-                                                        style={'visibility': 'hidden',
-                                                               'width': 'auto',
-                                                               'margin-top': '5px'}
-                                                    )
-                                                ],
-                                                className="seven columns"
-                                            ),
-                                            html.Div(
-                                                [
-                                                    "Provide csv with metadata about the sequences that enhance the visualisation. 'seqid' column is obligatory and must match sequences ids present in MULTIALIGNMENT file. Other columns are optional. Example file: ",
-                                                    html.A(
-                                                        href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
-                                                        target="_blank", children="metadata.csv")],
-                                                className="param_description three columns")]),
-
-                               html.Div(className="param",
-                                        children=[html.Div("Multialignment file",
-                                                           className="two columns param_name"),
-
-                                                  html.Div(
-                                                      children=[
-                                                          dcc.Store(
-                                                              id=id_multalignment_upload_state),
-                                                          html.Div(
-                                                              dcc.Upload(id=id_multialignment_upload,
-                                                                         multiple=False,
-                                                                         children=[
-                                                                             html.I(
-                                                                                 className='one column file_upload_img fas fa-align-justify fa-3x',
-                                                                                 style={
-                                                                                     'line-height': 'inherit',
-                                                                                     'padding-left': '5px',
-                                                                                 }
-                                                                             ),
-                                                                             html.Div(html.A(
-                                                                                 'Drag & drop MAF file or choose file...'),
-                                                                                 className="ten columns")
-                                                                         ]),
-                                                              className="file_upload"),
-                                                          html.Div(
-                                                              id=id_multalignment_upload_state_info,
-                                                              style={'visibility': 'hidden',
-                                                                     'width': 'auto',
-                                                                     'margin-top': '5px'}
-                                                          )
-                                                      ],
-                                                      className="seven columns"
-                                                  ),
-                                                  html.Div(
-                                                      children=[
-                                                          "Multialignment file. Accepted formats: ",
-                                                          html.A(
-                                                              href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
-                                                              target="_blank", children="maf"), ", ",
-                                                          html.A(
-                                                              href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
-                                                              target="_blank", children="po"),
-                                                          ". See example file: ",
-                                                          html.A(
-                                                              href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
-                                                              target="_blank",
-                                                              children="example.maf")],
-                                                      className="param_description three columns")]),
+                               # html.Div(className="param",
+                               #          id=id_metadata_upload_param,
+                               #          children=[
+                               #              html.Div("Metadata CSV",
+                               #                       className="two columns param_name"),
+                               #              html.Div(
+                               #                  children=[
+                               #                      dcc.Store(id=id_metadata_upload_state),
+                               #                      html.Div(dcc.Upload(id=id_metadata_upload,
+                               #                                          multiple=False,
+                               #                                          children=[
+                               #                                              html.I(
+                               #                                                  className='one column file_upload_img fas fa-file-csv fa-3x',
+                               #                                                  style={
+                               #                                                      'line-height': 'inherit',
+                               #                                                      'padding-left': '5px',
+                               #                                                  }
+                               #                                              ),
+                               #                                              html.Div(html.A(
+                               #                                                  'Drag & drop CSV metadata file or choose file...'),
+                               #                                                  className="ten columns")
+                               #                                          ]),
+                               #                               className="file_upload"),
+                               #                      html.Div(
+                               #                          id=id_metadata_upload_state_info,
+                               #                          style={'visibility': 'hidden',
+                               #                                 'width': 'auto',
+                               #                                 'margin-top': '5px'}
+                               #                      )
+                               #                  ],
+                               #                  className="seven columns"
+                               #              ),
+                               #              html.Div(
+                               #                  [
+                               #                      "Provide csv with metadata about the sequences that enhance the visualisation. 'seqid' column is obligatory and must match sequences ids present in MULTIALIGNMENT file. Other columns are optional. Example file: ",
+                               #                      html.A(
+                               #                          href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
+                               #                          target="_blank", children="metadata.csv")],
+                               #                  className="param_description three columns")]),
+                               #
+                               # html.Div(className="param",
+                               #          children=[html.Div("Multialignment file",
+                               #                             className="two columns param_name"),
+                               #
+                               #                    html.Div(
+                               #                        children=[
+                               #                            dcc.Store(
+                               #                                id=id_multalignment_upload_state),
+                               #                            html.Div(
+                               #                                dcc.Upload(id=id_multialignment_upload,
+                               #                                           multiple=False,
+                               #                                           children=[
+                               #                                               html.I(
+                               #                                                   className='one column file_upload_img fas fa-align-justify fa-3x',
+                               #                                                   style={
+                               #                                                       'line-height': 'inherit',
+                               #                                                       'padding-left': '5px',
+                               #                                                   }
+                               #                                               ),
+                               #                                               html.Div(html.A(
+                               #                                                   'Drag & drop MAF file or choose file...'),
+                               #                                                   className="ten columns")
+                               #                                           ]),
+                               #                                className="file_upload"),
+                               #                            html.Div(
+                               #                                id=id_multalignment_upload_state_info,
+                               #                                style={'visibility': 'hidden',
+                               #                                       'width': 'auto',
+                               #                                       'margin-top': '5px'}
+                               #                            )
+                               #                        ],
+                               #                        className="seven columns"
+                               #                    ),
+                               #                    html.Div(
+                               #                        children=[
+                               #                            "Multialignment file. Accepted formats: ",
+                               #                            html.A(
+                               #                                href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+                               #                                target="_blank", children="maf"), ", ",
+                               #                            html.A(
+                               #                                href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+                               #                                target="_blank", children="po"),
+                               #                            ". See example file: ",
+                               #                            html.A(
+                               #                                href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
+                               #                                target="_blank",
+                               #                                children="example.maf")],
+                               #                        className="param_description three columns")]),
                                html.Div(className="param_group",
                                         id=id_maf_specific_params,
                                         style={"display": "none", "overflow": "auto"},

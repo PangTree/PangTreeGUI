@@ -224,10 +224,10 @@ def tools():
 
 _data_type_form = dbc.FormGroup(
     [
-        dbc.Label("Data Type", html_for=id_data_type_edit, width=3, className="poapangenome_label"),
+        dbc.Label("Data Type", html_for=id_data_type, width=3, className="poapangenome_label"),
         dbc.Col([dbc.RadioItems(value="Nucleotides", options=[{"label": "Nucleotides", "value": "Nucleotides"},
                                                               {"label": "Proteins", "value": "Proteins"}],
-                                id=id_data_type_edit),
+                                id=id_data_type),
                  dbc.FormText(
                      "Type of aligned sequences provided in the uploaded multialignment file.",
                      color="secondary",
@@ -236,9 +236,9 @@ _data_type_form = dbc.FormGroup(
     row=True
 )
 
-_metadata_upload_form = html.Div(dbc.FormGroup(
+_metadata_upload_form = dbc.FormGroup(
     [
-        dbc.Label("Sequences metadata", html_for=id_metadata_upload_edit, width=3, className="poapangenome_label"),
+        dbc.Label("Sequences metadata", html_for=id_metadata_upload, width=3, className="poapangenome_label"),
         dbc.Col([dcc.Upload(id=id_metadata_upload,
                             multiple=False,
                             children=[
@@ -252,22 +252,75 @@ _metadata_upload_form = html.Div(dbc.FormGroup(
                  dcc.Store(id=id_metadata_upload_state),
                  dbc.FormText(
                      [
-                         "Provide csv with metadata about the sequences that enhance"
+                         "CSV with metadata about the sequences. It can enhance"
                          " the visualisation. 'seqid' column is obligatory and must match"
                          " sequences ids present in MULTIALIGNMENT file. "
                          "Other columns are optional. Example file: ",
-                         html.A(
-                             href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
-                             target="_blank", children="metadata.csv")],
+                         html.A("metadata.csv",
+                                href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
+                                target="_blank")],
                      color="secondary",
                  )
                  ], width=6),
         dbc.Label(id=id_metadata_upload_state_info, width=3, className="poapangenome_label")
     ],
     row=True
-))
+)
 
-_poapangenome_form = dbc.Form([_data_type_form, _metadata_upload_form])
+_multialignment_upload_form = dbc.FormGroup(
+    [
+        dbc.Label("Mulitialignment", html_for=id_multialignment_upload, width=3, className="poapangenome_label"),
+        dbc.Col([dcc.Upload(id=id_multialignment_upload,
+                            multiple=False,
+                            children=[
+                                dbc.Row([dbc.Col(html.I(className="fas fa-align-justify fa-3x"),
+                                                 className="col-md-2 my-auto"),
+                                         html.P(
+                                             "Drag & drop multialignment file or choose file...",
+                                             className="col-md-10")])
+
+                            ], className="file_upload"),
+                 dcc.Store(id=id_multialignment_upload_state),
+                 dbc.FormText(
+                     [
+                         "Multialignment file. Accepted formats: ",
+                         html.A(
+                             href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+                             target="_blank", children="maf"), ", ",
+                         html.A(
+                             href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+                             target="_blank", children="po"),
+                         ". See example file: ",
+                         html.A(
+                             href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
+                             target="_blank",
+                             children="example.maf")],
+                     color="secondary",
+                 )
+                 ], width=6),
+        dbc.Label(id=id_multialignment_upload_state_info, width=3, className="poapangenome_label")
+    ],
+    row=True
+)
+
+_missing_data_form = dbc.Collapse(dbc.FormGroup(
+    [
+        dbc.Label("Missing nucleotides source", html_for=id_fasta_provider_choice, width=3, className="poapangenome_label"),
+        dbc.Col([dbc.RadioItems(value="NCBI", options=[{'label': "NCBI", 'value': 'NCBI'},
+                                                                 {'label': 'Fasta File',
+                                                                  'value': 'File'},
+                                                                 {'label': 'Custom symbol',
+                                                                  'value': 'Symbol'}],
+                                id=id_fasta_provider_choice),
+                 dbc.FormText(
+                     "MAF file may not inlcude full sequences. Specify source of missing nucleotides/proteins.",
+                     color="secondary",
+                 )], width=6)
+    ],
+    row=True
+), id=id_maf_specific_params)
+
+_poapangenome_form = dbc.Form([_data_type_form, _metadata_upload_form, _multialignment_upload_form, _missing_data_form])
 
 _poapangenome_tab_content = html.Div([
     dcc.Store(id=id_session_state),

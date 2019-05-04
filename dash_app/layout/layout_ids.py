@@ -51,8 +51,7 @@ id_poagraph_node_info = "poagraph_node_info"
 
 id_process_tab_content = "process_tab_content"
 
-id_multalignment_upload_state = "multalignment_upload_state"
-id_multalignment_upload_state_info = "multalignment_upload_state_img"
+
 
 id_maf_specific_params = "maf_specific_params"
 id_fasta_upload_state = "fasta_upload_state"
@@ -81,7 +80,7 @@ id_output_configuration="id_output_configuration"
 
 id_metadata_upload_param = "metadata_upload_param"
 
-id_metadata_upload_state = "metadata_upload_state"
+
 
 id_metadata_upload_state_info = "metadata_upload_state_info"
 
@@ -109,9 +108,13 @@ id_page_content = "id_page_content"
 # Tools - PoaPangenome
 id_session_state = "session_state"
 
-id_data_type_edit = "data_type_edit"
-id_data_type_edit_help = "data_type_edit_help"
+id_data_type = "data_type_edit"
+id_data_type_help = "data_type_edit_help"
 
-id_metadata_upload_edit = "metadata_upload_edit"
-id_metadata_upload_edit_help = "metadata_upload_edit_help"
-id_metadata_upload_valid = "metadata_upload_valid"
+id_metadata_upload = "metadata_upload"
+id_metadata_upload_state = "metadata_upload_state"
+id_metadata_upload_info = "metadata_upload_valid"
+
+id_multialignment_upload = "multialignment_upload"
+id_multialignment_upload_state = "multialignment_upload_state"
+id_multialignment_upload_state_info = "multalignment_upload_state_info"

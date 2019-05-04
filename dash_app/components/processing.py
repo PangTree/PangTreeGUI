@@ -55,9 +55,9 @@ def blosum_file_is_valid(file_content: Path, missing_symbol: str) -> str:
         return str(e)
     return ""
 
-def metadata_file_is_valid(file_content: Path) -> str:
+def metadata_file_is_valid(file_content: str, file_path: Path) -> str:
     try:
-        _ = MetadataCSV(file_content, None)
+        _ = MetadataCSV(StringIO(file_content), file_path)
     except InputError as e:
         return str(e)
     return ""
