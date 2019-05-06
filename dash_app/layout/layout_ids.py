@@ -54,15 +54,14 @@ id_process_tab_content = "process_tab_content"
 
 
 id_maf_specific_params = "maf_specific_params"
-id_fasta_upload_state = "fasta_upload_state"
-id_fasta_upload_state_info = "fasta_upload_state_info"
 
 
-id_fasta_upload_param = "fasta_upload_param"
+
+
 id_fasta_provider_choice = "fasta_provider_choice"
 
-id_missing_symbol_input = "missing_symbol_input"
-id_missing_symbol_param = "missing_symbol_param"
+
+
 
 id_hbmin_param = "hbmin_param"
 
@@ -98,7 +97,7 @@ id_multialignment_upload = "multialignment_upload"
 id_blosum_upload = "blosum_upload"
 id_metadata_upload = "metadata_upload"
 
-id_fasta_upload = "fasta_upload"
+
 
 
 # Index
@@ -118,3 +117,11 @@ id_metadata_upload_info = "metadata_upload_valid"
 id_multialignment_upload = "multialignment_upload"
 id_multialignment_upload_state = "multialignment_upload_state"
 id_multialignment_upload_state_info = "multalignment_upload_state_info"
+
+id_missing_symbol_param = "missing_symbol_param"
+id_missing_symbol_input = "missing_symbol_input"
+
+id_fasta_upload_param = "fasta_upload_param"
+id_fasta_upload = "fasta_upload"
+id_fasta_upload_state = "fasta_upload_state"
+id_fasta_upload_state_info = "fasta_upload_state_info"

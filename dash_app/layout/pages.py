@@ -242,8 +242,8 @@ _metadata_upload_form = dbc.FormGroup(
         dbc.Col([dcc.Upload(id=id_metadata_upload,
                             multiple=False,
                             children=[
-                                dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-3x"),
-                                                 className="col-md-2 my-auto"),
+                                dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-2x"),
+                                                 className="col-md-2"),
                                          html.P(
                                              "Drag & drop CSV metadata file or choose file...",
                                              className="col-md-10")])
@@ -273,8 +273,8 @@ _multialignment_upload_form = dbc.FormGroup(
         dbc.Col([dcc.Upload(id=id_multialignment_upload,
                             multiple=False,
                             children=[
-                                dbc.Row([dbc.Col(html.I(className="fas fa-align-justify fa-3x"),
-                                                 className="col-md-2 my-auto"),
+                                dbc.Row([dbc.Col(html.I(className="fas fa-align-justify fa-2x"),
+                                                 className="col-md-2"),
                                          html.P(
                                              "Drag & drop multialignment file or choose file...",
                                              className="col-md-10")])
@@ -303,14 +303,15 @@ _multialignment_upload_form = dbc.FormGroup(
     row=True
 )
 
-_missing_data_form = dbc.Collapse(dbc.FormGroup(
+_missing_data_form = dbc.Collapse([dbc.FormGroup(
     [
-        dbc.Label("Missing nucleotides source", html_for=id_fasta_provider_choice, width=3, className="poapangenome_label"),
+        dbc.Label("Missing nucleotides source", html_for=id_fasta_provider_choice, width=3,
+                  className="poapangenome_label"),
         dbc.Col([dbc.RadioItems(value="NCBI", options=[{'label': "NCBI", 'value': 'NCBI'},
-                                                                 {'label': 'Fasta File',
-                                                                  'value': 'File'},
-                                                                 {'label': 'Custom symbol',
-                                                                  'value': 'Symbol'}],
+                                                       {'label': 'Fasta File',
+                                                        'value': 'File'},
+                                                       {'label': 'Custom symbol',
+                                                        'value': 'Symbol'}],
                                 id=id_fasta_provider_choice),
                  dbc.FormText(
                      "MAF file may not inlcude full sequences. Specify source of missing nucleotides/proteins.",
@@ -318,7 +319,41 @@ _missing_data_form = dbc.Collapse(dbc.FormGroup(
                  )], width=6)
     ],
     row=True
-), id=id_maf_specific_params)
+), dbc.Collapse(id=id_missing_symbol_param, children=[dbc.FormGroup(
+    children=[
+        dbc.Label("Missing symbol for unknown nucleotides/proteins", html_for=id_fasta_provider_choice,
+                  width=3, className="poapangenome_label"),
+        dbc.Col([dbc.Input(value="?",
+                           id=id_missing_symbol_input, type='text', maxlength=1, minlength=1),
+                 dbc.FormText(
+                     "Any single character is accepted but it must be present in BLOSUM file. Default BLOSUM file uses '?'.",
+                     color="secondary",
+                 )], width=6)], row=True
+)]),
+    dbc.Collapse(id=id_fasta_upload_param, children=[dbc.FormGroup(
+        children=[
+            dbc.Label("Missing symbols file source", html_for=id_fasta_provider_choice,
+                      width=3, className="poapangenome_label"),
+            dbc.Col([dcc.Upload(id=id_fasta_upload,
+                                multiple=False,
+                                children=[
+                                    dbc.Row([dbc.Col(html.I(className="fas fa-align-left fa-2x"),
+                                                     className="col-md-2"),
+                                             html.P(
+                                                 "Drag & drop FASTA/ZIP file or choose file..",
+                                                 className="col-md-10")])
+
+                                ], className="file_upload"),
+                     dcc.Store(id=id_fasta_upload_state),
+                     dbc.FormText(
+                         [
+                             "Provide zip with fasta files or single fasta file. It must contain full sequeneces which are not fully represented in provided MAF file."],
+                         color="secondary",
+                     )
+                     ], width=6),
+        dbc.Label(id=id_fasta_upload_state_info, width=3, className="poapangenome_label")], row=True
+    )])
+], id=id_maf_specific_params)
 
 _poapangenome_form = dbc.Form([_data_type_form, _metadata_upload_form, _multialignment_upload_form, _missing_data_form])
 
