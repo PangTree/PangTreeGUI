@@ -221,163 +221,163 @@ def get_process_tab_content(get_url_function):
                                             #                  "Any single character is accepted but it must be present in BLOSUM file. Default BLOSUM file uses '?'.",
                                             #                  className="param_description three columns")])
                                         ])]),
-            html.Div(className="params_section",
-                     style={"overflow": "auto"},
-                     children=[html.H4("Consensus Tree Generation"),
-                               html.Div(className="param",
-                                        children=[html.Div("BLOSUM file",
-                                                           className="two columns param_name"),
+            # html.Div(className="params_section",
+            #          style={"overflow": "auto"},
+            #          children=[html.H4("Consensus Tree Generation"),
+            #                    html.Div(className="param",
+            #                             children=[html.Div("BLOSUM file",
+            #                                                className="two columns param_name"),
+            #
+            #                                       html.Div(
+            #                                           children=[
+            #                                               dcc.Store(
+            #                                                   id=id_blosum_upload_state),
+            #                                               html.Div(
+            #                                                   dcc.Upload(id=id_blosum_upload,
+            #                                                              multiple=False,
+            #                                                              children=[
+            #                                                                  html.I(
+            #                                                                      className='one column file_upload_img fas fa-table fa-3x',
+            #                                                                      style={
+            #                                                                          'line-height': 'inherit',
+            #                                                                          'padding-left': '5px',
+            #                                                                      }
+            #                                                                  ),
+            #                                                                  html.Div(html.A(
+            #                                                                      'Drag & drop BLOSUM file or choose file...'),
+            #                                                                      className="ten columns")
+            #                                                              ]),
+            #                                                   className="file_upload"),
+            #                                               html.Div(
+            #                                                   id=id_blosum_upload_state_info,
+            #                                                   style={'visibility': 'hidden',
+            #                                                          'width': 'auto',
+            #                                                          'margin-top': '5px'}
+            #                                               )
+            #                                           ],
+            #                                           className="seven columns"
+            #                                       ),
+            #                                       html.Div(
+            #                                           children=[
+            #                                               "BLOSUM file. This parameter is optional as default BLOSUM file is ", html.A(
+            #                                                   href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat",
+            #                                                   target="_blank", children="BLOSUM80"), ". The BLOSUM file must contain '?' or custom symbol for missing nucleotides/proteins if specified."],
+            #                                           className="param_description three columns")]),
+                               # html.Div(className="param",
+                               #          children=[
+                               #              html.Div("Algorithm",
+                               #                       className="two columns param_name"),
+                               #              dcc.RadioItems(
+                               #                  id=id_tree_algorithm_choice,
+                               #                  options=[
+                               #                      {'label': "Poa", 'value': 'poa'},
+                               #                      {'label': 'Tree', 'value': 'tree'},
+                               #                  ],
+                               #                  value='tree'
+                               #                  , className="seven columns"
+                               #              ),
+                               #              html.Div(
+                               #                  children=[
+                               #                      "There are two available algorithms for consensus tree generation. 'Poa' by ",
+                               #                      html.A(
+                               #                          "Lee et al.",
+                               #                          href="https://doi.org/10.1093/bioinformatics/18.3.452"),
+                               #                      " and 'Tree' algorithm described ",
+                               #                      html.A("here",
+                               #                             href="https://github.com/meoke/pang#idea-and-algorithm-description")],
+                               #                  className="param_description three columns")]),
+                               # html.Div(className="param",
+                               #          id=id_hbmin_param,
+                               #          style={"display": "none"},
+                               #          children=[
+                               #              html.Div("HBMIN",
+                               #                       className="two columns param_name"),
+                               #              html.Div(children=[
+                               #                  dcc.Input(id=id_hbmin,
+                               #                            max=1,
+                               #                            min=0,
+                               #                            type="number",
+                               #                            value=0.8)
+                               #              ],
+                               #                  className="seven columns")
+                               #              ,
+                               #              html.Div(
+                               #                  "HBMIN is required minimum value of similarity between sequence and assigned consensus.",
+                               #                  className="param_description three columns")]),
+                               # html.Div(className="param_group",
+                               #          id=id_tree_specific_params,
+                               #          style={"display": "none"},
+                               #          children=[
+                               #              html.Div(className="param",
+                               #                       id=id_p_param,
+                               #                       children=[
+                               #                           html.Div("P",
+                               #                                    className="two columns param_name"),
+                               #                           html.Div(children=[
+                               #                               dcc.Input(id=id_p,
+                               #                                         min=0,
+                               #                                         type="number",
+                               #                                         value=1)
+                               #                           ],
+                               #                               className="seven columns")
+                               #                           ,
+                               #                           html.Div(
+                               #                               "P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while p > 1 works in the opposite way.",
+                               # #                               className="param_description three columns")]),
+                               #              html.Div(className="param",
+                               #                       id=id_stop_param,
+                               #                       children=[
+                               #                           html.Div("Stop",
+                               #                                    className="two columns param_name"),
+                               #                           html.Div(children=[
+                               #                               dcc.Input(id=id_stop,
+                               #                                         min=0,
+                               #                                         max=1,
+                               #                                         type="number",
+                               #                                         value=1)
+                               #                           ],
+                               #                               className="seven columns")
+                               #                           ,
+                               #                           html.Div(
+                               #                               "Minimum value of compatibility in tree leaves.",
+                               #                               className="param_description three columns")])
+                               #
+                               #          ])
+            #                    # ]),
+            # html.Div(className="params_section",
+            #          children=[html.H4("Output Configuration"),
+            #                    html.Div(
+            #                        className="param",
+            #                        children=[dcc.Checklist(
+            #                            id=id_output_configuration,
+            #                            options=[
+            #                                {
+            #                                    'label': 'FASTA (all sequences and consensuses in fasta format)',
+            #                                    'value': 'fasta'},
+            #                                {'label': 'PO (poagraph in PO format)', 'value': 'po'},
+            #                            ],
+            #                            values=['fasta', 'po'],
+            #                            className="nine columns"
+            #                        ),
+            #                            html.Div(
+            #                                children=[html.P("Output of the program will contain:"),
+            #                                          html.Ul(children=[
+            #                                              html.Li(
+            #                                                  "JSON that can be used as Visualisation input."),
+            #                                              html.Li("LOG file"),
+            #                                              html.Li(
+            #                                                  "Intermediate PO files produced by consensus algorithm.")]),
+            #                                          html.P(
+            #                                              "but also additional output can be produced.")],
+            #                                className="param_description three columns"
+            #                            )]
+            #                    ),
+            #                    ]),
 
-                                                  html.Div(
-                                                      children=[
-                                                          dcc.Store(
-                                                              id=id_blosum_upload_state),
-                                                          html.Div(
-                                                              dcc.Upload(id=id_blosum_upload,
-                                                                         multiple=False,
-                                                                         children=[
-                                                                             html.I(
-                                                                                 className='one column file_upload_img fas fa-table fa-3x',
-                                                                                 style={
-                                                                                     'line-height': 'inherit',
-                                                                                     'padding-left': '5px',
-                                                                                 }
-                                                                             ),
-                                                                             html.Div(html.A(
-                                                                                 'Drag & drop BLOSUM file or choose file...'),
-                                                                                 className="ten columns")
-                                                                         ]),
-                                                              className="file_upload"),
-                                                          html.Div(
-                                                              id=id_blosum_upload_state_info,
-                                                              style={'visibility': 'hidden',
-                                                                     'width': 'auto',
-                                                                     'margin-top': '5px'}
-                                                          )
-                                                      ],
-                                                      className="seven columns"
-                                                  ),
-                                                  html.Div(
-                                                      children=[
-                                                          "BLOSUM file. This parameter is optional as default BLOSUM file is ", html.A(
-                                                              href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat",
-                                                              target="_blank", children="BLOSUM80"), ". The BLOSUM file must contain '?' or custom symbol for missing nucleotides/proteins if specified."],
-                                                      className="param_description three columns")]),
-                               html.Div(className="param",
-                                        children=[
-                                            html.Div("Algorithm",
-                                                     className="two columns param_name"),
-                                            dcc.RadioItems(
-                                                id=id_tree_algorithm_choice,
-                                                options=[
-                                                    {'label': "Poa", 'value': 'poa'},
-                                                    {'label': 'Tree', 'value': 'tree'},
-                                                ],
-                                                value='tree'
-                                                , className="seven columns"
-                                            ),
-                                            html.Div(
-                                                children=[
-                                                    "There are two available algorithms for consensus tree generation. 'Poa' by ",
-                                                    html.A(
-                                                        "Lee et al.",
-                                                        href="https://doi.org/10.1093/bioinformatics/18.3.452"),
-                                                    " and 'Tree' algorithm described ",
-                                                    html.A("here",
-                                                           href="https://github.com/meoke/pang#idea-and-algorithm-description")],
-                                                className="param_description three columns")]),
-                               html.Div(className="param",
-                                        id=id_hbmin_param,
-                                        style={"display": "none"},
-                                        children=[
-                                            html.Div("HBMIN",
-                                                     className="two columns param_name"),
-                                            html.Div(children=[
-                                                dcc.Input(id=id_hbmin,
-                                                          max=1,
-                                                          min=0,
-                                                          type="number",
-                                                          value=0.8)
-                                            ],
-                                                className="seven columns")
-                                            ,
-                                            html.Div(
-                                                "HBMIN is required minimum value of similarity between sequence and assigned consensus.",
-                                                className="param_description three columns")]),
-                               html.Div(className="param_group",
-                                        id=id_tree_specific_params,
-                                        style={"display": "none"},
-                                        children=[
-                                            html.Div(className="param",
-                                                     id=id_p_param,
-                                                     children=[
-                                                         html.Div("P",
-                                                                  className="two columns param_name"),
-                                                         html.Div(children=[
-                                                             dcc.Input(id=id_p,
-                                                                       min=0,
-                                                                       type="number",
-                                                                       value=1)
-                                                         ],
-                                                             className="seven columns")
-                                                         ,
-                                                         html.Div(
-                                                             "P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while p > 1 works in the opposite way.",
-                                                             className="param_description three columns")]),
-                                            html.Div(className="param",
-                                                     id=id_stop_param,
-                                                     children=[
-                                                         html.Div("Stop",
-                                                                  className="two columns param_name"),
-                                                         html.Div(children=[
-                                                             dcc.Input(id=id_stop,
-                                                                       min=0,
-                                                                       max=1,
-                                                                       type="number",
-                                                                       value=1)
-                                                         ],
-                                                             className="seven columns")
-                                                         ,
-                                                         html.Div(
-                                                             "Minimum value of compatibility in tree leaves.",
-                                                             className="param_description three columns")])
-
-                                        ])
-                               ]),
-            html.Div(className="params_section",
-                     children=[html.H4("Output Configuration"),
-                               html.Div(
-                                   className="param",
-                                   children=[dcc.Checklist(
-                                       id=id_output_configuration,
-                                       options=[
-                                           {
-                                               'label': 'FASTA (all sequences and consensuses in fasta format)',
-                                               'value': 'fasta'},
-                                           {'label': 'PO (poagraph in PO format)', 'value': 'po'},
-                                       ],
-                                       values=['fasta', 'po'],
-                                       className="nine columns"
-                                   ),
-                                       html.Div(
-                                           children=[html.P("Output of the program will contain:"),
-                                                     html.Ul(children=[
-                                                         html.Li(
-                                                             "JSON that can be used as Visualisation input."),
-                                                         html.Li("LOG file"),
-                                                         html.Li(
-                                                             "Intermediate PO files produced by consensus algorithm.")]),
-                                                     html.P(
-                                                         "but also additional output can be produced.")],
-                                           className="param_description three columns"
-                                       )]
-                               ),
-                               ]),
-
-            html.Button(id=id_pang_button,
-                        children="Process",
-                        className='button-primary form_item',
-                        n_clicks_timestamp=0),
+            # html.Button(id=id_pang_button,
+            #             children="Process",
+            #             className='button-primary form_item',
+            #             n_clicks_timestamp=0),
             html.Div(id=id_processing_result,
                      style={"width": "auto", "display": "none"},
                      children=["Rezultat", html.Div(id=id_processing_result_text),

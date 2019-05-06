@@ -19,6 +19,7 @@ def get_error_info(message):
     return [html.I(className="fas fa-exclamation-circle incorrect"),
             html.P(message, style={"display": "inline", "margin-left": "10px"})]
 
+
 # Metadata Validation
 
 @app.callback(Output(id_metadata_upload_state, 'data'),
@@ -48,6 +49,7 @@ def show_validation_result(upload_state_data):
             return get_success_info(f"File {filename} uploaded.")
         else:
             return get_error_info(upload_state_data["error"])
+
 
 # Multialignment validation
 
@@ -79,7 +81,6 @@ def show_multialignment_validation_result(upload_state_data):
             return get_error_info(upload_state_data["error"])
 
 
-
 # MAF specific parameters toggling
 
 @app.callback(Output(id_maf_specific_params, 'is_open'),
@@ -90,6 +91,7 @@ def toggle_maf_specific_params(multialignment_upload_state_data):
     else:
         return True
 
+
 @app.callback(Output(id_missing_symbol_param, 'is_open'),
               [Input(id_fasta_provider_choice, 'value')])
 def toggle_mising_symbol_param(fasta_provider_choice):
@@ -97,6 +99,7 @@ def toggle_mising_symbol_param(fasta_provider_choice):
         return False
     else:
         return True
+
 
 @app.callback(Output(id_fasta_upload_param, 'is_open'),
               [Input(id_fasta_provider_choice, 'value')])
@@ -134,6 +137,7 @@ def validate_fasta_file(file_content, session_state, file_name):
         else:
             return {"is_correct": False, "filename": file_name, "error": error_message}
 
+
 @app.callback(Output(id_fasta_upload_state_info, 'children'),
               [Input(id_fasta_upload_state, 'data')])
 def show_fasta_validation_result(upload_state_data):
@@ -146,6 +150,81 @@ def show_fasta_validation_result(upload_state_data):
         else:
             return get_error_info(upload_state_data["error"])
 
+
+# Blosum Validation
+
+@app.callback(Output(id_blosum_upload_state, 'data'),
+              [Input(id_blosum_upload, 'contents'),
+               Input(id_missing_symbol_input, 'value'),
+               Input(id_fasta_provider_choice, "value")],
+              [State(id_blosum_upload, 'filename')])
+def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, file_name):
+    if file_content is None or file_name is None:
+        return None
+
+    if fasta_provider_choice == "Symbol" and missing_symbol != "":
+        symbol = missing_symbol
+    else:
+        symbol = None
+
+    if file_content is None:
+        blosum_file_content = tools.read_file_to_stream(processing.get_default_blosum_path())
+        file_source_info = "default BLOSUM file"
+    else:
+        blosum_file_content = StringIO(tools.decode_content(file_content))
+        file_source_info = f"provided BLOSUM file: {file_name}"
+
+    error_message = processing.blosum_file_is_valid(blosum_file_content, symbol)
+    if len(error_message) == 0:
+        symbol_info = f"It contains symbol for missing nucleotides/proteins: {symbol}." if symbol else ""
+        validation_message = f"The {file_source_info} is correct. " + symbol_info
+        return {"is_correct": True,
+                "filename": file_name,
+                "symbol": symbol,
+                "validation_message": validation_message}
+    else:
+        validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/proteins: {symbol}. " \
+            f"Reason: {error_message}"
+        return {"is_correct": False,
+                "filename": file_name,
+                "symbol": symbol,
+                "validation_message": validation_message}
+
+
+@app.callback(Output(id_blosum_upload_state_info, 'children'),
+              [Input(id_blosum_upload_state, 'data')])
+def show_validation_result(blosum_upload_state_data):
+    if blosum_upload_state_data is None or len(blosum_upload_state_data) == 0:
+        return []
+    else:
+        validation_message = blosum_upload_state_data["validation_message"]
+        if blosum_upload_state_data["is_correct"]:
+            return [html.I(className="fas fa-check-circle correct"),
+                    html.P(f"{validation_message}", style={"display": "inline", "margin-left": "10px"})]
+        else:
+            return [html.I(className="fas fa-exclamation-circle incorrect"),
+                    html.P(f"{validation_message}", style={"display": "inline", "margin-left": "10px"})]
+
+# POA specific parameters toggling
+
+@app.callback(Output(id_poa_specific_params, 'is_open'),
+              [Input(id_consensus_algorithm_choice, 'value')])
+def toggle_poa_specific_params(consensus_algorithm_choice):
+    if consensus_algorithm_choice is None or consensus_algorithm_choice != "poa":
+        return False
+    else:
+        return True
+
+# TREE specific parameters toggling
+
+@app.callback(Output(id_tree_specific_params, 'is_open'),
+              [Input(id_consensus_algorithm_choice, 'value')])
+def toggle_tree_specific_params(consensus_algorithm_choice):
+    if consensus_algorithm_choice is None or consensus_algorithm_choice != "tree":
+        return False
+    else:
+        return True
+
 # HANDLE SESSION DIR
 @app.callback(Output(id_session_state, 'data'),
               [Input(id_fasta_upload, 'contents')],
@@ -155,6 +234,7 @@ def create_output_dir(_, session_state):
         output_dir = tools.create_output_dir()
         session_state = {"output_dir": str(output_dir)}
     return session_state
+
 
 # EXAMPLE DATASETS
 

@@ -37,7 +37,7 @@ from typing import Dict, List
      State(id_missing_symbol_input, "value"),
      State(id_blosum_upload, "contents"),
      State(id_blosum_upload, "filename"),
-     State(id_tree_algorithm_choice, "value"),
+     State(id_consensus_algorithm_choice, "value"),
      State(id_output_configuration, "values"),
      State(id_metadata_upload, "contents"),
      State(id_metadata_upload, "filename"),
@@ -336,7 +336,7 @@ def show_fasta_upload(fasta_privider_choice, missing_symbol_param_style):
 
 
 @app.callback(Output(id_hbmin_param, 'style'),
-              [Input(id_tree_algorithm_choice, "value")],
+              [Input(id_consensus_algorithm_choice, "value")],
               [State(id_hbmin_param, 'style')])
 def show_hbmin_param(tree_algorithm_choice, hbmin_param_style):
     if tree_algorithm_choice == "poa":
@@ -346,7 +346,7 @@ def show_hbmin_param(tree_algorithm_choice, hbmin_param_style):
     return hbmin_param_style
 
 @app.callback(Output(id_tree_specific_params, 'style'),
-              [Input(id_tree_algorithm_choice, "value")],
+              [Input(id_consensus_algorithm_choice, "value")],
               [State(id_tree_specific_params, 'style')])
 def show_tree_params(tree_algorithm_choice, tree_params_style):
     if tree_algorithm_choice == "tree":
@@ -356,7 +356,7 @@ def show_tree_params(tree_algorithm_choice, tree_params_style):
     return tree_params_style
 
 @app.callback(Output(id_hbmin, 'required'),
-              [Input(id_tree_algorithm_choice, "value")])
+              [Input(id_consensus_algorithm_choice, "value")])
 def make_hbmin_required(tree_algorithm_choice):
     if tree_algorithm_choice == "poa":
         return True
@@ -365,7 +365,7 @@ def make_hbmin_required(tree_algorithm_choice):
 
 
 @app.callback(Output(id_stop, 'required'),
-              [Input(id_tree_algorithm_choice, "value")])
+              [Input(id_consensus_algorithm_choice, "value")])
 def make_stop_required(tree_algorithm_choice):
     if tree_algorithm_choice == "tree":
         return True
@@ -374,7 +374,7 @@ def make_stop_required(tree_algorithm_choice):
 
 
 @app.callback(Output(id_p, 'required'),
-              [Input(id_tree_algorithm_choice, "value")])
+              [Input(id_consensus_algorithm_choice, "value")])
 def make_stop_required(tree_algorithm_choice):
     if tree_algorithm_choice == "tree":
         return True
@@ -404,10 +404,10 @@ def validate_blosum(file_content, missing_symbol, fasta_provider_choice, file_na
 
     error_message = processing.blosum_file_is_valid(blosum_file_content, symbol)
     if len(error_message) == 0:
-        validation_message = f"The {file_source_info} is correct and contains symbol for missing nucleotides/proteins: {symbol}."
+        validation_message = f"The {file_source_info} is correct."
         return {"is_correct": True, "filename": file_name, "symbol": symbol, "validation_message": validation_message}
     else:
-        validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/proteins: {symbol}. Reason: {error_message}"
+        validation_message = f"Error in {file_source_info} or a problem with symbol for missing nucleotides/proteins: {symbol}. Reason: {error_message}"
         return {"is_correct": False, "filename": file_name, "symbol": symbol, "validation_message": validation_message}
 
 

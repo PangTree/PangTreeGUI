@@ -53,7 +53,7 @@ id_process_tab_content = "process_tab_content"
 
 
 
-id_maf_specific_params = "maf_specific_params"
+
 
 
 
@@ -63,17 +63,13 @@ id_fasta_provider_choice = "fasta_provider_choice"
 
 
 
-id_hbmin_param = "hbmin_param"
 
 
-id_tree_algorithm_choice = "tree_algorithm_choice"
-id_hbmin = "hbmin"
 
-id_tree_specific_params = "tree_specific_params"
-id_p = "p"
-id_stop = "stop"
-id_p_param = "p_param"
-id_stop_param = "stop_param"
+id_consensus_algorithm_choice = "tree_algorithm_choice"
+
+
+
 
 id_output_configuration="id_output_configuration"
 
@@ -118,6 +114,8 @@ id_multialignment_upload = "multialignment_upload"
 id_multialignment_upload_state = "multialignment_upload_state"
 id_multialignment_upload_state_info = "multalignment_upload_state_info"
 
+id_maf_specific_params = "maf_specific_params"
+
 id_missing_symbol_param = "missing_symbol_param"
 id_missing_symbol_input = "missing_symbol_input"
 
@@ -125,3 +123,10 @@ id_fasta_upload_param = "fasta_upload_param"
 id_fasta_upload = "fasta_upload"
 id_fasta_upload_state = "fasta_upload_state"
 id_fasta_upload_state_info = "fasta_upload_state_info"
+
+id_poa_specific_params = "poa_specific_params"
+id_hbmin_input = "hbmin_input"
+
+id_tree_specific_params = "tree_specific_params"
+id_p_input = "p_input"
+id_stop_input = "stop_input"

@@ -245,7 +245,7 @@ _metadata_upload_form = dbc.FormGroup(
                                 dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-2x"),
                                                  className="col-md-2"),
                                          html.P(
-                                             "Drag & drop CSV metadata file or choose file...",
+                                             "Drag & drop CSV metadata file or select file...",
                                              className="col-md-10")])
 
                             ], className="file_upload"),
@@ -276,7 +276,7 @@ _multialignment_upload_form = dbc.FormGroup(
                                 dbc.Row([dbc.Col(html.I(className="fas fa-align-justify fa-2x"),
                                                  className="col-md-2"),
                                          html.P(
-                                             "Drag & drop multialignment file or choose file...",
+                                             "Drag & drop multialignment file or select file...",
                                              className="col-md-10")])
 
                             ], className="file_upload"),
@@ -340,7 +340,7 @@ _missing_data_form = dbc.Collapse([dbc.FormGroup(
                                     dbc.Row([dbc.Col(html.I(className="fas fa-align-left fa-2x"),
                                                      className="col-md-2"),
                                              html.P(
-                                                 "Drag & drop FASTA/ZIP file or choose file..",
+                                                 "Drag & drop FASTA/ZIP file or select file..",
                                                  className="col-md-10")])
 
                                 ], className="file_upload"),
@@ -351,11 +351,124 @@ _missing_data_form = dbc.Collapse([dbc.FormGroup(
                          color="secondary",
                      )
                      ], width=6),
-        dbc.Label(id=id_fasta_upload_state_info, width=3, className="poapangenome_label")], row=True
+            dbc.Label(id=id_fasta_upload_state_info, width=3, className="poapangenome_label")], row=True
     )])
 ], id=id_maf_specific_params)
 
-_poapangenome_form = dbc.Form([_data_type_form, _metadata_upload_form, _multialignment_upload_form, _missing_data_form])
+_consensus_algorithm_form = dbc.FormGroup(
+    [
+        dbc.Label("Consensus algorithm", html_for=id_data_type, width=3, className="poapangenome_label"),
+        dbc.Col([dbc.RadioItems(value="tree", options=[
+            {'label': "Poa", 'value': 'poa'},
+            {'label': 'Tree', 'value': 'tree'},
+        ],
+                                id=id_consensus_algorithm_choice),
+                 dbc.FormText(
+                     [
+                         "There are two available algorithms for consensus tree generation. 'Poa' by ",
+                         html.A(
+                             "Lee et al.",
+                             href="https://doi.org/10.1093/bioinformatics/18.3.452"),
+                         " and 'Tree' algorithm described ",
+                         html.A("here",
+                                href="https://github.com/meoke/pang#idea-and-algorithm-description")],
+                     color="secondary",
+                 )], width=6)
+    ],
+    row=True
+)
+
+_blosum_upload_form = dbc.FormGroup(
+    [
+        dbc.Label("BLOSUM file", html_for=id_blosum_upload, width=3, className="poapangenome_label"),
+        dbc.Col([dcc.Upload(id=id_blosum_upload,
+                            multiple=False,
+                            children=[
+                                dbc.Row([dbc.Col(html.I(className="fas fa-table fa-2x"),
+                                                 className="col-md-2"),
+                                         html.P(
+                                             "Drag & drop BLOSUM file or select file...",
+                                             className="col-md-10")])
+
+                            ], className="file_upload"),
+                 dcc.Store(id=id_blosum_upload_state),
+                 dbc.FormText(
+                     [
+                         "BLOSUM file. This parameter is optional as default BLOSUM file is ", html.A(
+                         href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat",
+                         target="_blank", children="BLOSUM80"),
+                         ". The BLOSUM file must contain '?' or custom symbol for missing nucleotides/proteins if specified."],
+                     color="secondary",
+                 )
+                 ], width=6),
+        dbc.Label(id=id_blosum_upload_state_info, width=3, className="poapangenome_label")
+    ],
+    row=True
+)
+
+_poa_hbmin_form = dbc.Collapse([dbc.FormGroup(
+    [
+        dbc.Label("HBMIN", html_for=id_hbmin_input, width=3,
+                  className="poapangenome_label"),
+        dbc.Col([dbc.Input(value=0.9, type='number', min=0, max=1,
+                           id=id_hbmin_input),
+                 dbc.FormText(
+                     "HBMIN is required minimum value of similarity between sequence and assigned consensus. It must be a value  from range [0,1].",
+                     color="secondary",
+                 )], width=6)
+    ],
+    row=True
+)
+], id=id_poa_specific_params)
+
+_tree_params_form = dbc.Collapse([dbc.FormGroup([
+    dbc.Label("P", html_for=id_hbmin_input, width=3,
+              className="poapangenome_label"),
+    dbc.Col([dbc.Input(value=1, type='number', min=0,
+                       id=id_p_input),
+             dbc.FormText(
+                 "P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0.",
+                 color="secondary",
+             )], width=6)
+],
+    row=True), dbc.FormGroup([
+    dbc.Label("Stop", html_for=id_hbmin_input, width=3,
+              className="poapangenome_label"),
+    dbc.Col([dbc.Input(value=1, type='number', min=0, max=1,
+                       id=id_stop_input),
+             dbc.FormText(
+                 "Minimum value of compatibility in tree leaves. It must be a value  from range [0,1].",
+                 color="secondary",
+             )], width=6)
+],
+    row=True)], id=id_tree_specific_params)
+
+_output_form = dbc.FormGroup(
+    [
+        dbc.Label("Additional output generation", html_for=id_output_configuration, width=3,
+                  className="poapangenome_label"),
+        dbc.Col([dbc.Checklist(id=id_output_configuration,
+                               options=[
+                                   {
+                                       'label': 'FASTA (all sequences and consensuses in fasta format)',
+                                       'value': 'fasta'},
+                                   {'label': 'PO (poagraph in PO format)', 'value': 'po'},
+                               ],
+                               values=['fasta', 'po'])], width=6)
+        ,
+    ], row=True
+)
+
+_poapangenome_form = dbc.Form([_data_type_form,
+                               _metadata_upload_form,
+                               _multialignment_upload_form,
+                               _missing_data_form,
+                               _blosum_upload_form,
+                               _consensus_algorithm_form,
+                               _poa_hbmin_form,
+                               _tree_params_form,
+                               _output_form
+                               ])
 
 _poapangenome_tab_content = html.Div([
     dcc.Store(id=id_session_state),
@@ -364,6 +477,7 @@ _poapangenome_tab_content = html.Div([
             [
                 html.H3("Task Parameters"),
                 _poapangenome_form,
+                dbc.Row(dbc.Col(dbc.Button("Run", color="primary", className="offset-md-5 col-md-4 ")))
             ], className="col-md-6 offset-md-1"),
         dbc.Col([
             html.H3("Example Input Data"),

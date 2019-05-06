@@ -50,7 +50,9 @@ def fasta_file_is_valid(fasta_path: Path) -> str:
 
 def blosum_file_is_valid(file_content: Path, missing_symbol: str) -> str:
     try:
-        _ = Blosum(file_content, None, MissingSymbol(missing_symbol))
+        blosum = Blosum(file_content, None)
+        if missing_symbol != None:
+            blosum.check_if_symbol_is_present(missing_symbol)
     except ConsensusInputError as e:
         return str(e)
     return ""
