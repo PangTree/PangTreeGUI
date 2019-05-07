@@ -7,6 +7,18 @@ from ..components import consensustree
 from ..server import app
 
 @app.callback(
+    Output(id_full_consensustree_hidden, 'children'),
+    [Input(id_pangenome_hidden, 'children')]
+)
+def update_consensustree_hidden(jsonified_pangenome):
+    if not jsonified_pangenome:
+        return []
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
+    consensustree_dict = consensustree.get_consensustree_dict(jsonpangenome)
+    return tools.jsonify_builtin_types(consensustree_dict)
+
+
+@app.callback(
     Output(id_current_consensustree_hidden, 'children'),
     [Input(id_full_consensustree_hidden, 'children')]
 )

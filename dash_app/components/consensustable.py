@@ -99,7 +99,7 @@ def get_cell_styling_dict(consensus_colname, mincomp):
     return {
         'if': {'column_id': f'{consensus_colname}',
                'filter': f'{consensus_colname} >= "{mincomp}"'},
-        'backgroundColor': "brown"#colors['warm_background'
+        'backgroundColor': "brown"
     }
 
 

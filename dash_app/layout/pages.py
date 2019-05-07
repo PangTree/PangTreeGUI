@@ -1,6 +1,8 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
+from poapangenome.output.PangenomeJSON import PangenomeJSON
+
 from .layout_ids import *
 import dash_cytoscape as cyto
 import dash_table
@@ -523,22 +525,22 @@ _poapangenome_tab_content = html.Div([
                         ))
                 ],
             ),
-            dbc.Card(
-                [
-                    dbc.CardHeader(
-                        dbc.Button("Balibase", id="collapse-balibase-button",
-                                   className="mb-3 btn-block my-auto opac-button")),
-                    dbc.Collapse(
-                        id="balibase_collapse",
-                        children=dbc.CardBody(
-                            [
-                                dbc.CardText(["This is a multiplwe protein sequence alignment. It is based on ",
-                                              html.A("BAliBASE 4", href="http://www.lbgi.fr/balibase/",
-                                                     target="_align")]),
-                            ]
-                        )),
-                ],
-            ),
+            # dbc.Card(
+            #     [
+            #         dbc.CardHeader(
+            #             dbc.Button("Balibase", id="collapse-balibase-button",
+            #                        className="mb-3 btn-block my-auto opac-button")),
+            #         dbc.Collapse(
+            #             id="balibase_collapse",
+            #             children=dbc.CardBody(
+            #                 [
+            #                     dbc.CardText(["This is a multiplwe protein sequence alignment. It is based on ",
+            #                                   html.A("BAliBASE 4", href="http://www.lbgi.fr/balibase/",
+            #                                          target="_align")]),
+            #                 ]
+            #             )),
+            #     ],
+            # ),
 
         ], className="col-md-3 offset-md-1")
     ], className="poapangenome_content"),
@@ -572,7 +574,7 @@ _load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
                                       children=[
                                           dbc.DropdownMenuItem("Fabricated", id=id_pangviz_example_fabricated),
                                           dbc.DropdownMenuItem("Ebola", id_pangviz_example_ebola),
-                                          dbc.DropdownMenuItem("Ballibase", id=id_pangviz_example_ballibase),
+                                          # dbc.DropdownMenuItem("Ballibase", id=id_pangviz_example_ballibase),
                                       ]
                                   ), className="col-md-4")
 
@@ -584,10 +586,14 @@ _input_data_row = dbc.Row(children=[dbc.Col(html.Div(id=id_input_info_vis)),
                                     dbc.Col(html.Div(id=id_input_dagmaf_vis,
                                                      children=[html.H3("MAF graph"),
                                                                cyto.Cytoscape(id=id_mafgraph_graph,
-                                                                              elements=[],
+                                                                              elements=[]
+,
                                                                               layout={'name': 'cose'},
-                                                                              style={'width': 'auto',
-                                                                                     'height': '300px'},
+                                                                              autoRefreshLayout=True,
+                                                                              style={'width': 'auto', 'height': '350px'},
+                                                                              zoom=1,
+                                                                              # style={'width': 'auto',
+                                                                              #        'height': '300px'},
                                                                               stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
                                                                               # autolock=True,
                                                                               boxSelectionEnabled=False,
@@ -697,3 +703,7 @@ _pangviz_tab_content = html.Div([
     _consensus_tree_row,
     _consensus_table_row
 ])
+
+
+def get_task_description_layout(jsonpangenome: PangenomeJSON) -> html.Div():
+    return str(jsonpangenome.task_parameters)

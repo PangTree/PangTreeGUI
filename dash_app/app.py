@@ -6,6 +6,8 @@ from .server import app
 from .layout import layout_ids, pages
 
 app.title = 'PoaPangenome'
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 
 external_css = [
     'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
@@ -76,13 +78,10 @@ def display_page(pathname):
     else:
         return pages.index()
 
-# from .callbacks import broadcast_pangenome
-# # from .callbacks import parameters
 from .callbacks import consensustable
 from .callbacks import consensustree
-# from .callbacks import mafgraph
-# from .callbacks import poagraph
-# from .callbacks import processing
+from .callbacks import mafgraph
+from .callbacks import poagraph
 
 from .callbacks import poapangenome
 from .callbacks import visualisation

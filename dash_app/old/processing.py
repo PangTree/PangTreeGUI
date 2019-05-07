@@ -5,9 +5,9 @@ import flask
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_html_components as html
-from ..server import app
-from ..layout.layout_ids import *
-from ..components import tools
+from dash_app.server import app
+from dash_app.layout.layout_ids import *
+from dash_app.components import tools
 from poapangenome.consensus.input_types import Blosum, Hbmin, Stop, P
 from poapangenome.datamodel.DataType import DataType
 from poapangenome.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider

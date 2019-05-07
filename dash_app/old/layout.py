@@ -1,11 +1,9 @@
 import dash_html_components as html
 import dash_core_components as dcc
-import dash_bootstrap_components as dbc
-import dash_table
-import dash_cytoscape as cyto
-from .layout_ids import *
-from ..components import texts
-from dash_app.layout import tools, about, package, authors
+from dash_app.layout.layout_ids import *
+from dash_app.layout import about, package, authors
+from dash_app.old import tools
+
 
 def get_layout2(get_url_function):
     return html.Div(id=id_container_div, children=[

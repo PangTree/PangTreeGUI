@@ -1,11 +1,24 @@
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_app.components import poagraph
+import dash_html_components as html
 from ..components import tools
 from ..layout.layout_ids import *
 
 from ..server import app
 
+@app.callback(
+    Output(id_poagraph_hidden, 'children'),
+    [Input(id_pangenome_hidden, 'children')],
+)
+def update_poagraph_hidden(jsonified_pangenome):
+    if not jsonified_pangenome:
+        return []
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
+    pangenome, poagraph_nodes, poagraph_edges = poagraph.get_data(jsonpangenome)
+    return [html.Div(tools.jsonify_builtin_types(pangenome)),
+            html.Div(tools.jsonify_builtin_types(poagraph_nodes)),
+            html.Div(tools.jsonify_builtin_types(poagraph_edges))]
 
 @app.callback(
     Output(id_poagraph, 'elements'),
@@ -54,20 +67,19 @@ def show_poagraph(jsonified_poagraph_data):
     else:
         return {'visibility': 'hidden'}
 
+@app.callback(
+    Output(id_poagraph, 'style'),
+    [Input(id_poagraph, 'elements')],
+    [State(id_poagraph, 'style')])
+def show_poagraph(elements, poagraph_style):
+    if len(elements) > 0:
+        poagraph_style['visibility'] = 'visible'
+    return poagraph_style
 
-# @app.callback(
-#     Output(id_poagraph, 'style'),
-#     [Input(id_poagraph, 'elements')],
-#     [State(id_poagraph, 'style')])
-# def show_poagraph(elements, poagraph_style):
-#     if len(elements) > 0:
-#         poagraph_style['visibility'] = 'visible'
-#     return poagraph_style
-#
-# @app.callback(
-#     Output(id_poagraph_node_info, 'children'),
-#     [Input(id_poagraph, 'tapNodeData')])
-# def show_specific_node_info(clicked_node_data):
-#     if not clicked_node_data or clicked_node_data['label'] == '':
-#         raise PreventUpdate()
-#     return str(clicked_node_data)
+@app.callback(
+    Output(id_poagraph_node_info, 'children'),
+    [Input(id_poagraph, 'tapNodeData')])
+def show_specific_node_info(clicked_node_data):
+    if not clicked_node_data or clicked_node_data['label'] == '':
+        raise PreventUpdate()
+    return str(clicked_node_data)

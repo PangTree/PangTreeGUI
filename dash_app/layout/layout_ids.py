@@ -1,11 +1,3 @@
-id_header = 'header'
-id_title = 'title'
-id_body = 'body'
-id_program = 'program'
-id_visualisation = 'visualisation'
-id_container_div = "container_div"
-id_hidenn_divs = "hidenn_divs"
-
 id_pang_button = 'pang_button'
 id_pangenome_upload = 'pangenome_upload'
 

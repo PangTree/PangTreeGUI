@@ -5,10 +5,10 @@ from dash.dependencies import Input, Output, State
 from dash_app.components import parameters, consensustable, consensustree, poagraph, mafgraph
 import dash_html_components as html
 import dash_app.components.tools as tools
-from ..layout.layout_ids import *
-from ..components import poagraph as poagraph_component
+from dash_app.layout.layout_ids import *
+from dash_app.components import poagraph as poagraph_component
 
-from ..server import app
+from dash_app.server import app
 
 
 # @app.callback(

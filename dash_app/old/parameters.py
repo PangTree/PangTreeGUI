@@ -1,9 +1,9 @@
 from dash.dependencies import Input, Output
 import dash_html_components as html
-from ..components import tools
-from ..layout.layout_ids import *
+from dash_app.components import tools
+from dash_app.layout.layout_ids import *
 
-from ..server import app
+from dash_app.server import app
 
 @app.callback(
     Output(id_program_parameters, 'children'),

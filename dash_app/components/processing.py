@@ -2,6 +2,8 @@ import os
 from io import StringIO
 from typing import Union, Optional
 
+import dash_html_components as html
+
 from poapangenome.consensus import simple_tree_generator, tree_generator
 from poapangenome.consensus.cutoffs import MAX2, NODE3
 from poapangenome.datamodel.DataType import DataType
@@ -13,7 +15,7 @@ from poapangenome.output.PangenomeJSON import to_PangenomeJSON, to_json, Pangeno
 from poapangenome.output.PangenomePO import poagraph_to_PangenomePO
 from poapangenome.tools import logprocess
 
-from . import tools
+from dash_app.components import tools
 import time
 
 from pathlib import Path
@@ -88,7 +90,7 @@ def run_poapangenome(output_dir: Path,
     start = time.time()
     logprocess.add_file_handler_to_logger(output_dir, "details", "details.log", propagate=False)
     logprocess.add_file_handler_to_logger(output_dir, "", "details.log", propagate=False)
-
+    logprocess.remove_console_handler_from_root_logger()
     poagraph, dagmaf = None, None
     if isinstance(multialignment, Maf):
         poagraph, dagmaf = Poagraph.build_from_dagmaf(multialignment, fasta_provider, metadata)
@@ -157,3 +159,5 @@ def run_poapangenome(output_dir: Path,
     pangenome_json_str = to_json(pangenomejson)
     tools.save_to_file(pangenome_json_str, tools.get_child_path(output_dir, "pangenome.json"))
     return pangenomejson
+
+

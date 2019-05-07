@@ -16,8 +16,10 @@ from poapangenome.datamodel.fasta_providers.FromNCBI import FromNCBI
 from poapangenome.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
 from poapangenome.output.PangenomeJSON import to_json
 
-from ..components import tools, processing
+from ..components import tools
+from dash_app.components import processing
 from ..layout.layout_ids import *
+from ..layout.pages import get_task_description_layout
 from ..server import app
 
 
@@ -418,24 +420,25 @@ def export_pang_result_zip():
     return flask.send_file(
         data,
         mimetype='application/zip',
-        attachment_filename=f'result_{result_id}.zip',
+        attachment_filename=f'result_{result_id}',
         as_attachment=True,
         cache_timeout=0
     )
 
 @app.callback(Output(id_poapangenome_result, "is_open"),
               [Input(id_session_state, 'data')])
-def show_poapangenome_result(session_state_data):
+def open_poapangenome_result(session_state_data):
     if session_state_data is None or "jsonpangenome" not in session_state_data:
         return False
     return True
 
 @app.callback(Output(id_poapangenome_result_description, "children"),
               [Input(id_session_state, 'data')])
-def show_poapangenome_result(session_state_data):
+def get_poapangenome_result_description(session_state_data):
     if session_state_data is None or "jsonpangenome" not in session_state_data:
         return []
     jsonpangenome = tools.unjsonify_jsonpangenome(session_state_data["jsonpangenome"])
-    return str(jsonpangenome.task_parameters)
+    poapangenome_task_description = get_task_description_layout(jsonpangenome)
+    return poapangenome_task_description
 
 

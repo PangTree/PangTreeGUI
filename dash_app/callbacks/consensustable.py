@@ -6,6 +6,19 @@ from ..layout.layout_ids import *
 
 from ..server import app
 
+
+@app.callback(
+    Output(id_full_consensustable_hidden, 'children'),
+    [Input(id_pangenome_hidden, 'children')]
+)
+def update_full_consensustable_hidden(jsonified_pangenome):
+    if not jsonified_pangenome:
+        return []
+    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
+    consensustable_data = consensustable.get_full_table_data(jsonpangenome)
+    return tools.jsonify_df(consensustable_data)
+
+
 @app.callback(
     Output(id_partial_consensustable_hidden, 'children'),
     [Input(id_full_consensustable_hidden, 'children'),
