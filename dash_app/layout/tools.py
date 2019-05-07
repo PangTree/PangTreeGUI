@@ -391,78 +391,78 @@ def get_process_tab_content(get_url_function):
 def get_vis_tab_content():
     return html.Div(
         id="vis_tab_content",
-        children=[html.Div(id="tools_load_section",
-                           children=[
-                               html.Div(dcc.Upload(id=id_pangenome_upload,
-                                                   children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
-                                                   multiple=False, ),
-                                        className='three columns'),
-                               html.Div(children="or load example data: ",
-                                        style={'display': 'None', 'textAlign': 'center', 'lineHeight': '60px'},
-                                        className='two columns'),
-                               dcc.Dropdown(id="example_data_dropdown",
-                                            options=[{'label': 'Ebola', 'value': 'Ebola'}],
-                                            value='Ebola',
-                                            className='five columns form_item'),
-                           ]
-                           ),
-                  html.Div(id="tools_info_section",
-                           children=[
-                               html.Div(id=id_program_parameters,
-                                        className='three columns section'),
-                               html.Div(id=id_pangenome_info,
-                                        className='nine columns section')]
-                           ),
-                  html.Div(id=id_mafgraph,
-                           children=[
-                               html.Div(id=id_mafgraph_container,
-                                        className='twelve columns section row',
-                                        children=[cyto.Cytoscape(id=id_mafgraph_graph,
-                                                                 elements=[],
-                                                                 layout={'name': 'cose'},
-                                                                 style={'width': 'auto', 'height': '300px'},
-                                                                 stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
-                                                                 # autolock=True,
-                                                                 boxSelectionEnabled=False,
-                                                                 autoungrabify=True,
-                                                                 autounselectify=True)])
-                           ]),
-                  html.Div(id="tools_poagraph_section",
-                           children=[html.Div(id=id_poagraph_container,
-                                              className='twelve columns section row',
-                                              children=[html.Div(id=id_poagraph_node_info),
-                                                        cyto.Cytoscape(id=id_poagraph,
-                                                                       layout={
-                                                                           'name': 'preset'},
-                                                                       stylesheet=poagraph_component.get_poagraph_stylesheet(),
-                                                                       elements=[
-                                                                       ],
-                                                                       style={'width': 'auto', 'height': '500px'},
-                                                                       # zoom=1,
-                                                                       # minZoom=0.9,
-                                                                       # maxZoom=1.1,
-                                                                       # panningEnabled=False,
-                                                                       # userPanningEnabled=False,
-                                                                       boxSelectionEnabled=False,
-                                                                       autoungrabify=True,
-                                                                       autolock=True,
-                                                                       autounselectify=True
-                                                                       )
-
-                                                        ]),
-                                     html.Div(id=id_full_pangenome_container,
-                                              className="twelve columns section row",
-                                              children=[dcc.Graph(
-                                                  id=id_full_pangenome_graph,
-                                                  style={'width': 'auto'},
-                                                  # style={'height': '400px', 'width': 'auto'},
-                                                  figure={},
-                                                  config={
-                                                      'displayModeBar': False,
-                                                  }
-                                              )])
-                                     ]
-                           ),
+        # children=[html.Div(id="tools_load_section",
+        #                    children=[
+        #                        html.Div(dcc.Upload(id=id_pangenome_upload,
+        #                                            children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
+        #                                            multiple=False, ),
+        #                                 className='three columns'),
+        #                        html.Div(children="or load example data: ",
+        #                                 style={'display': 'None', 'textAlign': 'center', 'lineHeight': '60px'},
+        #                                 className='two columns'),
+        #                        dcc.Dropdown(id="example_data_dropdown",
+        #                                     options=[{'label': 'Ebola', 'value': 'Ebola'}],
+        #                                     value='Ebola',
+        #                                     className='five columns form_item'),
+        #                    ]
+        #                    ),
+                  # html.Div(id="tools_info_section",
+                  #          children=[
+                  #              html.Div(id=id_program_parameters,
+                  #                       className='three columns section'),
+                  #              html.Div(id=id_pangenome_info,
+                  #                       className='nine columns section')]
+                  #          ),
+                  # html.Div(id=id_mafgraph,
+                  #          children=[
+                  #              html.Div(id=id_mafgraph_container,
+                  #                       className='twelve columns section row',
+                  #                       children=[cyto.Cytoscape(id=id_mafgraph_graph,
+                  #                                                elements=[],
+                  #                                                layout={'name': 'cose'},
+                  #                                                style={'width': 'auto', 'height': '300px'},
+                  #                                                stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
+                  #                                                # autolock=True,
+                  #                                                boxSelectionEnabled=False,
+                  #                                                autoungrabify=True,
+                  #                                                autounselectify=True)])
+                  #          ]),
+                  # html.Div(id="tools_poagraph_section",
+                  #          children=[html.Div(id=id_poagraph_container,
+                  #                             className='twelve columns section row',
+                  #                             children=[html.Div(id=id_poagraph_node_info),
+                  #                                       cyto.Cytoscape(id=id_poagraph,
+                  #                                                      layout={
+                  #                                                          'name': 'preset'},
+                  #                                                      stylesheet=poagraph_component.get_poagraph_stylesheet(),
+                  #                                                      elements=[
+                  #                                                      ],
+                  #                                                      style={'width': 'auto', 'height': '500px'},
+                  #                                                      # zoom=1,
+                  #                                                      # minZoom=0.9,
+                  #                                                      # maxZoom=1.1,
+                  #                                                      # panningEnabled=False,
+                  #                                                      # userPanningEnabled=False,
+                  #                                                      boxSelectionEnabled=False,
+                  #                                                      autoungrabify=True,
+                  #                                                      autolock=True,
+                  #                                                      autounselectify=True
+                  #                                                      )
+                  #
+                  #                                       ]),
+                           #           html.Div(id=id_full_pangenome_container,
+                           #                    className="twelve columns section row",
+                           #                    children=[dcc.Graph(
+                           #                        id=id_full_pangenome_graph,
+                           #                        style={'width': 'auto'},
+                           #                        # style={'height': '400px', 'width': 'auto'},
+                           #                        figure={},
+                           #                        config={
+                           #                            'displayModeBar': False,
+                           #                        }
+                           #                    )])
+                           #           ]
+                           # ),
                   html.Div(id=id_consensus_tree_container,
                            style={'display': 'none'},
                            children=[

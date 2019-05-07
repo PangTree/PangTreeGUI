@@ -87,14 +87,14 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
             )
     return s
 
-@app.callback(
-    Output(id_mafgraph_hidden, 'children'),
-    [Input(id_pangenome_hidden, 'children')]
-)
-def update_mafgraph_hidden(jsonified_pangenome):
-    if not jsonified_pangenome:
-        return []
-    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
-    mafgraph_nodes, mafgraph_edges = mafgraph.get_graph_elements(jsonpangenome)
-    return [html.Div(tools.jsonify_builtin_types(mafgraph_nodes)),
-            html.Div(tools.jsonify_builtin_types(mafgraph_edges))]
+# @app.callback(
+#     Output(id_mafgraph_hidden, 'children'),
+#     [Input(id_pangenome_hidden, 'children')]
+# )
+# def update_mafgraph_hidden(jsonified_pangenome):
+#     if not jsonified_pangenome:
+#         return []
+#     jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
+#     mafgraph_nodes, mafgraph_edges = mafgraph.get_graph_elements(jsonpangenome)
+#     return [html.Div(tools.jsonify_builtin_types(mafgraph_nodes)),
+#             html.Div(tools.jsonify_builtin_types(mafgraph_edges))]

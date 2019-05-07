@@ -52,18 +52,7 @@ id_poagraph_node_info = "poagraph_node_info"
 id_process_tab_content = "process_tab_content"
 
 
-
-
-
-
-
-
 id_fasta_provider_choice = "fasta_provider_choice"
-
-
-
-
-
 
 
 id_consensus_algorithm_choice = "tree_algorithm_choice"
@@ -100,8 +89,14 @@ id_metadata_upload = "metadata_upload"
 id_url = "url"
 id_page_content = "id_page_content"
 
+id_tools_tabs = "tools_tabs"
+
 # Tools - PoaPangenome
 id_session_state = "session_state"
+id_session_dir = "session_dir"
+
+id_poapangenome_tab = "poapangenome_tab"
+id_pangviz_tab = "pangviz_tab"
 
 id_data_type = "data_type_edit"
 id_data_type_help = "data_type_edit_help"
@@ -130,3 +125,18 @@ id_hbmin_input = "hbmin_input"
 id_tree_specific_params = "tree_specific_params"
 id_p_input = "p_input"
 id_stop_input = "stop_input"
+
+id_running_indicator = "running_indicator"
+id_poapangenome_result_description = "poapangenome_result_description"
+id_poapangenome_result = "poapangenome_result"
+
+id_pangviz_load_row = "pangviz_load_row"
+id_pangviz_example_fabricated = "pangviz_example_fabricated"
+id_pangviz_example_ebola = "pangviz_example_ebola"
+id_pangviz_example_ballibase = "pangviz_example_ballibase"
+
+id_task_parameters_vis = "task_parameters_vis"
+id_task_parameters_row = "task_parameters_row"
+
+id_input_info_vis = "input_info_vis"
+id_input_dagmaf_vis = "input_dagmaf_vis"

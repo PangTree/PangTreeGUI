@@ -69,6 +69,7 @@ div>.jumbotron{
     margin: 30px 5px 5px 0px;
 }
 
+
 .poapangenome_label{
     align-self: flex-start !important;
 }
@@ -83,4 +84,16 @@ div>.jumbotron{
 
 .incorrect{
     color: var(--danger)
+}
+
+.result_btn{
+    margin: 5px;
+}
+
+#pangviz_load_row{
+    margin: 20px 5px 5px 5px;
+}
+
+#task_parameters_row{
+    margin: 0px 5px 5px 5px;
 }

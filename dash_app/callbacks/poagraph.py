@@ -55,19 +55,19 @@ def show_poagraph(jsonified_poagraph_data):
         return {'visibility': 'hidden'}
 
 
-@app.callback(
-    Output(id_poagraph, 'style'),
-    [Input(id_poagraph, 'elements')],
-    [State(id_poagraph, 'style')])
-def show_poagraph(elements, poagraph_style):
-    if len(elements) > 0:
-        poagraph_style['visibility'] = 'visible'
-    return poagraph_style
-
-@app.callback(
-    Output(id_poagraph_node_info, 'children'),
-    [Input(id_poagraph, 'tapNodeData')])
-def show_specific_node_info(clicked_node_data):
-    if not clicked_node_data or clicked_node_data['label'] == '':
-        raise PreventUpdate()
-    return str(clicked_node_data)
+# @app.callback(
+#     Output(id_poagraph, 'style'),
+#     [Input(id_poagraph, 'elements')],
+#     [State(id_poagraph, 'style')])
+# def show_poagraph(elements, poagraph_style):
+#     if len(elements) > 0:
+#         poagraph_style['visibility'] = 'visible'
+#     return poagraph_style
+#
+# @app.callback(
+#     Output(id_poagraph_node_info, 'children'),
+#     [Input(id_poagraph, 'tapNodeData')])
+# def show_specific_node_info(clicked_node_data):
+#     if not clicked_node_data or clicked_node_data['label'] == '':
+#         raise PreventUpdate()
+#     return str(clicked_node_data)

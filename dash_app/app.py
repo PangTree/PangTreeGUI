@@ -86,3 +86,4 @@ def display_page(pathname):
 # from .callbacks import processing
 
 from .callbacks import poapangenome
+from .callbacks import visualisation

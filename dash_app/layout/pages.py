@@ -2,6 +2,9 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
 from .layout_ids import *
+import dash_cytoscape as cyto
+from ..components import mafgraph as mafgraph_component
+from ..components import poagraph as poagraph_component
 
 
 def contact():
@@ -215,9 +218,11 @@ def tools():
         )]),
         dbc.Tabs(
             [
-                dbc.Tab(_poapangenome_tab_content, label="PoaPangenome", tab_style={"margin-left": "auto"}),
-                dbc.Tab(_pangviz_tab_content, label="PangViz", label_style={"color": "#00AEF9"}),
-            ], className="nav-justified"
+                dbc.Tab(_poapangenome_tab_content, id=id_poapangenome_tab, label="PoaPangenome",
+                        tab_style={"margin-left": "auto"}),
+                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangViz", label_style={"color": "#00AEF9"}),
+            ], className="nav-justified",
+            id=id_tools_tabs,
         )
     ])
 
@@ -472,12 +477,15 @@ _poapangenome_form = dbc.Form([_data_type_form,
 
 _poapangenome_tab_content = html.Div([
     dcc.Store(id=id_session_state),
+    dcc.Store(id=id_session_dir),
     dbc.Row([
         dbc.Col(
             [
                 html.H3("Task Parameters"),
                 _poapangenome_form,
-                dbc.Row(dbc.Col(dbc.Button("Run", color="primary", className="offset-md-5 col-md-4 ")))
+                dbc.Row(
+                    dbc.Col(dbc.Button("Run", id=id_pang_button, color="primary", className="offset-md-5 col-md-4 ")),
+                    dbc.Col(dcc.Loading(id="l2", children=html.Div(id=id_running_indicator), type="default")))
             ], className="col-md-6 offset-md-1"),
         dbc.Col([
             html.H3("Example Input Data"),
@@ -532,7 +540,101 @@ _poapangenome_tab_content = html.Div([
             ),
 
         ], className="col-md-3 offset-md-1")
-    ], className="poapangenome_content")
+    ], className="poapangenome_content"),
+    dbc.Collapse(id=id_poapangenome_result, children=dbc.Row(
+        children=[dbc.Col([html.Div(id=id_poapangenome_result_description)], className="col-md-6 offset-md-1"),
+                  dbc.Col([
+                      html.A(dbc.Button("Download result files", block=True, className="result_btn", color="info"),
+                             id=id_download_processing_result),
+                      dbc.Button("Go to visualisation", id=id_go_to_vis_tab,
+                                 n_clicks_timestamp=0, block=True, className="result_btn", color="success")],
+                      className="col-md-3 offset-md-1")]
+
+    ))
 ])
 
-_pangviz_tab_content = html.Div("b")
+_load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
+                              children=[
+                                  dbc.Col(dcc.Upload(id=id_pangenome_upload,
+                                                     multiple=False,
+                                                     children=[
+                                                         dbc.Row([dbc.Col(html.I(className="fas fa-align-left fa-2x"),
+                                                                          className="col-md-2"),
+                                                                  html.P(
+                                                                      "Drag & drop pangenome.json file or select file..",
+                                                                      className="col-md-10")])
+
+                                                     ], className="file_upload"), className="col-md-4 offset-md-1"),
+                                  dbc.Col("or", className="col-md-2"),
+                                  dbc.Col(dbc.DropdownMenu(
+                                      label="load example data",
+                                      children=[
+                                          dbc.DropdownMenuItem("Fabricated", id=id_pangviz_example_fabricated),
+                                          dbc.DropdownMenuItem("Ebola", id_pangviz_example_ebola),
+                                          dbc.DropdownMenuItem("Ballibase", id=id_pangviz_example_ballibase),
+                                      ]
+                                  ), className="col-md-4")
+
+                              ])
+
+_task_parameters_row = dbc.Row(id=id_task_parameters_row, children=[html.Div(id=id_task_parameters_vis)])
+
+_input_data_row = dbc.Row(children=[dbc.Col(html.Div(id=id_input_info_vis)),
+                                    dbc.Col(html.Div(id=id_input_dagmaf_vis,
+                                                     children=[html.H3("MAF graph"),
+                                                               cyto.Cytoscape(id=id_mafgraph_graph,
+                                                                              elements=[],
+                                                                              layout={'name': 'cose'},
+                                                                              style={'width': 'auto',
+                                                                                     'height': '300px'},
+                                                                              stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
+                                                                              # autolock=True,
+                                                                              boxSelectionEnabled=False,
+                                                                              # autoungrabify=True,
+                                                                              autounselectify=True)]
+                                                     ))])
+
+_pangenome_row = dbc.Row(children=[dbc.Col(html.H3("Pangenome info"),
+                                           html.Div(id=id_poagraph_node_info), className="col-md-1"),
+                                   dbc.Col([html.H3("Pangenome graphs"),
+                                            html.Div(id=id_full_pangenome_container,
+                                                     children=[dcc.Graph(
+                                                         id=id_full_pangenome_graph,
+                                                         style={'width': 'auto'},
+                                                         # style={'height': '400px', 'width': 'auto'},
+                                                         figure={},
+                                                         config={
+                                                             'displayModeBar': False,
+                                                         }
+                                                     )]),
+                                            html.Div(id=id_poagraph_container,
+                                                     children=cyto.Cytoscape(id=id_poagraph,
+                                                                    layout={
+                                                                        'name': 'preset'},
+                                                                    stylesheet=poagraph_component.get_poagraph_stylesheet(),
+                                                                    elements=[
+                                                                    ],
+                                                                    style={'width': 'auto', 'height': '500px'},
+                                                                    # zoom=1,
+                                                                    # minZoom=0.9,
+                                                                    # maxZoom=1.1,
+                                                                    # panningEnabled=False,
+                                                                    # userPanningEnabled=False,
+                                                                    boxSelectionEnabled=False,
+                                                                    autoungrabify=True,
+                                                                    autolock=True,
+                                                                    autounselectify=True
+                                                                    ))
+                                            ], className="col-md-11")])
+
+_consensus_tree_row = dbc.Row()
+
+_pangviz_tab_content = html.Div([
+    html.Div(style={'display': 'none'}, children=[html.Div(id=id_pangenome_hidden),
+                                                  html.Div(id=id_poagraph_hidden)]),
+    _load_pangenome_row,
+    _task_parameters_row,
+    _input_data_row,
+    _pangenome_row,
+    _consensus_tree_row
+])
