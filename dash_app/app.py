@@ -76,11 +76,10 @@ def display_page(pathname):
     else:
         return pages.index()
 
-# from .callbacks import visualisation
 # from .callbacks import broadcast_pangenome
 # # from .callbacks import parameters
-# from .callbacks import consensustable
-# from .callbacks import consensustree
+from .callbacks import consensustable
+from .callbacks import consensustree
 # from .callbacks import mafgraph
 # from .callbacks import poagraph
 # from .callbacks import processing

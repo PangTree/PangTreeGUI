@@ -140,3 +140,4 @@ id_task_parameters_row = "task_parameters_row"
 
 id_input_info_vis = "input_info_vis"
 id_input_dagmaf_vis = "input_dagmaf_vis"
+id_consensus_table_container = "consensus_table_container"
