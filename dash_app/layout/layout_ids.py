@@ -133,3 +133,6 @@ id_task_parameters_row = "task_parameters_row"
 id_input_info_vis = "input_info_vis"
 id_input_dagmaf_vis = "input_dagmaf_vis"
 id_consensus_table_container = "consensus_table_container"
+
+id_visualisation_session_info = "visualisation_session_info"
+id_elements_cache_info = "elements_cache_info"

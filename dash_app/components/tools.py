@@ -94,6 +94,10 @@ def read_file_to_stream(path: Path):
     return StringIO(filecontent)
 
 
-def dir_to_zip(dir_name: Path):
+def dir_to_zip(dir_name: Path) -> Path:
     shutil.make_archive(dir_name, 'zip', dir_name)
     return Path(str(dir_name) + ".zip")
+
+
+def remove_file(path: Path)-> None:
+    os.remove(path)

@@ -628,8 +628,8 @@ _pangenome_row = dbc.Row(children=[dbc.Col(html.H3("Pangenome info"),
                                                                              # panningEnabled=False,
                                                                              # userPanningEnabled=False,
                                                                              boxSelectionEnabled=False,
-                                                                             autoungrabify=True,
-                                                                             autolock=True,
+                                                                             # autoungrabify=True,
+                                                                             # autolock=True,
                                                                              autounselectify=True
                                                                              ))
                                             ], className="col-md-11")])
@@ -689,6 +689,8 @@ _consensus_table_row = dbc.Row(html.Div(id=id_consensus_table_container,
 ], style={'width': 'auto'}))
 
 _pangviz_tab_content = html.Div([
+    dcc.Store(id=id_visualisation_session_info, data=""),
+    dcc.Store(id=id_elements_cache_info, data=""),
     html.Div(style={'display': 'none'}, children=[html.Div(id=id_pangenome_hidden),
                                                   html.Div(id=id_poagraph_hidden),
                                                   html.Div(id=id_full_consensustree_hidden),
