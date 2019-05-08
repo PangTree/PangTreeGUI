@@ -6,8 +6,9 @@ from .server import app
 from .layout import layout_ids, pages
 
 app.title = 'PoaPangenome'
-app.css.config.serve_locally = True
-app.scripts.config.serve_locally = True
+# app.css.config.serve_locally = True
+# app.scripts.config.serve_locally = True
+
 
 external_css = [
     'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
@@ -47,14 +48,7 @@ app.layout = html.Div(
          sticky="top",
      ),
      html.Div(id=layout_ids.id_page_content)])
-# children=layout.get_page_content(app.get_asset_url))])
 
-tools = html.Div("tools")
-package = html.Div("package")
-contact = html.Div("contact")
-
-
-# add callback for toggling the collapse on small screens
 @app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],

@@ -1,6 +1,3 @@
-import itertools
-import pickle
-
 from ..components import tools
 from ..layout.colors import colors
 import colorsys
@@ -10,11 +7,11 @@ import math
 import pandas as pd
 from poapangenome.output.PangenomeJSON import PangenomeJSON, Sequence
 import plotly.graph_objs as go
-from time import time
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
 
+test = {}
 #
 # class PoaGraph:
 #     poagraph_node_width: int = 10
@@ -284,48 +281,48 @@ CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
 #     print("all", str(all_end - all_start))
 #     return poagraph.columns_to_cut_width, cytoscape_nodes, cytoscape_edges
 #
-
-def get_poagraph_elements(nodes: List[CytoscapeNode],
-                          edges: List[CytoscapeEdge],
-                          min_x: Optional[int],
-                          max_x: Optional[int]) -> List[any]:
-    update_start = time()
-
-    up_p1_start = time()
-    if max_x is None or min_x is None:
-        # if PoaGraph.pangenome_x_range is None:
-        #     raise Exception("Cannot draw poagraph.")
-        # r = PoaGraph.pangenome_x_range
-        r = _get_pangenome_graph_x_range([n['data']['column_id'] for n in nodes])
-        left_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3)
-        right_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3 * 2)
-    else:
-        visible_axis_length = abs(max_x - min_x)
-        left_bound = PoaGraph.pangenome_x_to_poagraph_x(min_x + visible_axis_length // 3)
-        right_bound = PoaGraph.pangenome_x_to_poagraph_x(min_x + visible_axis_length // 3 * 2)
-    up_p1_end = time()
-    print("up_1", str(up_p1_end - up_p1_start))
-
-    up_p1_start = time()
-    nodes = [node for node in nodes if node['position']['x'] >= left_bound and node['position']['x'] <= right_bound]
-    up_p1_end = time()
-    print("up_1", str(up_p1_end - up_p1_start))
-
-    up_p2_start = time()
-    nodes_ids = [node["data"]["id"] for node in nodes]
-    up_p2_end = time()
-    print("up_2", str(up_p2_end - up_p2_start))
-
-    up_p3_start = time()
-    # edges = [edge for edge in edges if edge['data']['source'] in nodes_ids and edge['data']['target'] in nodes_ids]
-    up_p3_end = time()
-    print("up_3", str(up_p3_end - up_p3_start))
-
-    update_end = time()
-    print("update", str(update_end - update_start))
-    return nodes + edges
-    # nodes_to_display = nodes_data.loc[(nodes_data["column_id"] >= left_bound)
-    #                                   & (nodes_data["column_id"] <= right_bound)]
+#
+# def get_poagraph_elements(nodes: List[CytoscapeNode],
+#                           edges: List[CytoscapeEdge],
+#                           min_x: Optional[int],
+#                           max_x: Optional[int]) -> List[any]:
+#     update_start = time()
+#
+#     up_p1_start = time()
+#     if max_x is None or min_x is None:
+#         # if PoaGraph.pangenome_x_range is None:
+#         #     raise Exception("Cannot draw poagraph.")
+#         # r = PoaGraph.pangenome_x_range
+#         r = _get_pangenome_graph_x_range([n['data']['column_id'] for n in nodes])
+#         left_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3)
+#         right_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3 * 2)
+#     else:
+#         visible_axis_length = abs(max_x - min_x)
+#         left_bound = PoaGraph.pangenome_x_to_poagraph_x(min_x + visible_axis_length // 3)
+#         right_bound = PoaGraph.pangenome_x_to_poagraph_x(min_x + visible_axis_length // 3 * 2)
+#     up_p1_end = time()
+#     print("up_1", str(up_p1_end - up_p1_start))
+#
+#     up_p1_start = time()
+#     nodes = [node for node in nodes if node['position']['x'] >= left_bound and node['position']['x'] <= right_bound]
+#     up_p1_end = time()
+#     print("up_1", str(up_p1_end - up_p1_start))
+#
+#     up_p2_start = time()
+#     nodes_ids = [node["data"]["id"] for node in nodes]
+#     up_p2_end = time()
+#     print("up_2", str(up_p2_end - up_p2_start))
+#
+#     up_p3_start = time()
+#     # edges = [edge for edge in edges if edge['data']['source'] in nodes_ids and edge['data']['target'] in nodes_ids]
+#     up_p3_end = time()
+#     print("up_3", str(up_p3_end - up_p3_start))
+#
+#     update_end = time()
+#     print("update", str(update_end - update_start))
+#     return nodes + edges
+#     # nodes_to_display = nodes_data.loc[(nodes_data["column_id"] >= left_bound)
+#     #                                   & (nodes_data["column_id"] <= right_bound)]
 
 #
 # def get_cytoscape_graph_old(nodes_data, edges_data) -> List[any]: #tu zwracam elements z cytoscape
@@ -664,7 +661,8 @@ def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
 
 
 def remove_elements_data_faster(elements_cache_info):
-    tools.remove_file(elements_cache_info)
+    del test[elements_cache_info]
+    # tools.remove_file(elements_cache_info)
 
 
 def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: PangenomeJSON):
@@ -838,27 +836,36 @@ def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: P
     d = {"sn": sequences_nodes,
          "e": edges,
          "cw": columns}
-    with open(elements_cache_info, 'wb') as o:
-        pickle.dump(d, o)
-    # print(d)
+    test[elements_cache_info] = d
+    # with open(elements_cache_info, 'wb') as o:
+    #     pickle.dump(d, o)
 
 
 def get_poagraph_elements_faster(elements_cache_info, relayout_data):
-    s = time()
-    with open(elements_cache_info, 'rb') as i:
-        poagraph_elements = pickle.load(i)
-    e = time()
-    print("read", str(e-s))
+    def recalc(x):
+        return x //  15
+    # with open(elements_cache_info, 'rb') as i:
+    #     poagraph_elements = pickle.load(i)
+    poagraph_elements = test[elements_cache_info]
+    max_column_id = len(poagraph_elements["cw"])
     try:
         min_x = int(relayout_data['xaxis.range[0]'])
         max_x = int(relayout_data['xaxis.range[1]'])
+        visible_axis_length = abs(max_x - min_x)
+        min_x = max(0, min_x + int(max_column_id *0.3))
+        max_x = min(min_x +int( 0.3 * max_column_id), max_column_id)#visible_axis_length // 3 * 2
     except KeyError:
-        min_x = None
-        max_x = None
+        min_x = int(0.3*max_column_id)
+        max_x = int(0.6*max_column_id)
+        # r = _get_pangenome_graph_x_range([n['data']['column_id'] for n in nodes])
+        #         left_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3)
+        #         right_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3 * 2)
 
-    min_x = 0
-    max_x = 10
+    # min_x = random.randint(0,5)
+    # max_x = random.randint(5,10)
     c_to_n = poagraph_elements["cw"]
-    nodes_ids_to_display = [n for nodes_ids in c_to_n[min_x:max_x] for n in nodes_ids]
-    return poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display)]
+    nodes_ids_to_display = [n for nodes_ids in c_to_n[min_x:max_x+1] for n in nodes_ids]
+    nodes = poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display)]
+    edges = [e for src in nodes_ids_to_display for e in poagraph_elements["e"][src]]
+    return nodes + edges
 #
