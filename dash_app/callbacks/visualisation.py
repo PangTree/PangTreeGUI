@@ -19,6 +19,13 @@ def load_visualisation(pangenome_content: str) -> str:
         return tools.decode_content(pangenome_content)
     return pangenome_content
 
+@app.callback(
+    Output(id_pangviz_result_collapse, 'is_open'),
+    [Input(id_pangenome_upload, 'contents')])
+def show_visualisation(pangenome_content: str) -> str:
+    if not pangenome_content:
+        return False
+    return True
 
 @app.callback(Output(id_task_parameters_vis, 'children'),
               [Input(id_pangenome_hidden, 'children')])

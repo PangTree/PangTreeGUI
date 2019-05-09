@@ -133,3 +133,15 @@ def get_poagraph_elements(elements_cache_info, relayout_data, pangenome_upload_c
 #     if not clicked_node_data or clicked_node_data['label'] == '':
 #         raise PreventUpdate()
 #     return str(clicked_node_data)
+
+@app.callback(Output(id_full_pangenome_container, 'style'),
+              [Input(id_full_pangenome_graph, 'figure')],
+              [State(id_full_pangenome_container, 'style')])
+def expand_graph(fig, s):
+    if not fig:
+        raise PreventUpdate()
+    print("działam")
+    if not s:
+        s = {}
+    s["visibility"] = "visible"
+    return s

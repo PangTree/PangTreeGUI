@@ -546,7 +546,7 @@ _poapangenome_tab_content = html.Div([
     ], className="poapangenome_content"),
     dbc.Collapse(id=id_poapangenome_result, children=dbc.Row(
         children=[dbc.Col([dbc.Row([html.I(id=id_result_icon), html.H3("Task completed!", className="next_to_icon")]),
-                                     dbc.Col(html.Div(id=id_poapangenome_result_description), className="col-md-11")],
+                           dbc.Col(html.Div(id=id_poapangenome_result_description), className="col-md-11")],
                           className="col-md-6 offset-md-1"),
                   dbc.Col([
                       html.A(dbc.Button("Download result files", block=True, className="result_btn", color="info"),
@@ -569,22 +569,27 @@ _load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
                                                                       "Drag & drop pangenome.json file or select file..",
                                                                       className="col-md-10")])
 
-                                                     ], className="file_upload"), className="col-md-4 offset-md-1"),
-                                  dbc.Col("or", className="col-md-2"),
+                                                     ], className="file_upload"), width={"size": 4, "offset": 1}),
+                                  dbc.Col("or", id=id_or, width=2),
                                   dbc.Col(dbc.DropdownMenu(
+                                      id=id_examples_dropdown,
                                       label="load example data",
                                       children=[
                                           dbc.DropdownMenuItem("Fabricated", id=id_pangviz_example_fabricated),
                                           dbc.DropdownMenuItem("Ebola", id_pangviz_example_ebola),
                                           # dbc.DropdownMenuItem("Ballibase", id=id_pangviz_example_ballibase),
-                                      ]
-                                  ), className="col-md-4")
+                                      ], bs_size="lg"
+                                  ), width=4)
 
                               ])
 
-_task_parameters_row = dbc.Row(id=id_task_parameters_row, children=[html.Div(id=id_task_parameters_vis)])
+_task_parameters_row = dbc.Row(id=id_task_parameters_row,
+                               children=html.Div([html.Div(html.H3("Task parameters"), className="panel-heading"),
+                                                  html.Div(id=id_task_parameters_vis, className="panel-body")],
+                                                 ),
+                               className="vis_row")
 
-_input_data_row = dbc.Row(children=[dbc.Col(html.Div(id=id_input_info_vis)),
+_input_data_row = dbc.Row(style={'display':'none'},children=[dbc.Col(html.Div(id=id_input_info_vis)),
                                     dbc.Col(html.Div(id=id_input_dagmaf_vis,
                                                      children=[html.H3("MAF graph"),
                                                                cyto.Cytoscape(id=id_mafgraph_graph,
@@ -604,85 +609,145 @@ _input_data_row = dbc.Row(children=[dbc.Col(html.Div(id=id_input_info_vis)),
                                                                               autounselectify=True)]
                                                      ))])
 
-_pangenome_row = dbc.Row(children=[dbc.Col(html.H3("Pangenome info"),
-                                           html.Div(id=id_poagraph_node_info), className="col-md-1"),
-                                   dbc.Col([html.H3("Pangenome graphs"),
-                                            html.Div(id=id_full_pangenome_container,
-                                                     children=[dcc.Graph(
-                                                         id=id_full_pangenome_graph,
-                                                         style={'width': 'auto'},
-                                                         # style={'height': '400px', 'width': 'auto'},
-                                                         figure={},
-                                                         config={
-                                                             'displayModeBar': False,
-                                                         }
-                                                     )]),
-                                            html.Div(id=id_poagraph_container,
-                                                     children=cyto.Cytoscape(id=id_poagraph,
-                                                                             layout={
-                                                                                 'name': 'preset'},
-                                                                             stylesheet=poagraph_component.get_poagraph_stylesheet(),
-                                                                             elements=[
-                                                                             ],
-                                                                             style={'width': 'auto', 'height': '500px'},
-                                                                             zoom=1,
-                                                                             # minZoom=0.9,
-                                                                             # maxZoom=1.1,
-                                                                             # panningEnabled=False,
-                                                                             # userPanningEnabled=False,
-                                                                             boxSelectionEnabled=False,
-                                                                             # autoungrabify=True,
-                                                                             # autolock=True,
-                                                                             autounselectify=True
-                                                                             ))
-                                            ], className="col-md-11")])
+_pangenome_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - Cut Width statistic"), width=12),
+                                   dbc.Col([html.P("Representation of full poagraph as Cut Width statistics."),
+                                            html.P("Cut Width - edges count between two consecutive columns."),
+                                            html.I(id="arrow_icon",
+                                                   className="fas fa-level-down-alt fa-flip-horizontal fa-5x")],
+                                           width=2),
+                                   dbc.Col(html.Div(id=id_full_pangenome_container,
+                                                    style={'visibility': 'hidden'},
+                                                    children=[dcc.Graph(
+                                                        id=id_full_pangenome_graph,
+                                                        style={'width': 'auto'},
+                                                        # style={'height': '400px', 'width': 'auto'},
+                                                        figure={},
+                                                        config={
+                                                            'displayModeBar': False,
+                                                        }
+                                                    )]), width=10)], className="vis_row")
 
-_consensus_tree_row = dbc.Row(children=[
-    dbc.Col(children=[dcc.Graph(
-        id=id_consensus_tree_graph,
-        style={'height': '1000px', 'width': 'auto'}
-    ),
-        dcc.Slider(
-            id=id_consensus_tree_slider,
-            min=0,
-            max=1,
-            marks={
-                int(i) if i % 1 == 0 else i: '{}'.format(i)
-                for i
-                in
-                [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
-                 0.9,
-                 1]},
-            step=0.01,
-            value=0.5,
-            dots=True
-        )
-    ], className="col-md-8"),
-    dbc.Col(children=[html.H5("Metadata in consensuses tree leaves:"),
-                      dcc.Dropdown(
-                          id=id_leaf_info_dropdown,
-                          style={'margin-bottom': '20px'},
-                          options=[
-                          ],
-                          value='SEQID'
-                      ),
-                      html.H5("Consensus tree node details:"),
-                      html.H5(
-                          id=id_consensus_node_details_header
-                      ),
-                      html.Img(
-                          id=id_consensus_node_details_distribution,
-                      ),
-                      dash_table.DataTable(
-                          id=id_consensus_node_details_table,
-                          style_table={
-                              'maxHeight': '800',
-                              'overflowY': 'scroll'
-                          },
-                          style_cell={'textAlign': 'left'},
-                          sorting=True
-                      )], className="col-md-4")
-])
+_poagraph_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - a closer view on graph details"), width=12),
+                                  dbc.Col([html.P(
+                                      "This is a visualisation of pangenome internal representation as a PoaGraph"),
+                                           html.Div(id=id_poagraph_node_info)], width=2),
+                                  dbc.Col(html.Div(id=id_poagraph_container,
+                                                   children=cyto.Cytoscape(id=id_poagraph,
+                                                                           layout={
+                                                                               'name': 'preset'},
+                                                                           stylesheet=poagraph_component.get_poagraph_stylesheet(),
+                                                                           elements=[
+                                                                           ],
+                                                                           style={'width': 'auto',
+                                                                                  'height': '500px',
+                                                                                  'background-color': 'white'},
+                                                                           zoom=1,
+                                                                           # minZoom=0.9,
+                                                                           # maxZoom=1.1,
+                                                                           # panningEnabled=False,
+                                                                           # userPanningEnabled=False,
+                                                                           boxSelectionEnabled=False,
+                                                                           # autoungrabify=True,
+                                                                           # autolock=True,
+                                                                           autounselectify=True
+                                                                           )), width=10)], className="vis_row")
+
+_consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], width=12),
+                                        dbc.Col([html.P(
+                                            "This is consensus tree generated using this software. IOt is similar to a phylogenetic tree but every node has a consensus sequence assigned.")],
+                                                width=2),
+                                        dbc.Col([dcc.Graph(
+                                            id=id_consensus_tree_graph,
+                                            style={'height': '600px', 'width': 'auto'}
+                                            # style={'width': 'auto'}
+                                        ),
+                                            html.Div(dcc.Slider(
+                                                id=id_consensus_tree_slider,
+                                                min=0,
+                                                max=1,
+                                                marks={
+                                                    int(i) if i % 1 == 0 else i: '{}'.format(i)
+                                                    for i
+                                                    in
+                                                    [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
+                                                     0.9,
+                                                     1]},
+                                                step=0.01,
+                                                value=0.5,
+                                                dots=True
+                                            ), style={"margin": '0% 20% 0% 5%'})], width=7),
+                                        dbc.Col(children=[html.H5("Metadata in consensuses tree leaves:"),
+                                                          dcc.Dropdown(
+                                                              id=id_leaf_info_dropdown,
+                                                              style={'margin-bottom': '20px'},
+                                                              options=[
+                                                              ],
+                                                              value='SEQID'
+                                                          ),
+                                                          html.H5(["Consensus tree node details:",html.P(
+                                                              id=id_consensus_node_details_header
+                                                          ),]),
+
+                                                          html.Img(
+                                                              id=id_consensus_node_details_distribution,
+                                                              style={'max-width': '100%', 'margin-bottom':'2%'}
+                                                          ),
+                                                          dash_table.DataTable(
+                                                              id=id_consensus_node_details_table,
+                                                              style_table={
+                                                                  'maxHeight': '800',
+                                                                  'overflowY': 'scroll'
+                                                              },
+                                                              style_cell={'textAlign': 'left'},
+                                                              sorting=True
+                                                          )], width=3)], className="vis_row")
+
+# _consensus_tree_row = dbc.Row(children=[
+#     dbc.Col(children=[dcc.Graph(
+#         id=id_consensus_tree_graph,
+#         style={'height': '1000px', 'width': 'auto'}
+#     ),
+#         dcc.Slider(
+#             id=id_consensus_tree_slider,
+#             min=0,
+#             max=1,
+#             marks={
+#                 int(i) if i % 1 == 0 else i: '{}'.format(i)
+#                 for i
+#                 in
+#                 [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
+#                  0.9,
+#                  1]},
+#             step=0.01,
+#             value=0.5,
+#             dots=True
+#         )
+#     ], className="col-md-8"),
+#     dbc.Col(children=[html.H5("Metadata in consensuses tree leaves:"),
+#                       dcc.Dropdown(
+#                           id=id_leaf_info_dropdown,
+#                           style={'margin-bottom': '20px'},
+#                           options=[
+#                           ],
+#                           value='SEQID'
+#                       ),
+#                       html.H5("Consensus tree node details:"),
+#                       html.H5(
+#                           id=id_consensus_node_details_header
+#                       ),
+#                       html.Img(
+#                           id=id_consensus_node_details_distribution,
+#                       ),
+#                       dash_table.DataTable(
+#                           id=id_consensus_node_details_table,
+#                           style_table={
+#                               'maxHeight': '800',
+#                               'overflowY': 'scroll'
+#                           },
+#                           style_cell={'textAlign': 'left'},
+#                           sorting=True
+#                       )], className="col-md-4")
+# ])
 
 _consensus_table_row = dbc.Row(html.Div(id=id_consensus_table_container,
                                         children=[dash_table.DataTable(id=id_consensuses_table,
@@ -691,23 +756,26 @@ _consensus_table_row = dbc.Row(html.Div(id=id_consensus_table_container,
 
                                                   ], style={'width': 'auto'}))
 
-_pangviz_tab_content = html.Div([
+_pangviz_tab_content = dbc.Container([
     dcc.Store(id=id_visualisation_session_info, data=""),
     dcc.Store(id=id_elements_cache_info, data=""),
-    html.Div(style={'display': 'none'}, children=[html.Div(id=id_pangenome_hidden),
-                                                  html.Div(id=id_poagraph_hidden),
-                                                  html.Div(id=id_full_consensustree_hidden),
-                                                  html.Div(id=id_partial_consensustable_hidden),
-                                                  html.Div(id=id_current_consensustree_hidden),
-                                                  html.Div(id=id_full_consensustable_hidden),
-                                                  html.Div(id=id_consensus_node_details_table_hidden)]),
+    dbc.Row(style={'display': 'none'}, children=[html.Div(id=id_pangenome_hidden),
+                                                 html.Div(id=id_poagraph_hidden),
+                                                 html.Div(id=id_full_consensustree_hidden),
+                                                 html.Div(id=id_partial_consensustable_hidden),
+                                                 html.Div(id=id_current_consensustree_hidden),
+                                                 html.Div(id=id_full_consensustable_hidden),
+                                                 html.Div(id=id_consensus_node_details_table_hidden)]),
     _load_pangenome_row,
-    _task_parameters_row,
-    _input_data_row,
-    _pangenome_row,
-    _consensus_tree_row,
-    _consensus_table_row
-])
+    dbc.Collapse(
+        id=id_pangviz_result_collapse,
+        children=[_task_parameters_row,
+                  _input_data_row,
+                  _pangenome_row,
+                  _poagraph_row,
+                  _consensus_tree_row,
+                  _consensus_table_row])
+], fluid=True)
 
 
 def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():

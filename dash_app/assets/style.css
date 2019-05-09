@@ -58,9 +58,9 @@ div>.jumbotron{
     margin: 20px 5px 5px 5px;
 }
 
-#task_parameters_row{
-    margin: 0px 5px 5px 5px;
-}
+/*#task_parameters_row{*/
+/*    margin: 0px 5px 5px 5px;*/
+/*}*/
 
 .file_upload{
     width:100%;
@@ -78,4 +78,24 @@ div>.jumbotron{
 
 i{
     align-self: center;
+}
+
+#or{
+    text-align: center;
+    font-size: 2em;
+}
+#examples_dropdown{
+    text-align: center;
+}
+
+.vis_row{
+    padding: 20px 30px;
+    background-color: var(--light);
+    border-radius: 25px;
+    /*margin-top: 20px;*/
+    margin: 20px 5px 5px 5px;
+}
+
+#arrow_icon{
+    margin: 200px 0px 0px 100px;
 }

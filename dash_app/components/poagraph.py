@@ -708,7 +708,7 @@ def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: P
 
     def get_cytoscape_node(id, label, x, y, cl, sequences_ids, consensus_ids) -> CytoscapeNode:
             return {'data': {'id': id,
-                             'label': f"{label} {id}",
+                             'label': f"{label}",
                              'sequences_ids': sequences_ids,
                              'consensus_ids': consensus_ids},
                     'position': {'x': x, 'y': y},
