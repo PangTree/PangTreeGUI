@@ -349,10 +349,10 @@ def run_pangenome(run_processing_btn_click,
     missing_symbol = MissingSymbol(missing_symbol) if missing_symbol != "" else MissingSymbol()
 
     fasta_path = None
-    if fasta_provider_choice == "ncbi":
+    if fasta_provider_choice == "NCBI":
         fasta_provider = FromNCBI(use_cache=True)
-    elif fasta_provider_choice == "file":
-        fasta_path = tools.get_child_path(current_processing_output_dir_name, fasta_filename)
+    elif fasta_provider_choice == "File":
+        fasta_path = tools.get_child_path(current_processing_output_dir_name, fasta_filename).resolve()
         save_mode = "wb" if "zip" in fasta_filename else "w"
         tools.save_to_file(fasta_content, fasta_path, save_mode)
         fasta_provider = FromFile(fasta_path)
@@ -442,3 +442,12 @@ def get_poapangenome_result_description(session_state_data):
     return poapangenome_task_description
 
 
+@app.callback(Output(id_result_icon, "className"),
+              [Input(id_session_state, 'data')])
+def get_poapangenome_result_description(session_state_data):
+    if session_state_data is None or "jsonpangenome" not in session_state_data:
+        return ""
+    if session_state_data["error"]:
+        return "fas fa-times-circle correct"
+    else:
+        return "fas fa-check-circle incorrect"

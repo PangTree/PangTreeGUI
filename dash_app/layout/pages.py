@@ -545,7 +545,9 @@ _poapangenome_tab_content = html.Div([
         ], className="col-md-3 offset-md-1")
     ], className="poapangenome_content"),
     dbc.Collapse(id=id_poapangenome_result, children=dbc.Row(
-        children=[dbc.Col([html.Div(id=id_poapangenome_result_description)], className="col-md-6 offset-md-1"),
+        children=[dbc.Col([dbc.Row([html.I(id=id_result_icon), html.H3("Task completed!", className="next_to_icon")]),
+                                     dbc.Col(html.Div(id=id_poapangenome_result_description), className="col-md-11")],
+                          className="col-md-6 offset-md-1"),
                   dbc.Col([
                       html.A(dbc.Button("Download result files", block=True, className="result_btn", color="info"),
                              id=id_download_processing_result),
@@ -561,7 +563,7 @@ _load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
                                   dbc.Col(dcc.Upload(id=id_pangenome_upload,
                                                      multiple=False,
                                                      children=[
-                                                         dbc.Row([dbc.Col(html.I(className="fas fa-align-left fa-2x"),
+                                                         dbc.Row([dbc.Col(html.I(className="fas fa-seedling fa-2x"),
                                                                           className="col-md-2"),
                                                                   html.P(
                                                                       "Drag & drop pangenome.json file or select file..",
@@ -587,10 +589,11 @@ _input_data_row = dbc.Row(children=[dbc.Col(html.Div(id=id_input_info_vis)),
                                                      children=[html.H3("MAF graph"),
                                                                cyto.Cytoscape(id=id_mafgraph_graph,
                                                                               elements=[]
-,
+                                                                              ,
                                                                               layout={'name': 'cose'},
                                                                               autoRefreshLayout=True,
-                                                                              style={'width': 'auto', 'height': '350px'},
+                                                                              style={'width': 'auto',
+                                                                                     'height': '350px'},
                                                                               zoom=1,
                                                                               # style={'width': 'auto',
                                                                               #        'height': '300px'},
@@ -655,38 +658,38 @@ _consensus_tree_row = dbc.Row(children=[
             dots=True
         )
     ], className="col-md-8"),
-    dbc.Col(children=[ html.H5("Metadata in consensuses tree leaves:"),
-                                               dcc.Dropdown(
-                                                   id=id_leaf_info_dropdown,
-                                                   style={'margin-bottom': '20px'},
-                                                   options=[
-                                                   ],
-                                                   value='SEQID'
-                                               ),
-                                               html.H5("Consensus tree node details:"),
-                                               html.H5(
-                                                   id=id_consensus_node_details_header
-                                               ),
-                                               html.Img(
-                                                   id=id_consensus_node_details_distribution,
-                                               ),
-                                               dash_table.DataTable(
-                                                   id=id_consensus_node_details_table,
-                                                   style_table={
-                                                       'maxHeight': '800',
-                                                       'overflowY': 'scroll'
-                                                   },
-                                                   style_cell={'textAlign': 'left'},
-                                                   sorting=True
-                                               )], className="col-md-4")
+    dbc.Col(children=[html.H5("Metadata in consensuses tree leaves:"),
+                      dcc.Dropdown(
+                          id=id_leaf_info_dropdown,
+                          style={'margin-bottom': '20px'},
+                          options=[
+                          ],
+                          value='SEQID'
+                      ),
+                      html.H5("Consensus tree node details:"),
+                      html.H5(
+                          id=id_consensus_node_details_header
+                      ),
+                      html.Img(
+                          id=id_consensus_node_details_distribution,
+                      ),
+                      dash_table.DataTable(
+                          id=id_consensus_node_details_table,
+                          style_table={
+                              'maxHeight': '800',
+                              'overflowY': 'scroll'
+                          },
+                          style_cell={'textAlign': 'left'},
+                          sorting=True
+                      )], className="col-md-4")
 ])
 
 _consensus_table_row = dbc.Row(html.Div(id=id_consensus_table_container,
-                                         children=[dash_table.DataTable(id=id_consensuses_table,
-                                                          sorting=True,
-                                                          sorting_type="multi")
+                                        children=[dash_table.DataTable(id=id_consensuses_table,
+                                                                       sorting=True,
+                                                                       sorting_type="multi")
 
-], style={'width': 'auto'}))
+                                                  ], style={'width': 'auto'}))
 
 _pangviz_tab_content = html.Div([
     dcc.Store(id=id_visualisation_session_info, data=""),
@@ -707,5 +710,77 @@ _pangviz_tab_content = html.Div([
 ])
 
 
-def get_task_description_layout(jsonpangenome: PangenomeJSON) -> html.Div():
-    return str(jsonpangenome.task_parameters)
+def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():
+    fasta_provider_paragraph = html.P()
+    if jsonpangenome.task_parameters.multialignment_format == "Maf":
+        opt = jsonpangenome.task_parameters.fasta_complementation_option
+        if opt == "ConstSymbolProvider":
+            o = f"Const symbol {jsonpangenome.task_parameters.missing_base_symbol}"
+        elif opt == "FromFile":
+            o = f"Fasta file {jsonpangenome.task_parameters.fasta_source_file}"
+        else:
+            o = "NCBI"
+        fasta_provider_paragraph = html.P(f"Fasta provider: {o}")
+
+    if jsonpangenome.task_parameters.consensus_type == "poa":
+        cons_type_paragraph = html.P(f"Hbmin: {jsonpangenome.task_parameters.hbmin}")
+    else:
+        cons_type_paragraph = [html.P(f"P: {jsonpangenome.task_parameters.p}"),
+                               html.P(f"Stop: {jsonpangenome.task_parameters.stop}")]
+
+    return dbc.CardDeck(
+        [
+            dbc.Card(
+                [
+                    dbc.CardBody(
+                        [
+                            dbc.CardText([
+                                html.P(f"Multialignment: {jsonpangenome.task_parameters.multialignment_file_path}"),
+                                html.P(f"Metadata : {jsonpangenome.task_parameters.metadata_file_path}"),
+                                fasta_provider_paragraph
+                            ]
+                            ),
+                        ]
+                    ),
+                    dbc.CardFooter("PoaGraph Configuration", className="text-center"),
+                ],
+                outline=True,
+                color="dark",
+            ),
+            dbc.Card(
+                [
+                    dbc.CardBody(
+                        [
+                            dbc.CardText([
+                                             html.P(f"Algorithm: {jsonpangenome.task_parameters.consensus_type}"),
+                                             html.P(f"Blosum file: {jsonpangenome.task_parameters.blosum_file_path}")]
+                                         + cons_type_paragraph
+
+                                         ),
+                        ]
+                    ),
+                    dbc.CardFooter("Consensus Configuration", className="text-center"),
+                ],
+                outline=True,
+                color="dark",
+            ),
+            dbc.Card(
+                [
+                    dbc.CardBody(
+                        [
+                            dbc.CardText([
+                                html.P(f"Time: {jsonpangenome.task_parameters.running_time}"),
+                                html.P(f"Poagraph nodes count: {len(jsonpangenome.nodes)}"),
+                                html.P(f"Sequences count: {len(jsonpangenome.sequences)}"),
+                                html.P(f"Consensuses count: {len(jsonpangenome.consensuses)}"),
+                            ]
+                            ),
+                        ]
+                    ),
+                    dbc.CardFooter("Processing info", className="text-center"),
+                ],
+                outline=True,
+                color="dark",
+            ),
+        ]
+    )

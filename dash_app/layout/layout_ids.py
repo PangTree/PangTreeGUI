@@ -136,3 +136,4 @@ id_consensus_table_container = "consensus_table_container"
 
 id_visualisation_session_info = "visualisation_session_info"
 id_elements_cache_info = "elements_cache_info"
+id_result_icon = "result_icon"

@@ -71,3 +71,11 @@ div>.jumbotron{
     text-align: center;
     /*margin: 10px;*/
 }
+
+.next_to_icon{
+    padding-left: 10px;
+}
+
+i{
+    align-self: center;
+}
