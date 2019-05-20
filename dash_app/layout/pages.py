@@ -193,7 +193,7 @@ def tools():
             ), className="col-md-2 offset-md-1"),
                 dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
                         className="col-md-1 my-auto text-center"),
-                dbc.Col(html.H2(dbc.Badge("PoaPangenome", className="badge-success badge-pill")),
+                dbc.Col(html.H2(dbc.Badge("PoaPangenome", className="page_elem badge-pill")),
                         className="col-md-2 my-auto"),
                 dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
                         className="col-md-1 my-auto text-center"),
@@ -215,15 +215,15 @@ def tools():
                 ), className="col-md-2 my-auto"),
                 dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
                         className="col-md-1 my-auto text-center"),
-                dbc.Col(html.H2(dbc.Badge("PangViz", className="badge-success badge-pill badge-block")),
+                dbc.Col(html.H2(dbc.Badge("PangViz", className="page_elem badge-pill badge-block")),
                         className="col-md-2 my-auto"),
             ]
         )]),
         dbc.Tabs(
             [
                 dbc.Tab(_poapangenome_tab_content, id=id_poapangenome_tab, label="PoaPangenome",
-                        tab_style={"margin-left": "auto"}),
-                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangViz", label_style={"color": "#00AEF9"}),
+                        tab_style={"margin-left": "auto"}, className="tools_tab"),
+                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangViz", label_style={"color": "#00AEF9"}, className="tools_tab"),
             ], className="nav-justified",
             id=id_tools_tabs,
         )
@@ -234,7 +234,7 @@ _data_type_form = dbc.FormGroup(
     [
         dbc.Label("Data Type", html_for=id_data_type, width=3, className="poapangenome_label"),
         dbc.Col([dbc.RadioItems(value="Nucleotides", options=[{"label": "Nucleotides", "value": "Nucleotides"},
-                                                              {"label": "Proteins", "value": "Proteins"}],
+                                                              {"label": "Aminoacids", "value": "Proteins"}],
                                 id=id_data_type),
                  dbc.FormText(
                      "Type of aligned sequences provided in the uploaded multialignment file.",
@@ -260,9 +260,9 @@ _metadata_upload_form = dbc.FormGroup(
                  dcc.Store(id=id_metadata_upload_state),
                  dbc.FormText(
                      [
-                         "CSV with metadata about the sequences. It can enhance"
-                         " the visualisation. 'seqid' column is obligatory and must match"
-                         " sequences ids present in MULTIALIGNMENT file. "
+                         "CSV with sequences metadata. It will be included in the visualisation. "
+                         "The 'seqid' column is obligatory and must match"
+                         " sequences identifiers from MULTIALIGNMENT file. "
                          "Other columns are optional. Example file: ",
                          html.A("metadata.csv",
                                 href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
@@ -277,7 +277,7 @@ _metadata_upload_form = dbc.FormGroup(
 
 _multialignment_upload_form = dbc.FormGroup(
     [
-        dbc.Label("Mulitialignment", html_for=id_multialignment_upload, width=3, className="poapangenome_label"),
+        dbc.Label("Multialignment", html_for=id_multialignment_upload, width=3, className="poapangenome_label"),
         dbc.Col([dcc.Upload(id=id_multialignment_upload,
                             multiple=False,
                             children=[
@@ -291,7 +291,7 @@ _multialignment_upload_form = dbc.FormGroup(
                  dcc.Store(id=id_multialignment_upload_state),
                  dbc.FormText(
                      [
-                         "Multialignment file. Accepted formats: ",
+                         "Accepted formats: ",
                          html.A(
                              href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
                              target="_blank", children="maf"), ", ",
@@ -376,7 +376,7 @@ _consensus_algorithm_form = dbc.FormGroup(
                          "There are two available algorithms for consensus tree generation. 'Poa' by ",
                          html.A(
                              "Lee et al.",
-                             href="https://doi.org/10.1093/bioinformatics/18.3.452"),
+                             href="https://doi.org/10.1093/bioinformatics/btg109"),
                          " and 'Tree' algorithm described ",
                          html.A("here",
                                 href="https://github.com/meoke/pang#idea-and-algorithm-description")],
@@ -388,7 +388,7 @@ _consensus_algorithm_form = dbc.FormGroup(
 
 _blosum_upload_form = dbc.FormGroup(
     [
-        dbc.Label("BLOSUM file", html_for=id_blosum_upload, width=3, className="poapangenome_label"),
+        dbc.Label("BLOSUM", html_for=id_blosum_upload, width=3, className="poapangenome_label"),
         dbc.Col([dcc.Upload(id=id_blosum_upload,
                             multiple=False,
                             children=[
@@ -402,10 +402,10 @@ _blosum_upload_form = dbc.FormGroup(
                  dcc.Store(id=id_blosum_upload_state),
                  dbc.FormText(
                      [
-                         "BLOSUM file. This parameter is optional as default BLOSUM file is ", html.A(
+                         "This parameter is optional as default BLOSUM file is ", html.A(
                          href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat",
                          target="_blank", children="BLOSUM80"),
-                         ". The BLOSUM file must contain '?' or custom symbol for missing nucleotides/proteins if specified."],
+                         ". The BLOSUM matrix must contain '?' or the custom symbol for missing nucleotides, if specified."],
                      color="secondary",
                  )
                  ], width=6),
@@ -435,7 +435,10 @@ _tree_params_form = dbc.Collapse([dbc.FormGroup([
     dbc.Col([dbc.Input(value=1, type='number', min=0,
                        id=id_p_input),
              dbc.FormText(
-                 "P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0.",
+                 ["P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0. ",
+                         html.A("Read more...",
+                                href="https://github.com/meoke/pang",
+                                target="_blank")],
                  color="secondary",
              )], width=6)
 ],
@@ -467,7 +470,8 @@ _output_form = dbc.FormGroup(
     ], row=True
 )
 
-_poapangenome_form = dbc.Form([_data_type_form,
+_poapangenome_form = dbc.Form([
+                               _data_type_form,
                                _metadata_upload_form,
                                _multialignment_upload_form,
                                _missing_data_form,
@@ -489,13 +493,13 @@ _poapangenome_tab_content = html.Div([
                 dbc.Row(
                     dbc.Col(dbc.Button("Run", id=id_pang_button, color="primary", className="offset-md-5 col-md-4 ")),
                     dbc.Col(dcc.Loading(id="l2", children=html.Div(id=id_running_indicator), type="default")))
-            ], className="col-md-6 offset-md-1"),
+            ], className="col-md-6 offset-md-1", id='poapangenome_form'),
         dbc.Col([
             html.H3("Example Input Data"),
             dbc.Card(
                 [
                     dbc.CardHeader(
-                        dbc.Button("Fabricated", id="collapse_fabricated_button",
+                        dbc.Button("Simulated", id="collapse_fabricated_button",
                                    className="mb-3 btn-block my-auto opac-button")),
                     dbc.Collapse(
                         id="fabricated_collapse",
@@ -585,14 +589,14 @@ _load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
 
 _task_parameters_row = dbc.Row(id=id_task_parameters_row,
                                children=html.Div([html.Div(html.H3("Task parameters"), className="panel-heading"),
-                                                  html.Div(id=id_task_parameters_vis, className="panel-body")],
+                                                  dcc.Loading(html.Div(id=id_task_parameters_vis, className="panel-body"), type="circle")],
                                                  ),
                                className="vis_row")
 
 _input_data_row = dbc.Row(style={'display':'none'},children=[dbc.Col(html.Div(id=id_input_info_vis)),
                                     dbc.Col(html.Div(id=id_input_dagmaf_vis,
                                                      children=[html.H3("MAF graph"),
-                                                               cyto.Cytoscape(id=id_mafgraph_graph,
+                                                               dcc.Loading(cyto.Cytoscape(id=id_mafgraph_graph,
                                                                               elements=[]
                                                                               ,
                                                                               layout={'name': 'cose'},
@@ -606,7 +610,7 @@ _input_data_row = dbc.Row(style={'display':'none'},children=[dbc.Col(html.Div(id
                                                                               # autolock=True,
                                                                               boxSelectionEnabled=False,
                                                                               # autoungrabify=True,
-                                                                              autounselectify=True)]
+                                                                              autounselectify=True), type="circle")]
                                                      ))])
 
 _pangenome_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - Cut Width statistic"), width=12),
@@ -617,7 +621,7 @@ _pangenome_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - Cut Width statist
                                            width=2),
                                    dbc.Col(html.Div(id=id_full_pangenome_container,
                                                     style={'visibility': 'hidden'},
-                                                    children=[dcc.Graph(
+                                                    children=[dcc.Loading(dcc.Graph(
                                                         id=id_full_pangenome_graph,
                                                         style={'width': 'auto'},
                                                         # style={'height': '400px', 'width': 'auto'},
@@ -625,14 +629,14 @@ _pangenome_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - Cut Width statist
                                                         config={
                                                             'displayModeBar': False,
                                                         }
-                                                    )]), width=10)], className="vis_row")
+                                                    ), type="circle")]), width=10)], className="vis_row")
 
 _poagraph_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - a closer view on graph details"), width=12),
                                   dbc.Col([html.P(
                                       "This is a visualisation of pangenome internal representation as a PoaGraph"),
                                            html.Div(id=id_poagraph_node_info)], width=2),
                                   dbc.Col(html.Div(id=id_poagraph_container,
-                                                   children=cyto.Cytoscape(id=id_poagraph,
+                                                   children=dcc.Loading(cyto.Cytoscape(id=id_poagraph,
                                                                            layout={
                                                                                'name': 'preset'},
                                                                            stylesheet=poagraph_component.get_poagraph_stylesheet(),
@@ -650,7 +654,7 @@ _poagraph_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - a closer view on g
                                                                            # autoungrabify=True,
                                                                            # autolock=True,
                                                                            autounselectify=True
-                                                                           )), width=10)], className="vis_row")
+                                                                           ), type="circle")), width=10)], className="vis_row")
 
 _consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], width=12),
                                         dbc.Col([html.P(
@@ -658,7 +662,11 @@ _consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], wid
                                                 width=2),
                                         dbc.Col([dcc.Graph(
                                             id=id_consensus_tree_graph,
-                                            style={'height': '600px', 'width': 'auto'}
+                                            style={'height': '600px', 'width': 'auto'},
+                                            config={
+                                                    'displayModeBar': True
+                                                },
+
                                             # style={'width': 'auto'}
                                         ),
                                             html.Div(dcc.Slider(
@@ -675,7 +683,7 @@ _consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], wid
                                                 step=0.01,
                                                 value=0.5,
                                                 dots=True
-                                            ), style={"margin": '0% 20% 0% 5%'})], width=7),
+                                            ), style={"margin": '-1% 20% 0% 3%'})], width=7, id="consensus_tree_col"),
                                         dbc.Col(children=[html.H5("Metadata in consensuses tree leaves:"),
                                                           dcc.Dropdown(
                                                               id=id_leaf_info_dropdown,
@@ -692,7 +700,7 @@ _consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], wid
                                                               id=id_consensus_node_details_distribution,
                                                               style={'max-width': '100%', 'margin-bottom':'2%'}
                                                           ),
-                                                          dash_table.DataTable(
+                                                          dcc.Loading(dash_table.DataTable(
                                                               id=id_consensus_node_details_table,
                                                               style_table={
                                                                   'maxHeight': '800',
@@ -700,7 +708,7 @@ _consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], wid
                                                               },
                                                               style_cell={'textAlign': 'left'},
                                                               sorting=True
-                                                          )], width=3)], className="vis_row")
+                                                          ), type="circle")], width=3)], className="vis_row")
 
 # _consensus_tree_row = dbc.Row(children=[
 #     dbc.Col(children=[dcc.Graph(
@@ -749,13 +757,20 @@ _consensus_tree_row = dbc.Row(children=[dbc.Col([html.H4("Consensus Tree")], wid
 #                       )], className="col-md-4")
 # ])
 
-_consensus_table_row = dbc.Row(html.Div(id=id_consensus_table_container,
-                                        children=[dash_table.DataTable(id=id_consensuses_table,
+# _consensus_table_row = dbc.Row(html.Div(id=id_consensus_table_container,
+#                                         children=[dash_table.DataTable(id=id_consensuses_table,
+#                                                                        sorting=True,
+#                                                                        sorting_type="multi")
+#
+#                                                   ], style={'width': 'auto'}))
+
+_consensus_table_row = dbc.Row(children=[dbc.Col(html.H4("Consensuses on current Consensus Tree cut level"), width=12),
+                                  dbc.Col(html.Div(id=id_consensus_table_container,
+                                                   children=dcc.Loading(dash_table.DataTable(id=id_consensuses_table,
                                                                        sorting=True,
-                                                                       sorting_type="multi")
+                                                                       sorting_type="multi"), type="circle")), width=12, style={'overflow-x': 'scroll'})], className="vis_row")
 
-                                                  ], style={'width': 'auto'}))
-
+loading_style="circle"
 _pangviz_tab_content = dbc.Container([
     dcc.Store(id=id_visualisation_session_info, data=""),
     dcc.Store(id=id_elements_cache_info, data=""),
@@ -791,7 +806,7 @@ def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():
         fasta_provider_paragraph = html.P(f"Fasta provider: {o}")
 
     if jsonpangenome.task_parameters.consensus_type == "poa":
-        cons_type_paragraph = html.P(f"Hbmin: {jsonpangenome.task_parameters.hbmin}")
+        cons_type_paragraph = [html.P(f"Hbmin: {jsonpangenome.task_parameters.hbmin}")]
     else:
         cons_type_paragraph = [html.P(f"P: {jsonpangenome.task_parameters.p}"),
                                html.P(f"Stop: {jsonpangenome.task_parameters.stop}")]

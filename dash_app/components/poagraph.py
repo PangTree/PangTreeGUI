@@ -1,4 +1,7 @@
+import pickle
+
 from ..components import tools
+from flask import Flask, session
 from ..layout.colors import colors
 import colorsys
 from typing import List, Dict, Tuple, Set, Optional, Any, Union
@@ -11,7 +14,7 @@ import plotly.graph_objs as go
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
 
-test = {}
+# test = {}
 #
 # class PoaGraph:
 #     poagraph_node_width: int = 10
@@ -506,7 +509,7 @@ def get_poagraph_stylesheet():
         {
             'selector': '.s_node',
             'style': {
-                'background-color': colors['light_accent'],
+                'background-color': colors['background'],
                 # 'border-color': 'green',
                 # 'border-width': '0.5px',
                 'content': 'data(label)',
@@ -614,7 +617,7 @@ def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
             hoverinfo='skip',
             mode='lines',
             marker=dict(
-                color=colors["light_accent"]
+                color=colors["accent"]
             ),
             name="Pangenome Cut Width"
         )
@@ -661,11 +664,12 @@ def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
 
 
 def remove_elements_data_faster(elements_cache_info):
-    del test[elements_cache_info]
+    pass
+    # del test[elements_cache_info]
     # tools.remove_file(elements_cache_info)
 
 
-def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: PangenomeJSON):
+def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangenome: PangenomeJSON):
     def get_y(column_id, node_id):
         if column_id not in cols_occupancy:
             cols_occupancy[column_id] = {node_id: 0}
@@ -708,7 +712,7 @@ def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: P
 
     def get_cytoscape_node(id, label, x, y, cl, sequences_ids, consensus_ids) -> CytoscapeNode:
             return {'data': {'id': id,
-                             'label': f"{label}",
+                             'label': f"{label} {id}",
                              'sequences_ids': sequences_ids,
                              'consensus_ids': consensus_ids},
                     'position': {'x': x, 'y': y},
@@ -765,15 +769,15 @@ def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: P
                         weight=1,
                         cl='s_edge_aligned')]
 
-        if jsonpangenome.consensuses:
-            for consensus in jsonpangenome.consensuses:
-                for i in range(len(consensus.nodes_ids)-1):
-                    c_edge = get_cytoscape_edge(
-                                                 source=consensus.nodes_ids[i],
-                                                 target=consensus.nodes_ids[i+1],
-                                                 weight=math.log10(len(consensus.sequences_int_ids)+1),
-                                                 cl=f'c_edge c{consensus.name}')
-                    all_edges[consensus.nodes_ids[i]].append(c_edge)
+        # if jsonpangenome.consensuses:
+        #     for consensus in jsonpangenome.consensuses:
+        #         for i in range(len(consensus.nodes_ids)-1):
+        #             c_edge = get_cytoscape_edge(
+        #                                          source=consensus.nodes_ids[i],
+        #                                          target=consensus.nodes_ids[i+1],
+        #                                          weight=math.log10(len(consensus.sequences_int_ids)+1),
+        #                                          cl=f'c_edge c{consensus.name}')
+        #             all_edges[consensus.nodes_ids[i]].append(c_edge)
 
         return sequences_nodes, all_edges
 
@@ -795,7 +799,10 @@ def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: P
                 next_node_id = path[i + 1]
                 if current_node_id in nodes_to_sequences:
                     nodes_to_sequences[current_node_id].append(sequence.sequence_int_id)
-                    edges[current_node_id].append(next_node_id)
+                    if current_node_id in edges:
+                        edges[current_node_id].append(next_node_id)
+                    else:
+                        edges[current_node_id] = [next_node_id]
                 else:
                     nodes_to_sequences[current_node_id] = [sequence.sequence_int_id]
                     x = current_node.column_id * node_y_distance
@@ -836,8 +843,9 @@ def update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome: P
     d = {"sn": sequences_nodes,
          "e": edges,
          "cw": columns}
-    test[elements_cache_info] = d
-    # with open(elements_cache_info, 'wb') as o:
+    # test[user_session_elements_id] = d
+    session[user_session_elements_id] = d
+    # with open(user_session_elements_id, 'wb') as o:
     #     pickle.dump(d, o)
 
 
@@ -846,26 +854,32 @@ def get_poagraph_elements_faster(elements_cache_info, relayout_data):
         return x //  15
     # with open(elements_cache_info, 'rb') as i:
     #     poagraph_elements = pickle.load(i)
-    poagraph_elements = test[elements_cache_info]
-    max_column_id = len(poagraph_elements["cw"])
+    # poagraph_elements = test[elements_cache_info]
+    poagraph_elements = session[elements_cache_info]
+    max_column_id = len(poagraph_elements["cw"])+1
     try:
         min_x = int(relayout_data['xaxis.range[0]'])
         max_x = int(relayout_data['xaxis.range[1]'])
         visible_axis_length = abs(max_x - min_x)
         min_x = max(0, min_x + int(max_column_id *0.3))
-        max_x = min(min_x +int( 0.3 * max_column_id), max_column_id)#visible_axis_length // 3 * 2
+        max_x = min(min_x + int(0.3 * max_column_id), max_column_id)#visible_axis_length // 3 * 2
     except KeyError:
         min_x = int(0.3*max_column_id)
         max_x = int(0.6*max_column_id)
         # r = _get_pangenome_graph_x_range([n['data']['column_id'] for n in nodes])
         #         left_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3)
         #         right_bound = PoaGraph.pangenome_x_to_poagraph_x(r[1] // 3 * 2)
-
+    min_x=0
+    max_x=max_column_id
     # min_x = random.randint(0,5)
     # max_x = random.randint(5,10)
     c_to_n = poagraph_elements["cw"]
     nodes_ids_to_display = [n for nodes_ids in c_to_n[min_x:max_x+1] for n in nodes_ids]
-    nodes = poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display)]
-    edges = [e for src in nodes_ids_to_display for e in poagraph_elements["e"][src]]
+    if nodes_ids_to_display:
+        nodes = poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display)+1]
+        edges = [e for src in nodes_ids_to_display for e in poagraph_elements["e"][src]]
+    else:
+        nodes = []
+        edges = []
     return nodes + edges
 #

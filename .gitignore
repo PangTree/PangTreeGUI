@@ -107,4 +107,5 @@ venv.bak/
 /.idea/*
 /users_temp_data/*
 *.xml
-/cache/*
+/dash_app/cache/*
+/.fastacache/*
