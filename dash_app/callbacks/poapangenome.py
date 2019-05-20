@@ -59,7 +59,7 @@ def show_validation_result(upload_state_data):
     else:
         if upload_state_data["is_correct"]:
             filename = upload_state_data["filename"]
-            return get_success_info(f"File {filename} uploaded.")
+            return get_success_info(f"File {filename} is uploaded.")
         else:
             return get_error_info(upload_state_data["error"])
 
@@ -89,7 +89,7 @@ def show_multialignment_validation_result(upload_state_data):
     else:
         if upload_state_data["is_correct"]:
             filename = upload_state_data["filename"]
-            return get_success_info(f"File {filename} uploaded.")
+            return get_success_info(f"File {filename} is uploaded.")
         else:
             return get_error_info(upload_state_data["error"])
 
@@ -159,7 +159,7 @@ def show_fasta_validation_result(upload_state_data):
     else:
         if upload_state_data["is_correct"]:
             filename = upload_state_data["filename"]
-            return get_success_info(f"File {filename} uploaded.")
+            return get_success_info(f"File {filename} is uploaded.")
         else:
             return get_error_info(upload_state_data["error"])
 
@@ -354,7 +354,11 @@ def run_pangenome(run_processing_btn_click,
     elif fasta_provider_choice == "File":
         fasta_path = tools.get_child_path(current_processing_output_dir_name, fasta_filename).resolve()
         save_mode = "wb" if "zip" in fasta_filename else "w"
-        tools.save_to_file(fasta_content, fasta_path, save_mode)
+        if "zip" in fasta_filename:
+            fasta_decoded_content = tools.decode_zip_content(fasta_content)
+        else:
+            fasta_decoded_content = tools.decode_content(fasta_content)
+        tools.save_to_file(fasta_decoded_content, fasta_path, save_mode)
         fasta_provider = FromFile(fasta_path)
     else:
         fasta_provider = ConstSymbolProvider(missing_symbol)
@@ -448,6 +452,6 @@ def get_poapangenome_result_description(session_state_data):
     if session_state_data is None or "jsonpangenome" not in session_state_data:
         return ""
     if session_state_data["error"]:
-        return "fas fa-times-circle correct"
+        return "fas fa-times-circle incorrect"
     else:
-        return "fas fa-check-circle incorrect"
+        return "fas fa-check-circle correct"

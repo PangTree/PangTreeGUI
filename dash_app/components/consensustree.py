@@ -2,6 +2,7 @@ from collections import deque
 from typing import Dict, List, Tuple, Set, Any
 
 import math
+from ..layout.colors import colors
 import plotly.graph_objs as go
 import pandas as pd
 
@@ -109,15 +110,16 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
                                              showticklabels=False,)),
                   yaxis=go.layout.YAxis(dict(range=[0, 100], showline=False, zeroline=False, showgrid=False,
                                              showticklabels=False,)),
-                  margin=dict(l=40, r=40, b=85, t=100),
+                  margin=dict(l=0, r=0, b=0, t=0),
                   hovermode='closest',
-                  plot_bgcolor='rgb(248,248,248)',
+                  plot_bgcolor=colors['transparent'],
                   autosize=True,
                   )
 
     return go.Figure(
             data=[tree_lines_graph, tree_nodes_graph, line_graph, leaves_text_graph],
-            layout=layout
+            layout=layout,
+
             )
 
 
@@ -125,7 +127,7 @@ def get_line_graph(slider_value: float) -> go.Scatter:
     return go.Scatter(x=[slider_value, slider_value],
                       y=[0, 100],
                       mode='lines',
-                      line=dict(color='rgba(126, 178, 54, 1)'))
+                      line=dict(color=colors['accent']))
 
 
 def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: List[str]) -> go.Scatter:
@@ -168,7 +170,7 @@ def get_tree_nodes_annotations(positions: List[Tuple[float, float]], labels: Lis
 
 
 def get_leaf_label(sequences_ids: List[int], leaf_info_value: str, full_consensustable: pd.DataFrame) -> str:
-    return str(set(full_consensustable[leaf_info_value].loc[full_consensustable["ID"].isin(sequences_ids)]))
+    return ", ".join([str(l) for l in set(full_consensustable[leaf_info_value].loc[full_consensustable["ID"].isin(sequences_ids)])])
 
 def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph, leaf_info_value: str,
                           full_consensustable: pd.DataFrame) -> go.Scatter:

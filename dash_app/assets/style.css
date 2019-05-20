@@ -1,3 +1,9 @@
+:root {
+  --page-elem: rgb(80, 133, 165);
+  --accent: rgb(255, 137, 48);
+  --background: rgba(221, 226, 233, 1);
+}
+
 .card{
     margin: 5px 0px;
 }
@@ -90,7 +96,8 @@ i{
 
 .vis_row{
     padding: 20px 30px;
-    background-color: var(--light);
+    /*background-color: var(--light);*/
+    background-color: var(--background);
     border-radius: 25px;
     /*margin-top: 20px;*/
     margin: 20px 5px 5px 5px;
@@ -98,4 +105,37 @@ i{
 
 #arrow_icon{
     margin: 200px 0px 0px 100px;
+}
+
+#poapangenome_form{
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--background);
+}
+
+a{
+    color: rgb(255, 137, 48);
+}
+
+
+.navbar, .jumbotron{
+    background-color: rgba(221, 226, 233, 1) !important;
+}
+
+.rc-slider-handle, .rc-slider-dot-active, .tools_tab{
+    border-color: var(--accent);
+}
+
+.page_elem{
+    background-color: var(--page-elem);
+}
+
+#consensus_tree_col{
+    padding: 20px;
+    background-color: var(--background);
+}
+
+#id_consensus_table_container{
+    /*overflow-x: scroll;*/
+    width: auto;
 }

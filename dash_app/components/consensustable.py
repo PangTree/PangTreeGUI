@@ -9,7 +9,8 @@ from dash_app.components import consensustree
 import pandas as pd
 import networkx as nx
 import seaborn as sns
-
+from ..layout.colors import colors
+from matplotlib.colors import ColorConverter
 
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
     if not jsonpangenome.sequences:
@@ -105,9 +106,9 @@ def get_cell_styling_dict(consensus_colname, mincomp):
 
 def get_node_distribution_fig(node_id: ConsensusNodeID, full_consensustable: pd.DataFrame):
     x = full_consensustable[get_consensus_column_name(node_id)]
-
+    print(x)
     plt.figure()
-    sns.kdeplot(x, shade=True, bw=.01, color="olive")
+    sns.kdeplot(x, shade=True, bw=.01, color=ColorConverter().to_rgba(colors['dark_background']))
     plt.title("Compatibility distribution")
     buf = io.BytesIO()
     plt.savefig(buf, format='png')

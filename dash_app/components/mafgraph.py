@@ -12,7 +12,7 @@ def get_mafgraph_stylesheet():
         {
             'selector': '.maf_node',
             'style': {
-                'background-color': colors['light_accent'],
+                'background-color': colors['light_background'],
                 'border-color': colors['dark_background'],
                 'border-width': '0.5px',
                 'content': 'data(label)',

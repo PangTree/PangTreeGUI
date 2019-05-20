@@ -38,11 +38,13 @@ def decode_content(content: str) -> str:
     content_string = content.split(',')[1]
     return b64decode(content_string).decode('ascii')
 
+
 def decode_zip_content(content: str) -> str:
     if not content:
         return ''
     content_string = content.split(',')[1]
     return b64decode(content_string)
+
 
 def create_output_dir() -> Path:
     parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath("../../users_temp_data/")
