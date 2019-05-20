@@ -1,24 +1,19 @@
 from typing import Dict, Union, Any, Tuple, List
 
 from poapangenome.output.PangenomeJSON import PangenomeJSON
-
+from ..layout.colors import colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
 
+
 def get_mafgraph_stylesheet():
     return [
-        # {
-        #     'selector': 'node',
-        #     'style': {
-        #         'background-color': 'white',
-        #     }
-        # },
         {
             'selector': '.maf_node',
             'style': {
-                'background-color': 'red',#colors['light_accent'],
-                'border-color': "blue",#colors['dark_background'],
+                'background-color': colors['light_background'],
+                'border-color': colors['dark_background'],
                 'border-width': '0.5px',
                 'content': 'data(label)',
                 # 'height': '10px',
@@ -29,7 +24,6 @@ def get_mafgraph_stylesheet():
                 'opacity': 0.5
             }
         },
-
         {
             'selector': 'edge',
             'style': {
@@ -78,6 +72,6 @@ def get_graph_elements(jsonpangenome: PangenomeJSON) -> Tuple[List[CytoscapeNode
             edges.append(get_cytoscape_edge(source=str(maf_node.node_id),
                                             target=str(edge.to_block),
                                             weight=len(edge.sequences),
-                                            classes="correct_edge" if edge.edge_type == (1, -1) else "incorrect_edge"))
+                                            classes="correct_edge" if edge.edge_type == [1, -1] else "incorrect_edge"))
 
     return nodes, edges

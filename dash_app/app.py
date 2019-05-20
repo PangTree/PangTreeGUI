@@ -3,9 +3,12 @@ import dash_core_components as dcc
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 from .server import app
-from .layout import layout_ids, index_page
+from .layout import layout_ids, pages
 
 app.title = 'PoaPangenome'
+# app.css.config.serve_locally = True
+# app.scripts.config.serve_locally = True
+
 
 external_css = [
     'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
@@ -24,7 +27,7 @@ app.layout = html.Div(
                  dbc.Row(
                      [
                          dbc.Col(html.Img(src="assets/favicon.ico", height="30px")),
-                         dbc.Col(dbc.NavbarBrand("PoaPangenome", className="ml-2")),
+                         dbc.Col(dbc.NavbarBrand("Pangenome Tools", className="ml-2")),
                      ],
                      align="center",
                      no_gutters=True,
@@ -42,17 +45,10 @@ app.layout = html.Div(
                  className="ml-auto flex-nowrap mt-3 mt-md-0",
                  align="center"), id="navbar-collapse", navbar=True)
          ],
-         sticky="top"
+         sticky="top",
      ),
      html.Div(id=layout_ids.id_page_content)])
-# children=layout.get_page_content(app.get_asset_url))])
 
-tools = html.Div("tools")
-package = html.Div("package")
-contact = html.Div("contact")
-
-
-# add callback for toggling the collapse on small screens
 @app.callback(
     Output("navbar-collapse", "is_open"),
     [Input("navbar-toggler", "n_clicks")],
@@ -68,19 +64,18 @@ def toggle_navbar_collapse(n, is_open):
               [Input(layout_ids.id_url, 'pathname')])
 def display_page(pathname):
     if pathname == '/tools':
-        return tools
+        return pages.tools()
     elif pathname == '/package':
-        return package
+        return pages.package()
     elif pathname == '/contact':
-        return contact
+        return pages.contact()
     else:
-        return index_page.get_layout()
+        return pages.index()
 
-# from .callbacks import visualisation
-# from .callbacks import broadcast_pangenome
-# # from .callbacks import parameters
-# from .callbacks import consensustable
-# from .callbacks import consensustree
-# from .callbacks import mafgraph
-# from .callbacks import poagraph
-# from .callbacks import processing
+from .callbacks import consensustable
+from .callbacks import consensustree
+from .callbacks import mafgraph
+from .callbacks import poagraph
+
+from .callbacks import poapangenome
+from .callbacks import visualisation

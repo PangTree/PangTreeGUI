@@ -38,11 +38,13 @@ def decode_content(content: str) -> str:
     content_string = content.split(',')[1]
     return b64decode(content_string).decode('ascii')
 
+
 def decode_zip_content(content: str) -> str:
     if not content:
         return ''
     content_string = content.split(',')[1]
     return b64decode(content_string)
+
 
 def create_output_dir() -> Path:
     parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath("../../users_temp_data/")
@@ -94,6 +96,10 @@ def read_file_to_stream(path: Path):
     return StringIO(filecontent)
 
 
-def dir_to_zip(dir_name: Path):
+def dir_to_zip(dir_name: Path) -> Path:
     shutil.make_archive(dir_name, 'zip', dir_name)
     return Path(str(dir_name) + ".zip")
+
+
+def remove_file(path: Path)-> None:
+    os.remove(path)

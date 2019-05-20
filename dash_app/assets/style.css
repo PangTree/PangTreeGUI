@@ -1,32 +1,141 @@
-/*html, body {*/
-/*  height: 100%;*/
-/*  margin: 0;*/
-/*  background-color: var(--main-bg-color);*/
-/*}*/
+:root {
+  --page-elem: rgb(80, 133, 165);
+  --accent: rgb(255, 137, 48);
+  --background: rgba(221, 226, 233, 1);
+}
 
-/*#container_div{*/
-/*    margin-left: 5%;*/
-/*    margin-right: 5%;*/
-/*    height: 100% !important;*/
-/*    background-color: var(--light-bg-color);*/
-/*}*/
+.card{
+    margin: 5px 0px;
+}
 
-/*#react-entry-point, #data-reactroot, #_dash-app-content, #_dash-global-error-container, #_dash-global-error-container:first-child{*/
-/*    height: 100%;*/
-/*}*/
+.container:first-child{
+    margin-top: 2%
+}
 
-/*:root{*/
-/*    --main-bg-color: rgb(252,255,255);*/
-/*    --light-bg-color: rgb(179,207,226);*/
-/*    --dark-bg-color: rgb(80,133,165);*/
-/*    --info-color: rgb(80,133,165);*/
-/*    --accent-color: rgb(255,137,48);*/
-/*    --error-color: rgb(150,3,26);*/
-/*    --correct-color: rgb(105,120,101);*/
-/*}*/
+.logo{
+    color: green;
+}
 
 
-/*.form_item{*/
-/*    margin-left: 10px;*/
-/*    width: 100%;*/
+div>.jumbotron{
+    margin-top: 10px;
+}
+
+.param_row{
+    margin-top: 20px;
+}
+
+.dataset{
+    margin-top: 10px;
+}
+
+.opac-button{
+ background-color: rgba(0,0,0,0);
+    border: none;
+    color: black;
+}
+
+.poapangenome_content{
+    margin: 30px 5px 5px 0px;
+}
+
+
+.poapangenome_label{
+    align-self: flex-start !important;
+}
+
+.hide{
+    visibility: hidden;
+}
+
+.correct{
+    color: var(--success)
+}
+
+.incorrect{
+    color: var(--danger)
+}
+
+.result_btn{
+    margin: 5px;
+}
+
+#pangviz_load_row{
+    margin: 20px 5px 5px 5px;
+}
+
+/*#task_parameters_row{*/
+/*    margin: 0px 5px 5px 5px;*/
 /*}*/
+
+.file_upload{
+    width:100%;
+    height:60px;
+    line-height: 60px;
+    border: 1px black dashed;
+    border-radius: 5px;
+    text-align: center;
+    /*margin: 10px;*/
+}
+
+.next_to_icon{
+    padding-left: 10px;
+}
+
+i{
+    align-self: center;
+}
+
+#or{
+    text-align: center;
+    font-size: 2em;
+}
+#examples_dropdown{
+    text-align: center;
+}
+
+.vis_row{
+    padding: 20px 30px;
+    /*background-color: var(--light);*/
+    background-color: var(--background);
+    border-radius: 25px;
+    /*margin-top: 20px;*/
+    margin: 20px 5px 5px 5px;
+}
+
+#arrow_icon{
+    margin: 200px 0px 0px 100px;
+}
+
+#poapangenome_form{
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--background);
+}
+
+a{
+    color: rgb(255, 137, 48);
+}
+
+
+.navbar, .jumbotron{
+    background-color: rgba(221, 226, 233, 1) !important;
+}
+
+.rc-slider-handle, .rc-slider-dot-active, .tools_tab{
+    border-color: var(--accent);
+}
+
+.page_elem{
+    background-color: var(--page-elem);
+}
+
+#consensus_tree_col{
+    padding: 20px;
+    background-color: var(--background);
+}
+
+#id_consensus_table_container{
+    /*overflow-x: scroll;*/
+    width: auto;
+}
