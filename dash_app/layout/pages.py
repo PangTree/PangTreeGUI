@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
-from poapangenome.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.output.PangenomeJSON import PangenomeJSON
 
 from .layout_ids import *
 import dash_cytoscape as cyto
@@ -556,7 +556,7 @@ _poapangenome_tab_content = html.Div([
                       html.A(dbc.Button("Download result files", block=True, className="result_btn", color="info"),
                              id=id_download_processing_result),
                       dbc.Button("Go to visualisation", id=id_go_to_vis_tab,
-                                 n_clicks_timestamp=0, block=True, className="result_btn", color="success")],
+                                 n_clicks_timestamp=0, block=True, className="result_btn", color="success", style={"visibility": "hidden"})],
                       className="col-md-3 offset-md-1")]
 
     ))
@@ -645,14 +645,14 @@ _poagraph_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - a closer view on g
                                                                            style={'width': 'auto',
                                                                                   'height': '500px',
                                                                                   'background-color': 'white'},
-                                                                           zoom=1,
-                                                                           # minZoom=0.9,
-                                                                           # maxZoom=1.1,
+                                                                           zoom=20,
+                                                                           minZoom=0.9,
+                                                                           maxZoom=1.1,
                                                                            # panningEnabled=False,
                                                                            # userPanningEnabled=False,
                                                                            boxSelectionEnabled=False,
                                                                            # autoungrabify=True,
-                                                                           # autolock=True,
+                                                                           autolock=True,
                                                                            autounselectify=True
                                                                            ), type="circle")), width=10)], className="vis_row")
 

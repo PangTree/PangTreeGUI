@@ -6,8 +6,8 @@ from ..layout.colors import colors
 import plotly.graph_objs as go
 import pandas as pd
 
-from poapangenome.consensus.ConsensusTree import ConsensusNodeID
-from poapangenome.output.PangenomeJSON import PangenomeJSON, ConsensusNode
+from pangtreebuild.consensus.ConsensusTree import ConsensusNodeID
+from pangtreebuild.output.PangenomeJSON import PangenomeJSON, ConsensusNode
 import networkx as nx
 from networkx.readwrite import json_graph
 
@@ -110,7 +110,7 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
                                              showticklabels=False,)),
                   yaxis=go.layout.YAxis(dict(range=[0, 100], showline=False, zeroline=False, showgrid=False,
                                              showticklabels=False,)),
-                  margin=dict(l=0, r=0, b=0, t=0),
+                  margin=dict(l=20, r=10, b=0, t=0),
                   hovermode='closest',
                   plot_bgcolor=colors['transparent'],
                   autosize=True,

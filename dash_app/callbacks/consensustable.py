@@ -34,7 +34,6 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
     table_without_consensuses_smaller_than_slider = consensustable.remove_smaller_than_slider(full_consensustable_data,
                                                                                               full_consensustree_tree,
                                                                                               slider_value)
-    # tu dołożyć ewentualne zmiany wynikające z innych elementów Input/State
     return tools.jsonify_df(table_without_consensuses_smaller_than_slider)
 
 @app.callback(

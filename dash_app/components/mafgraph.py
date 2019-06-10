@@ -1,6 +1,6 @@
 from typing import Dict, Union, Any, Tuple, List
 
-from poapangenome.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.output.PangenomeJSON import PangenomeJSON
 from ..layout.colors import colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]

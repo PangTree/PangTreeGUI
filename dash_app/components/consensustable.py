@@ -3,8 +3,8 @@ import io
 from collections import deque
 from typing import List, Dict
 import matplotlib.pyplot as plt
-from poapangenome.consensus.ConsensusTree import ConsensusNodeID
-from poapangenome.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.consensus.ConsensusTree import ConsensusNodeID
+from pangtreebuild.output.PangenomeJSON import PangenomeJSON
 from dash_app.components import consensustree
 import pandas as pd
 import networkx as nx

@@ -4,26 +4,26 @@ from typing import Union, Optional
 
 import dash_html_components as html
 
-from poapangenome.consensus import simple_tree_generator, tree_generator
-from poapangenome.consensus.cutoffs import MAX2, NODE3
-from poapangenome.datamodel.DataType import DataType
-from poapangenome.datamodel.Poagraph import Poagraph
-from poapangenome.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
-from poapangenome.datamodel.fasta_providers.FromNCBI import FromNCBI
-from poapangenome.output.PangenomeFASTA import poagraph_to_fasta, consensuses_tree_to_fasta
-from poapangenome.output.PangenomeJSON import to_PangenomeJSON, to_json, PangenomeJSON, TaskParameters
-from poapangenome.output.PangenomePO import poagraph_to_PangenomePO
-from poapangenome.tools import logprocess
+from pangtreebuild.consensus import simple_tree_generator, tree_generator
+from pangtreebuild.consensus.cutoffs import MAX2, NODE3
+from pangtreebuild.datamodel.DataType import DataType
+from pangtreebuild.datamodel.Poagraph import Poagraph
+from pangtreebuild.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
+from pangtreebuild.datamodel.fasta_providers.FromNCBI import FromNCBI
+from pangtreebuild.output.PangenomeFASTA import poagraph_to_fasta, consensuses_tree_to_fasta
+from pangtreebuild.output.PangenomeJSON import to_PangenomeJSON, to_json, PangenomeJSON, TaskParameters
+from pangtreebuild.output.PangenomePO import poagraph_to_PangenomePO
+from pangtreebuild.tools import logprocess
 
 from dash_app.components import tools
 import time
 
 from pathlib import Path
 
-from poapangenome.consensus.input_types import Blosum, ConsensusInputError, Hbmin, Stop, P
-from poapangenome.datamodel.fasta_providers.FastaProvider import FastaProviderException
-from poapangenome.datamodel.fasta_providers.FromFile import FromFile
-from poapangenome.datamodel.input_types import Maf, InputError, Po, MissingSymbol, MetadataCSV
+from pangtreebuild.consensus.input_types import Blosum, ConsensusInputError, Hbmin, Stop, P
+from pangtreebuild.datamodel.fasta_providers.FastaProvider import FastaProviderException
+from pangtreebuild.datamodel.fasta_providers.FromFile import FromFile
+from pangtreebuild.datamodel.input_types import Maf, InputError, Po, MissingSymbol, MetadataCSV
 
 
 def multialignment_file_is_valid(multialignment_content: str, filename: str) -> str:

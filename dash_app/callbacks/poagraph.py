@@ -2,7 +2,6 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_app.components import poagraph
 import dash
-import dash_html_components as html
 from ..components import tools, visualisation
 from ..layout.layout_ids import *
 

@@ -1,6 +1,6 @@
 from typing import Dict
 
-from poapangenome.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.output.PangenomeJSON import PangenomeJSON
 
 
 def get_data(jsonpangenome: PangenomeJSON) -> Dict[str, str]:

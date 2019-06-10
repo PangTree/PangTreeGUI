@@ -7,12 +7,11 @@ from typing import Dict, Union, Any, Optional
 from base64 import b64decode
 import jsonpickle
 import pandas as pd
-from poapangenome.output import PangenomeJSON
+from pangtreebuild.output import PangenomeJSON
 import uuid
 from io import StringIO
 
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
-    # return jsonpickle.decode(jsonified_pangenome)
     return PangenomeJSON.str_to_PangenomeJSON(jsonified_pangenome)
 
 

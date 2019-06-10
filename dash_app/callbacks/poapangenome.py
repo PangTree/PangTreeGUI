@@ -8,13 +8,13 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from poapangenome.consensus.input_types import Blosum, Hbmin, Stop, P
-from poapangenome.datamodel.DataType import DataType
-from poapangenome.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
-from poapangenome.datamodel.fasta_providers.FromFile import FromFile
-from poapangenome.datamodel.fasta_providers.FromNCBI import FromNCBI
-from poapangenome.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
-from poapangenome.output.PangenomeJSON import to_json
+from pangtreebuild.consensus.input_types import Blosum, Hbmin, Stop, P
+from pangtreebuild.datamodel.DataType import DataType
+from pangtreebuild.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
+from pangtreebuild.datamodel.fasta_providers.FromFile import FromFile
+from pangtreebuild.datamodel.fasta_providers.FromNCBI import FromNCBI
+from pangtreebuild.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
+from pangtreebuild.output.PangenomeJSON import to_json
 
 from ..components import tools
 from dash_app.components import processing

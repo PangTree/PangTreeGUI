@@ -1,6 +1,6 @@
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
-from poapangenome.output.PangenomeJSON import TaskParameters, PangenomeJSON
+from pangtreebuild.output.PangenomeJSON import TaskParameters, PangenomeJSON
 from ..components import tools
 import os
 from pathlib import Path
