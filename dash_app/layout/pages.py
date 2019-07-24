@@ -45,9 +45,9 @@ def index():
     return dbc.Container(
         html.Div([
             dbc.Jumbotron(children=[dbc.Row(
-                [dbc.Col([html.H2("PoaPangenome"),
+                [dbc.Col([html.H2("PangTreeBuild"),
                           html.P("is a tool for multiple sequence alignment analysis."),
-                          html.H2("PangViz"),
+                          html.H2("PangTreeVis"),
                           html.P("visualises the results in browser.")
                           ],
                          className="col-md-8"),
@@ -145,7 +145,7 @@ def package():
                           dbc.Card(dbc.CardBody(dcc.Markdown('''
 
                           
-                          from poapangenome import Poagraph, input_types, fasta_provider, consensus
+                          from pangtreebuild import Poagraph, input_types, fasta_provider, consensus
 
                           poagraph = Poagraph.build_from_dagmaf(input_types.Maf("example.maf"), 
                                                                 fasta_provider.FromNCBI())
@@ -159,7 +159,7 @@ def package():
                           ''')), style={"margin": '30px 0px', 'padding': '10px'}),
                           dbc.Row("or used as a CLI tool:"),
                           dbc.Card(dbc.CardBody(dcc.Markdown(
-                              '''poapangenome --multialignment "example.maf" --consensus tree --p 1 --stop 1''')),
+                              '''pangtreebuild --multialignment "example.maf" --consensus tree --p 1 --stop 1''')),
                               style={"margin": '30px 0px', 'padding': '10px'}),
                           dbc.Row("Check out full documentation at the above links.")
                           ]
@@ -168,62 +168,62 @@ def package():
 
 def tools():
     return html.Div([
-        dbc.Jumbotron(children=[dbc.Row(
-            [dbc.Col(dbc.Card(
-                [
-                    dbc.CardBody(
-                        [
-                            dbc.CardText(
-                                html.Ul([html.Li(
-                                    [html.Span(html.I(className="fas fa-file"), className="fa-li"), "multialignment ",
-                                     html.A("MAF",
-                                            href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
-                                            target="_blank"), " or ",
-                                     html.A("PO",
-                                            href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
-                                            target="_blank")]),
-                                    html.Li([html.Span(html.I(className="fas fa-file"), className="fa-li"),
-                                             "metadata CSV"]),
-                                    html.Li([html.Span(html.I(className="fas fa-sliders-h"), className="fa-li"),
-                                             "additional parameters"])], className="fa-ul")
-                            )
-                        ]
-                    ),
-                ], outline=True
-            ), className="col-md-2 offset-md-1"),
-                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
-                        className="col-md-1 my-auto text-center"),
-                dbc.Col(html.H2(dbc.Badge("PoaPangenome", className="page_elem badge-pill")),
-                        className="col-md-2 my-auto"),
-                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
-                        className="col-md-1 my-auto text-center"),
-                dbc.Col(dbc.Card(
-                    [
-                        dbc.CardBody(
-                            [
-                                dbc.CardText(dbc.Row(
-                                    [
-                                        dbc.Col(html.I(className="fas fa-file"), className="col-md-3"),
-                                        dbc.Col("pangenome.json"),
-                                    ],
-                                    align="center",
-                                    no_gutters=True,
-                                ))
-                            ]
-                        ),
-                    ]
-                ), className="col-md-2 my-auto"),
-                dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
-                        className="col-md-1 my-auto text-center"),
-                dbc.Col(html.H2(dbc.Badge("PangViz", className="page_elem badge-pill badge-block")),
-                        className="col-md-2 my-auto"),
-            ]
-        )]),
+        # dbc.Jumbotron(children=[dbc.Row(
+        #     [dbc.Col(dbc.Card(
+        #         [
+        #             dbc.CardBody(
+        #                 [
+        #                     dbc.CardText(
+        #                         html.Ul([html.Li(
+        #                             [html.Span(html.I(className="fas fa-file"), className="fa-li"), "multialignment ",
+        #                              html.A("MAF",
+        #                                     href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+        #                                     target="_blank"), " or ",
+        #                              html.A("PO",
+        #                                     href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+        #                                     target="_blank")]),
+        #                             html.Li([html.Span(html.I(className="fas fa-file"), className="fa-li"),
+        #                                      "metadata CSV"]),
+        #                             html.Li([html.Span(html.I(className="fas fa-sliders-h"), className="fa-li"),
+        #                                      "additional parameters"])], className="fa-ul")
+        #                     )
+        #                 ]
+        #             ),
+        #         ], outline=True
+        #     ), className="col-md-2 offset-md-1"),
+        #         dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
+        #                 className="col-md-1 my-auto text-center"),
+        #         dbc.Col(html.H2(dbc.Badge("PoaPangenome", className="page_elem badge-pill")),
+        #                 className="col-md-2 my-auto"),
+        #         dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
+        #                 className="col-md-1 my-auto text-center"),
+        #         dbc.Col(dbc.Card(
+        #             [
+        #                 dbc.CardBody(
+        #                     [
+        #                         dbc.CardText(dbc.Row(
+        #                             [
+        #                                 dbc.Col(html.I(className="fas fa-file"), className="col-md-3"),
+        #                                 dbc.Col("pangenome.json"),
+        #                             ],
+        #                             align="center",
+        #                             no_gutters=True,
+        #                         ))
+        #                     ]
+        #                 ),
+        #             ]
+        #         ), className="col-md-2 my-auto"),
+        #         dbc.Col(html.I(className="fas fa-long-arrow-alt-right fa-3x"),
+        #                 className="col-md-1 my-auto text-center"),
+        #         dbc.Col(html.H2(dbc.Badge("PangViz", className="page_elem badge-pill badge-block")),
+        #                 className="col-md-2 my-auto"),
+        #     ]
+        # )]),
         dbc.Tabs(
             [
-                dbc.Tab(_poapangenome_tab_content, id=id_poapangenome_tab, label="PoaPangenome",
+                dbc.Tab(_poapangenome_tab_content, id=id_poapangenome_tab, label="PangTreeBuild",
                         tab_style={"margin-left": "auto"}, className="tools_tab"),
-                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangViz", label_style={"color": "#00AEF9"}, className="tools_tab"),
+                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangTreeVis", label_style={"color": "#00AEF9"}, className="tools_tab"),
             ], className="nav-justified",
             id=id_tools_tabs,
         )
@@ -241,7 +241,8 @@ _data_type_form = dbc.FormGroup(
                      color="secondary",
                  )], width=6)
     ],
-    row=True
+    row=True,
+    style={"display": "none"}
 )
 
 _metadata_upload_form = dbc.FormGroup(
@@ -253,7 +254,7 @@ _metadata_upload_form = dbc.FormGroup(
                                 dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-2x"),
                                                  className="col-md-2"),
                                          html.P(
-                                             "Drag & drop CSV metadata file or select file...",
+                                             "Drag & drop or select file...",
                                              className="col-md-10")])
 
                             ], className="file_upload"),
@@ -284,7 +285,7 @@ _multialignment_upload_form = dbc.FormGroup(
                                 dbc.Row([dbc.Col(html.I(className="fas fa-align-justify fa-2x"),
                                                  className="col-md-2"),
                                          html.P(
-                                             "Drag & drop multialignment file or select file...",
+                                             "Drag & drop or select file...",
                                              className="col-md-10")])
 
                             ], className="file_upload"),
@@ -348,7 +349,7 @@ _missing_data_form = dbc.Collapse([dbc.FormGroup(
                                     dbc.Row([dbc.Col(html.I(className="fas fa-align-left fa-2x"),
                                                      className="col-md-2"),
                                              html.P(
-                                                 "Drag & drop FASTA/ZIP file or select file..",
+                                                 "Drag & drop or select file...",
                                                  className="col-md-10")])
 
                                 ], className="file_upload"),
@@ -395,7 +396,7 @@ _blosum_upload_form = dbc.FormGroup(
                                 dbc.Row([dbc.Col(html.I(className="fas fa-table fa-2x"),
                                                  className="col-md-2"),
                                          html.P(
-                                             "Drag & drop BLOSUM file or select file...",
+                                             "Drag & drop or select file...",
                                              className="col-md-10")])
 
                             ], className="file_upload"),
@@ -494,59 +495,42 @@ _poapangenome_tab_content = html.Div([
                     dbc.Col(dbc.Button("Run", id=id_pang_button, color="primary", className="offset-md-5 col-md-4 ")),
                     dbc.Col(dcc.Loading(id="l2", children=html.Div(id=id_running_indicator), type="default")))
             ], className="col-md-6 offset-md-1", id='poapangenome_form'),
-        dbc.Col([
-            html.H3("Example Input Data"),
-            dbc.Card(
-                [
-                    dbc.CardHeader(
-                        dbc.Button("Simulated", id="collapse_fabricated_button",
-                                   className="mb-3 btn-block my-auto opac-button")),
-                    dbc.Collapse(
-                        id="fabricated_collapse",
-                        children=
-                        dbc.CardBody(
-                            [
-                                dbc.CardText(["This dataset is very small and consists of fabricated sequences."
-                                              "Its aim is to demonstrate how the processing and visualisation works",
-                                              html.Button("a", className="btn btn-primary btn-block dataset")]),
-                            ]
-                        )),
-                ]
-            ),
-            dbc.Card(
-                [
-                    dbc.CardHeader(
-                        dbc.Button("Ebola", id="collapse-ebola-button",
-                                   className="mb-3 btn-block my-auto opac-button")),
-                    dbc.Collapse(
-                        id="ebola_collapse",
-                        children=dbc.CardBody(
-                            [
-                                dbc.CardText(["This dataset orginates from ", html.A("UCSC Ebola Portal",
-                                                                                     href="https://genome.ucsc.edu/ebolaPortal/",
-                                                                                     target="_blank")]),
-                            ]
-                        ))
-                ],
-            ),
-            # dbc.Card(
-            #     [
-            #         dbc.CardHeader(
-            #             dbc.Button("Balibase", id="collapse-balibase-button",
-            #                        className="mb-3 btn-block my-auto opac-button")),
-            #         dbc.Collapse(
-            #             id="balibase_collapse",
-            #             children=dbc.CardBody(
-            #                 [
-            #                     dbc.CardText(["This is a multiplwe protein sequence alignment. It is based on ",
-            #                                   html.A("BAliBASE 4", href="http://www.lbgi.fr/balibase/",
-            #                                          target="_align")]),
-            #                 ]
-            #             )),
-            #     ],
-            # ),
-
-        ], className="col-md-3 offset-md-1")
+        # dbc.Col([
+        #     html.H3("Example Input Data"),
+        #     dbc.Card(
+        #         [
+        #             dbc.CardHeader(
+        #                 dbc.Button("Simulated", id="collapse_fabricated_button",
+        #                            className="mb-3 btn-block my-auto opac-button")),
+        #             dbc.Collapse(
+        #                 id="fabricated_collapse",
+        #                 children=
+        #                 dbc.CardBody(
+        #                     [
+        #                         dbc.CardText(["This dataset is very small and consists of fabricated sequences."
+        #                                       "Its aim is to demonstrate how the processing and visualisation works",
+        #                                       html.Button("a", className="btn btn-primary btn-block dataset")]),
+        #                     ]
+        #                 )),
+        #         ]
+        #     ),
+        #     dbc.Card(
+        #         [
+        #             dbc.CardHeader(
+        #                 dbc.Button("Ebola", id="collapse-ebola-button",
+        #                            className="mb-3 btn-block my-auto opac-button")),
+        #             dbc.Collapse(
+        #                 id="ebola_collapse",
+        #                 children=dbc.CardBody(
+        #                     [
+        #                         dbc.CardText(["This dataset orginates from ", html.A("UCSC Ebola Portal",
+        #                                                                              href="https://genome.ucsc.edu/ebolaPortal/",
+        #                                                                              target="_blank")]),
+        #                     ]
+        #                 ))
+        #         ],
+        #     ),
+        # ], className="col-md-3 offset-md-1")
     ], className="poapangenome_content"),
     dbc.Collapse(id=id_poapangenome_result, children=dbc.Row(
         children=[dbc.Col([dbc.Row([html.I(id=id_result_icon), html.H3("Task completed!", className="next_to_icon")]),
@@ -573,17 +557,15 @@ _load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
                                                                       "Drag & drop pangenome.json file or select file..",
                                                                       className="col-md-10")])
 
-                                                     ], className="file_upload"), width={"size": 4, "offset": 1}),
-                                  dbc.Col("or", id=id_or, width=2),
-                                  dbc.Col(dbc.DropdownMenu(
-                                      id=id_examples_dropdown,
-                                      label="load example data",
-                                      children=[
-                                          dbc.DropdownMenuItem("Fabricated", id=id_pangviz_example_fabricated),
-                                          dbc.DropdownMenuItem("Ebola", id_pangviz_example_ebola),
-                                          # dbc.DropdownMenuItem("Ballibase", id=id_pangviz_example_ballibase),
-                                      ], bs_size="lg"
-                                  ), width=4)
+                                                     ], className="file_upload"), width={"size": 4, "offset": 4}),
+                                  # dbc.Col("or", id=id_or, width=2),
+                                  # dbc.Col(dbc.DropdownMenu(
+                                  #     id=id_examples_dropdown,
+                                  #     label="load example data",
+                                  #     children=[
+                                  #         dbc.DropdownMenuItem("Ebola", id_pangviz_example_ebola),
+                                  #     ], bs_size="lg"
+                                  # ), width=4)
 
                               ])
 
@@ -613,7 +595,7 @@ _input_data_row = dbc.Row(style={'display':'none'},children=[dbc.Col(html.Div(id
                                                                               autounselectify=True), type="circle")]
                                                      ))])
 
-_pangenome_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - Cut Width statistic"), width=12),
+_pangenome_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - Cut Width statistic"), width=12),
                                    dbc.Col([html.P("Representation of full poagraph as Cut Width statistics."),
                                             html.P("Cut Width - edges count between two consecutive columns."),
                                             html.I(id="arrow_icon",
@@ -623,15 +605,15 @@ _pangenome_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - Cut Width statist
                                                     style={'visibility': 'hidden'},
                                                     children=[dcc.Loading(dcc.Graph(
                                                         id=id_full_pangenome_graph,
-                                                        style={'width': 'auto'},
-                                                        # style={'height': '400px', 'width': 'auto'},
+                                                        # style={'width': 'auto'},
+                                                        style={'height': '200px', 'width': 'auto'},
                                                         figure={},
                                                         config={
                                                             'displayModeBar': False,
                                                         }
                                                     ), type="circle")]), width=10)], className="vis_row")
 
-_poagraph_row = dbc.Row(children=[dbc.Col(html.H4("PoaGraph - a closer view on graph details"), width=12),
+_poagraph_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - a closer view on graph details"), width=12),
                                   dbc.Col([html.P(
                                       "This is a visualisation of pangenome internal representation as a PoaGraph"),
                                            html.Div(id=id_poagraph_node_info)], width=2),

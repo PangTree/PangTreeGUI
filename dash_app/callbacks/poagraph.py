@@ -7,10 +7,11 @@ from ..layout.layout_ids import *
 
 from ..server import app
 from time import time
+from ..app import draw_poagraph
 @app.callback(Output(id_full_pangenome_graph, 'figure'),
               [Input(id_pangenome_upload, 'contents')])
 def get_full_pangenome_graph(pangenome_upload_contents):
-    if not pangenome_upload_contents:
+    if not pangenome_upload_contents or not draw_poagraph:
         raise PreventUpdate()
     jsonpangenome = visualisation.read_pangenome_upload(pangenome_upload_contents)
     return poagraph.get_pangenome_figure_faster(jsonpangenome)
@@ -27,7 +28,7 @@ def update_pangenome_hash(pangenome_upload_contents):
               [Input(id_visualisation_session_info, 'data')],
               [State(id_elements_cache_info, 'data')])
 def update_elements_cache_info(visualisation_session_info, elements_cache_info):
-    if not visualisation_session_info:
+    if not visualisation_session_info or not draw_poagraph:
         raise PreventUpdate()
     if elements_cache_info:
         poagraph.remove_elements_data_faster(elements_cache_info)
@@ -42,7 +43,7 @@ def update_elements_cache_info(visualisation_session_info, elements_cache_info):
               [State(id_pangenome_upload, 'contents'),
                State(id_poagraph, 'elements')])
 def get_poagraph_elements(elements_cache_info, relayout_data, pangenome_upload_contents, poagraph_elements):
-    if not dash.callback_context.triggered or not elements_cache_info or not pangenome_upload_contents or not relayout_data:
+    if not dash.callback_context.triggered or not elements_cache_info or not pangenome_upload_contents or not relayout_data or not draw_poagraph:
         raise PreventUpdate
     trigger = dash.callback_context.triggered[0]
     if trigger['prop_id'] == id_elements_cache_info+'.data':

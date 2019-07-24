@@ -90,7 +90,8 @@ def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[ConsensusNodeID, int]:
 
 def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_value: str, full_consensustable: pd.DataFrame) -> go.Figure:
     node_id_to_y = get_node_id_to_y_pos(tree)
-    labels_on_hover = [f'min_comp: {tree.nodes[node_id]["mincomp"]}' for node_id in range(len(node_id_to_y))]
+    minCompsLabels = [format(tree.nodes[node_id]["mincomp"], '.4f') for node_id in range(len(node_id_to_y))]
+    labels_on_hover = [f'{minCompLabel}' for minCompLabel in minCompsLabels]
     labels = [f"{node_id}" for node_id in range(len(node_id_to_y))]
     positions = [(tree.nodes[node_id]["mincomp"], node_id_to_y[node_id]) for node_id in range(len(node_id_to_y))]
 
@@ -135,6 +136,7 @@ def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: 
                       y=[y for [_, y] in positions],
                       mode='markers',
                       name='',
+                      textposition='top left',
                       marker=dict(symbol='circle',
                                   size=20,
                                   color='rgba(255, 255, 255, 1)',
@@ -143,7 +145,7 @@ def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: 
                                   ),
                       text=labels_on_hover,
                       hoverinfo='text',
-                      opacity=0.8)
+                      opacity=1)
 
 
 def get_tree_lines_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph) -> go.Scatter:
@@ -172,6 +174,7 @@ def get_tree_nodes_annotations(positions: List[Tuple[float, float]], labels: Lis
 def get_leaf_label(sequences_ids: List[int], leaf_info_value: str, full_consensustable: pd.DataFrame) -> str:
     return ", ".join([str(l) for l in set(full_consensustable[leaf_info_value].loc[full_consensustable["ID"].isin(sequences_ids)])])
 
+
 def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph, leaf_info_value: str,
                           full_consensustable: pd.DataFrame) -> go.Scatter:
     x = []
@@ -180,7 +183,7 @@ def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph
     for i in range(len(tree.nodes)):
         if not tree.nodes[i]['is_leaf']:
             continue
-        x.append(positions[i][0] + 0.01)
+        x.append(positions[i][0] + 0.02)
         y.append(positions[i][1])
         text.append(get_leaf_label(sequences_ids=tree.nodes[i]['sequences_ids'],
                                    leaf_info_value=leaf_info_value,
@@ -194,9 +197,9 @@ def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph
         textposition='middle right',
         hoverinfo='none',
         marker=dict(symbol='line-ew-open',
-                    size=10,
+                    size=3,
                     color='black',
-                    line=dict(color='rgb(50,50,50)', width=0.7),
+                    line=dict(color='rgb(50,50,50)', width=0),
                     )
     )
 

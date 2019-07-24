@@ -18,7 +18,7 @@ for css in external_css:
     app.css.append_css({"external_url": css})
 
 app.config.suppress_callback_exceptions = True
-
+draw_poagraph = True
 app.layout = html.Div(
     [dcc.Location(id=layout_ids.id_url, refresh=False),
      dbc.Navbar(
