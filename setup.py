@@ -1,0 +1,46 @@
+import setuptools
+
+
+setuptools.setup(
+    name='pangtreevis',
+    version='0.1dev',
+    author="Paulina Dziadkiewicz",
+    author_email="pedziadkiewicz@gmail.com",
+    description="Multiple sequence alignment analysis with Affinity Tree generation",
+    url="https://github.com/meoke/pangtreevis",
+    packages=setuptools.find_packages(exclude=("tests",)),
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+        "Topic :: Scientific/Engineering :: Bio-Informatics"
+    ],
+    install_requires=['biopython',
+                      'dash',
+                      'biopython',
+                      'dash',
+                      'dash-bootstrap-components',
+                      'dash-core-components',
+                      'dash-cytoscape',
+                      'dash-html-components',
+                      'dash-renderer',
+                      'dash-table',
+                      'Flask',
+                      'Flask-Compress',
+                      'Flask-Session',
+                      'jsonpickle',
+                      'matplotlib',
+                      'networkx',
+                      'numpy',
+                      'pandas',
+                      'pangtreebuild',
+                      'plotly',
+                      'scipy',
+                      'seaborn',
+                      'six',
+                      'newick'],
+    license='MIT Licence',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
+    include_package_data=True
+)

@@ -8,6 +8,17 @@ PangtreeVis is a web-browser tool. It enables direct calling [PangtreeBuild](htt
 * [Dash Plotly, Dash Bootstrap Components, Dash Core Components, Dash Cytoscape, Dash Table, Dash Html Components](https://plot.ly/products/dash/)
 * [Flask](http://flask.pocoo.org/)
 * [seaborn](https://seaborn.pydata.org/)
+* [pangtreebuild](https://github.com/meoke/pangtreebuild)
+
+### Installing
+
+Firstly make sure the [PangtreeBuild](https://github.com/meoke/pangtreebuild) package is installed. Then run:
+
+```
+python3 setup.py install
+```
+
+
 
 ## Usage
 

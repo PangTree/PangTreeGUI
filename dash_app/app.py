@@ -27,7 +27,7 @@ app.layout = html.Div(
                  dbc.Row(
                      [
                          dbc.Col(html.Img(src="assets/favicon.ico", height="30px")),
-                         dbc.Col(dbc.NavbarBrand("Pangenome Tools", className="ml-2")),
+                         dbc.Col(dbc.NavbarBrand("Pangtree", className="ml-2")),
                      ],
                      align="center",
                      no_gutters=True,
