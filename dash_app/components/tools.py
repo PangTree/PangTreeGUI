@@ -3,9 +3,8 @@ import shutil
 from datetime import datetime
 import json
 from pathlib import Path
-from typing import Dict, Union, Any, Optional
+from typing import Any, Optional
 from base64 import b64decode
-import jsonpickle
 import pandas as pd
 from pangtreebuild.output import PangenomeJSON
 import uuid

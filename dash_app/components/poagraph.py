@@ -369,17 +369,13 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
     d = {"sn": sequences_nodes,
          "e": edges,
          "cw": columns}
-    # session[user_session_elements_id] = d
     with open(user_session_elements_id, 'wb') as o:
         pickle.dump(d, o)
 
 
 def get_poagraph_elements_faster(elements_cache_info, relayout_data):
-    def recalc(x):
-        return x //  15
     with open(elements_cache_info, 'rb') as i:
         poagraph_elements = pickle.load(i)
-    # poagraph_elements = session[elements_cache_info]
     max_column_id = len(poagraph_elements["cw"])+1
     try:
         min_x = int(relayout_data['xaxis.range[0]'])
@@ -399,4 +395,3 @@ def get_poagraph_elements_faster(elements_cache_info, relayout_data):
         nodes = []
         edges = []
     return nodes + edges
-#

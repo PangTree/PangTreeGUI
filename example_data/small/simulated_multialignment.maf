@@ -1,0 +1,22 @@
+#maf version=1 scoring=roast.v3.3",
+a score=1
+s seq0 0 7 + 15 ACTGA-CG
+s seq1 0 7 + 16 AGTCG-CG
+s seq2 0 8 + 17 AGTTGTCG
+s seq3 0 7 + 17 CGTAGT-G
+s seq4 0 7 + 16 T-TTACAC
+s seq5 0 7 + 14 T-TGACAC
+
+a score=1
+s seq1 7 3 + 18 CTG
+s seq2 8 3 + 17 CCG
+s seq3 7 2 + 17 C-G
+s seq4 7 2 + 16 C-G
+
+a score=1
+s seq0 7 8 + 15 CTGGCACT
+s seq1 10 6 + 16 CTGG-AC-
+s seq2 11 6 + 17 -TGGGTA-
+s seq3 9 8 + 17 CGTAGTAT
+s seq4 9 7 + 16 T-ACACGC
+s seq5 7 7 + 14 T-AGACGC

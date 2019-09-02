@@ -106,7 +106,6 @@ def get_cell_styling_dict(consensus_colname, mincomp):
 
 def get_node_distribution_fig(node_id: ConsensusNodeID, full_consensustable: pd.DataFrame):
     x = full_consensustable[get_consensus_column_name(node_id)]
-    print(x)
     plt.figure()
     sns.kdeplot(x, shade=True, bw=.01, color=ColorConverter().to_rgba(colors['dark_background']))
     plt.title("Compatibility distribution")

@@ -1,10 +1,10 @@
 from dash.dependencies import Input, Output
 
 from dash_app.components import consensustable
-from ..components import tools
-from ..layout.layout_ids import *
-from ..components import consensustree
-from ..server import app
+from dash_app.components import tools
+from dash_app.layout.layout_ids import *
+from dash_app.components import consensustree
+from dash_app.server import app
 
 @app.callback(
     Output(id_full_consensustree_hidden, 'children'),
@@ -43,8 +43,7 @@ def to_consensustree_graph(jsonified_current_consensustree, slider_value, leaf_i
     current_consensustree_data = tools.unjsonify_builtin_types(jsonified_current_consensustree)
     current_consensustree_tree = consensustree.dict_to_tree(current_consensustree_data)
     full_consensustable_data = tools.unjsonify_df(jsonified_full_consensustable)
-    graph = consensustree.get_consensustree_graph(current_consensustree_tree, slider_value, leaf_info, full_consensustable_data)
-    return graph
+    return consensustree.get_consensustree_graph(current_consensustree_tree, slider_value, leaf_info, full_consensustable_data)
 
 @app.callback(
     Output(id_consensus_node_details_header, 'children'),
@@ -82,8 +81,7 @@ def to_consensusnode_details_content(jsonified_consensus_details_table):
     if not jsonified_consensus_details_table:
         return []
     consensus_details_table_data = tools.unjsonify_df(jsonified_consensus_details_table)
-    data_rows = consensus_details_table_data.to_dict("rows")
-    return data_rows
+    return consensus_details_table_data.to_dict("rows")
 
 @app.callback(
     Output(id_consensus_node_details_distribution, 'src'),
@@ -137,5 +135,4 @@ def to_consensustree_leaf_info_options_dropdown(jsonified_full_consensustable):
         return []
     full_consensustable = tools.unjsonify_df(jsonified_full_consensustable)
     metadata = consensustable.get_metadata_list(full_consensustable)
-    dropdown_options = consensustree.get_leaf_info_dropdown_options(metadata)
-    return dropdown_options
+    return consensustree.get_leaf_info_dropdown_options(metadata)

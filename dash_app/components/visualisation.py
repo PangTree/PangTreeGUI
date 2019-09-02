@@ -12,10 +12,6 @@ def get_task_params(task_parameters: TaskParameters):
             html.P(f"Input: {task_parameters.multialignment_file_path}")]
 
 
-def get_input_info(jsonpangenome):
-    return [html.H3("Input Info"), html.P("Coś o inpucie")]
-
-
 def read_pangenome_upload(upload_content) -> PangenomeJSON:
     if not upload_content:
         raise PreventUpdate()
