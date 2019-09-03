@@ -5,8 +5,7 @@ from ..server import app
 from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
 from ..layout.pages import get_task_description_layout
-from ..components import tools, visualisation, mafgraph, poagraph, consensustree, consensustable
-import dash_html_components as html
+from ..components import tools, poagraph
 
 
 @app.callback(
@@ -35,16 +34,6 @@ def show_task_parameters(jsonified_pangenome):
     jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     return get_task_description_layout(jsonpangenome)
 
-
-@app.callback(Output(id_input_info_vis, "children"),
-              [Input(id_pangenome_hidden, 'children')])
-def show_input_info(jsonified_pangenome):
-    if not jsonified_pangenome:
-        return []
-    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
-    return visualisation.get_input_info(jsonpangenome)
-
-
 @app.callback(
     Output(id_poagraph, 'stylesheet'),
     [Input(id_pangenome_hidden, 'children'),
@@ -61,10 +50,10 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
     current_consensuses_names = [column_name for column_name in list(partial_consensustable_data) if
                                  "CONSENSUS" in column_name]
     colors = poagraph.get_distinct_colors(len(jsonpangenome.consensuses))
-    s = poagraph.get_poagraph_stylesheet()
+    stylesheet = poagraph.get_poagraph_stylesheet()
     for i, consensus in enumerate(jsonpangenome.consensuses):
         if consensus.name in current_consensuses_names:
-            s.append(
+            stylesheet.append(
                 {
                     'selector': f'.c{consensus.name}',
                     'style': {
@@ -73,7 +62,7 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
                 }
             )
         else:
-            s.append(
+            stylesheet.append(
                 {
                     'selector': f'.c{consensus.name}',
                     'style': {
@@ -82,7 +71,4 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
                     }
                 }
             )
-    return s
-
-
-
+    return stylesheet

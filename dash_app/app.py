@@ -5,7 +5,7 @@ import dash_html_components as html
 from .server import app
 from .layout import layout_ids, pages
 
-app.title = 'PoaPangenome'
+app.title = 'PangtreeVis'
 # app.css.config.serve_locally = True
 # app.scripts.config.serve_locally = True
 
@@ -77,5 +77,5 @@ from .callbacks import consensustree
 from .callbacks import mafgraph
 from .callbacks import poagraph
 
-from .callbacks import poapangenome
+from .callbacks import pangtreebuild
 from .callbacks import visualisation
