@@ -109,3 +109,4 @@ venv.bak/
 *.xml
 /dash_app/cache/*
 /.fastacache/*
+/scripts
