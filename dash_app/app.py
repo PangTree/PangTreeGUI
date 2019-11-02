@@ -12,42 +12,34 @@ app.title = 'PangtreeVis'
 
 external_css = [
     'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
-    dbc.themes.FLATLY
+    # dbc.themes.FLATLY
 ]
 for css in external_css:
     app.css.append_css({"external_url": css})
 
 app.config.suppress_callback_exceptions = True
 draw_poagraph = True
-app.layout = html.Div(
-    [dcc.Location(id=layout_ids.id_url, refresh=False),
-     dbc.Navbar(
-         [
-             html.A(
-                 dbc.Row(
-                     [
-                         dbc.Col(html.Img(src="assets/favicon.ico", height="30px")),
-                         dbc.Col(dbc.NavbarBrand("Pangtree", className="ml-2")),
-                     ],
-                     align="center",
-                     no_gutters=True,
-                 ),
 
-                 href="/#",
-             ),
-             dbc.NavbarToggler(id="navbar-toggler"),
-             dbc.Collapse(dbc.Row(children=[
-                 dbc.Col(dbc.NavLink("Tools", href="/tools")),
-                 dbc.Col(dbc.NavLink("Package", href="/package")),
-                 dbc.Col(dbc.NavLink("Contact", href="/contact")),
-             ],
-                 no_gutters=True,
-                 className="ml-auto flex-nowrap mt-3 mt-md-0",
-                 align="center"), id="navbar-collapse", navbar=True)
-         ],
-         sticky="top",
-     ),
-     html.Div(id=layout_ids.id_page_content)])
+
+app.layout = html.Div([
+    dcc.Location(id=layout_ids.id_url, refresh=False),
+    html.Div([], className="area"),
+    dbc.Navbar([
+        html.Ul([
+            html.Li(html.A([html.I(className="fas fas-nav fa-home"), html.Span("Home", className="nav-text")],
+                           href="/#"), className="high"),
+            html.Li(html.A([html.I(className="fas fas-nav fa-seedling"), html.Span("Tools", className="nav-text")],
+                           href="/tools"), className="has-subnav high"),
+            # html.Li(html.A([html.I(className="fas fas-nav fa-tree"), html.Span("PangTreeVis", className="nav-text")],
+            #                href="/pangtreevis"), className="has-subnav high"),
+            html.Li(html.A([html.I(className="fas fas-nav fa-archive"), html.Span("Package", className="nav-text")],
+                           href="/package"), className="has-subnav high"),
+            html.Li(html.A([html.I(className="fas fas-nav fa-address-book"), html.Span("Contact", className="nav-text")],
+                           href="/contact"), className="has-subnav high"),
+        ])
+    ], className="main-menu", sticky="left"),
+    html.Div(id=layout_ids.id_page_content, style={'margin-left': '60px'})
+])
 
 @app.callback(
     Output("navbar-collapse", "is_open"),

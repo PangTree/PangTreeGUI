@@ -119,9 +119,9 @@ a{
 }
 
 
-.navbar, .jumbotron{
+/*.navbar, .jumbotron{
     background-color: rgba(221, 226, 233, 1) !important;
-}
+}*/
 
 .rc-slider-handle, .rc-slider-dot-active, .tools_tab{
     border-color: var(--accent);

@@ -11,34 +11,26 @@ from ..components import poagraph as poagraph_component
 
 
 def contact():
-    return dbc.Container(
-        [
-            dbc.Card(
-                [
-                    dbc.CardBody(
-                        [
-                            dbc.CardTitle("Norbert Dojer, PhD.", className="text-info"),
-                            dbc.CardText(html.P("dojer@mimuw.edu.pl")),
-                        ]
-                    ),
-                ],
-                outline=True,
-                color="info"
-            ),
-            dbc.Card(
-                [
-                    dbc.CardBody(
-                        [
-                            dbc.CardTitle("Paulina Dziadkiewicz, M.Sc.", className="text-info"),
-                            dbc.CardText("pedziadkiewicz@gmail.com"),
-                        ]
-                    )
-                ],
-                outline=True,
-                color="info",
-            )
-        ]
-    )
+    return dbc.Container([
+        dbc.Card([
+            dbc.CardBody([
+                html.H5("Norbert Dojer, PhD.", className="card-title text-info"),
+                html.P("dojer@mimuw.edu.pl", className='card-text'),
+            ]),
+        ], outline=True, color="info"),
+        dbc.Card([
+            dbc.CardBody([
+                html.H5("Paulina Dziadkiewicz, M.Sc.", className="card-title text-info"),
+                html.P("pedziadkiewicz@gmail.com", className='card-text'),
+            ])
+        ], outline=True, color="info"),
+        dbc.Card([
+            dbc.CardBody([
+                html.H5("Paulina Knut, B.Sc.", className="card-title text-info"),
+                html.P("paulina.knut@gmail.com", className='card-text'),
+            ])
+        ], outline=True, color="info")
+    ])
 
 
 def index():
@@ -138,7 +130,8 @@ def index():
 
 def package():
     return dbc.Container([dbc.Row(html.Span(["The underlying software is available at ",
-                                             html.A("GitHub", href="https://github.com/meoke/pangtree", target="_blank"),
+                                             html.A("GitHub", href="https://github.com/meoke/pangtree",
+                                                    target="_blank"),
                                              # " and ",
                                              # html.A("PyPI", href="", target="_blank"),
                                              ". It can be incorporated into your Python application in this simple way:"])),
@@ -172,7 +165,8 @@ def tools():
             [
                 dbc.Tab(_poapangenome_tab_content, id=id_poapangenome_tab, label="PangtreeBuild",
                         tab_style={"margin-left": "auto"}, className="tools_tab"),
-                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangtreeVis", label_style={"color": "#00AEF9"}, className="tools_tab"),
+                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangtreeVis", label_style={"color": "#00AEF9"},
+                        className="tools_tab"),
             ], className="nav-justified",
             id=id_tools_tabs,
         )
@@ -385,10 +379,11 @@ _tree_params_form = dbc.Collapse([dbc.FormGroup([
     dbc.Col([dbc.Input(value=1, type='number', min=0,
                        id=id_p_input),
              dbc.FormText(
-                 ["P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0. ",
-                         html.A("Read more...",
-                                href="https://github.com/meoke/pangtree",
-                                target="_blank")],
+                 [
+                     "P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0. ",
+                     html.A("Read more...",
+                            href="https://github.com/meoke/pangtree",
+                            target="_blank")],
                  color="secondary",
              )], width=6)
 ],
@@ -421,16 +416,16 @@ _output_form = dbc.FormGroup(
 )
 
 _poapangenome_form = dbc.Form([
-                               _data_type_form,
-                               _metadata_upload_form,
-                               _multialignment_upload_form,
-                               _missing_data_form,
-                               _blosum_upload_form,
-                               _consensus_algorithm_form,
-                               _poa_hbmin_form,
-                               _tree_params_form,
-                               _output_form
-                               ])
+    _data_type_form,
+    _metadata_upload_form,
+    _multialignment_upload_form,
+    _missing_data_form,
+    _blosum_upload_form,
+    _consensus_algorithm_form,
+    _poa_hbmin_form,
+    _tree_params_form,
+    _output_form
+])
 
 _poapangenome_tab_content = html.Div([
     dcc.Store(id=id_session_state),
@@ -473,12 +468,13 @@ _poapangenome_tab_content = html.Div([
                         children=dbc.CardBody(
                             [
                                 html.P(["This dataset orginates from ", html.A("UCSC Ebola Portal",
-                                                                                     href="https://genome.ucsc.edu/ebolaPortal/",
-                                                                                     target="_blank")], className='card-text'),
+                                                                               href="https://genome.ucsc.edu/ebolaPortal/",
+                                                                               target="_blank")],
+                                       className='card-text'),
                                 html.P([html.A(
-                             href="https://github.com/meoke/pangtree/blob/master/data/Ebola/multialignment.maf",
-                             target="_blank",
-                             children="See example file...")], className='card-text'),
+                                    href="https://github.com/meoke/pangtree/blob/master/data/Ebola/multialignment.maf",
+                                    target="_blank",
+                                    children="See example file...")], className='card-text'),
                             ]
                         ))
                 ],
@@ -493,7 +489,8 @@ _poapangenome_tab_content = html.Div([
                       html.A(dbc.Button("Download result files", block=True, className="result_btn", color="info"),
                              id=id_download_processing_result),
                       dbc.Button("Go to visualisation", id=id_go_to_vis_tab,
-                                 n_clicks_timestamp=0, block=True, className="result_btn", color="success", style={"visibility": "hidden"})],
+                                 n_clicks_timestamp=0, block=True, className="result_btn", color="success",
+                                 style={"visibility": "hidden"})],
                       className="col-md-3 offset-md-1")]
 
     ))
@@ -515,29 +512,31 @@ _load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
 
 _task_parameters_row = dbc.Row(id=id_task_parameters_row,
                                children=html.Div([html.Div(html.H3("Task parameters"), className="panel-heading"),
-                                                  dcc.Loading(html.Div(id=id_task_parameters_vis, className="panel-body"), type="circle")],
+                                                  dcc.Loading(
+                                                      html.Div(id=id_task_parameters_vis, className="panel-body"),
+                                                      type="circle")],
                                                  ),
                                className="vis_row")
 
-_input_data_row = dbc.Row(style={'display':'none'},children=[
-                                    dbc.Col(html.Div(id=id_input_dagmaf_vis,
-                                                     children=[html.H3("MAF graph"),
-                                                               dcc.Loading(cyto.Cytoscape(id=id_mafgraph_graph,
-                                                                              elements=[],
-                                                                              layout={'name': 'cose'},
-                                                                              autoRefreshLayout=True,
-                                                                              style={'width': 'auto',
-                                                                                     'height': '350px'},
-                                                                              zoom=1,
-                                                                              # style={'width': 'auto',
-                                                                              #        'height': '300px'},
-                                                                              stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
-                                                                              # autolock=True,
-                                                                              boxSelectionEnabled=False,
-                                                                              # autoungrabify=True,
-                                                                              autounselectify=True),
-                                                                           type="circle")]
-                                                     ))])
+_input_data_row = dbc.Row(style={'display': 'none'}, children=[
+    dbc.Col(html.Div(id=id_input_dagmaf_vis,
+                     children=[html.H3("MAF graph"),
+                               dcc.Loading(cyto.Cytoscape(id=id_mafgraph_graph,
+                                                          elements=[],
+                                                          layout={'name': 'cose'},
+                                                          autoRefreshLayout=True,
+                                                          style={'width': 'auto',
+                                                                 'height': '350px'},
+                                                          zoom=1,
+                                                          # style={'width': 'auto',
+                                                          #        'height': '300px'},
+                                                          stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
+                                                          # autolock=True,
+                                                          boxSelectionEnabled=False,
+                                                          # autoungrabify=True,
+                                                          autounselectify=True),
+                                           type="circle")]
+                     ))])
 
 _pangenome_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - Cut Width statistic"), width=12),
                                    dbc.Col([html.P("Representation of full poagraph as Cut Width statistics."),
@@ -560,89 +559,93 @@ _pangenome_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - Cut Width statis
 _poagraph_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - a closer view on graph details"), width=12),
                                   dbc.Col([html.P(
                                       "This is a visualisation of pangenome internal representation as a PoaGraph"),
-                                           html.Div(id=id_poagraph_node_info)], width=2),
+                                      html.Div(id=id_poagraph_node_info)], width=2),
                                   dbc.Col(html.Div(id=id_poagraph_container,
                                                    children=dcc.Loading(cyto.Cytoscape(id=id_poagraph,
-                                                                           layout={
-                                                                               'name': 'preset'},
-                                                                           stylesheet=poagraph_component.get_poagraph_stylesheet(),
-                                                                           elements=[
-                                                                           ],
-                                                                           style={'width': 'auto',
-                                                                                  'height': '500px',
-                                                                                  'background-color': 'white'},
-                                                                           zoom=20,
-                                                                           # minZoom=0.9,
-                                                                           # maxZoom=1.1,
-                                                                           # panningEnabled=False,
-                                                                           # userPanningEnabled=False,
-                                                                           boxSelectionEnabled=False,
-                                                                           # autoungrabify=True,
-                                                                           autolock=True,
-                                                                           autounselectify=True
-                                                                           ), type="circle")), width=10)], className="vis_row")
+                                                                                       layout={
+                                                                                           'name': 'preset'},
+                                                                                       stylesheet=poagraph_component.get_poagraph_stylesheet(),
+                                                                                       elements=[
+                                                                                       ],
+                                                                                       style={'width': 'auto',
+                                                                                              'height': '500px',
+                                                                                              'background-color': 'white'},
+                                                                                       zoom=20,
+                                                                                       # minZoom=0.9,
+                                                                                       # maxZoom=1.1,
+                                                                                       # panningEnabled=False,
+                                                                                       # userPanningEnabled=False,
+                                                                                       boxSelectionEnabled=False,
+                                                                                       # autoungrabify=True,
+                                                                                       autolock=True,
+                                                                                       autounselectify=True
+                                                                                       ), type="circle")), width=10)],
+                        className="vis_row")
 
 _affinity_tree_row = dbc.Row(children=[dbc.Col([html.H4("Affinity Tree")], width=12),
                                        dbc.Col([html.P(
-                                            "This is affinity tree generated using this software. It is similar to a phylogenetic tree but every node has a consensus sequence assigned.")],
-                                                width=2),
+                                           "This is affinity tree generated using this software. It is similar to a phylogenetic tree but every node has a consensus sequence assigned.")],
+                                           width=2),
                                        dbc.Col([dcc.Graph(
-                                            id=id_consensus_tree_graph,
-                                            style={'height': '600px', 'width': 'auto'},
-                                            config={
-                                                    'displayModeBar': True
-                                                },
+                                           id=id_consensus_tree_graph,
+                                           style={'height': '600px', 'width': 'auto'},
+                                           config={
+                                               'displayModeBar': True
+                                           },
 
-                                            # style={'width': 'auto'}
-                                        ),
-                                            html.Div(dcc.Slider(
-                                                id=id_consensus_tree_slider,
-                                                min=0,
-                                                max=1,
-                                                marks={
-                                                    int(i) if i % 1 == 0 else i: '{}'.format(i)
-                                                    for i
-                                                    in
-                                                    [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
-                                                     0.9,
-                                                     1]},
-                                                step=0.01,
-                                                value=0.5,
-                                                dots=True
-                                            ), style={"margin": '-1% 20% 0% 3%'})], width=7, id="consensus_tree_col"),
+                                           # style={'width': 'auto'}
+                                       ),
+                                           html.Div(dcc.Slider(
+                                               id=id_consensus_tree_slider,
+                                               min=0,
+                                               max=1,
+                                               marks={
+                                                   int(i) if i % 1 == 0 else i: '{}'.format(i)
+                                                   for i
+                                                   in
+                                                   [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8,
+                                                    0.9,
+                                                    1]},
+                                               step=0.01,
+                                               value=0.5,
+                                               dots=True
+                                           ), style={"margin": '-1% 20% 0% 3%'})], width=7, id="consensus_tree_col"),
                                        dbc.Col(children=[html.H5("Metadata in affinity tree leaves:"),
-                                                          dcc.Dropdown(
-                                                              id=id_leaf_info_dropdown,
-                                                              style={'margin-bottom': '20px'},
-                                                              options=[
-                                                              ],
-                                                              value='SEQID'
-                                                          ),
-                                                          html.H5(["Affinity tree node details:",html.P(
-                                                              id=id_consensus_node_details_header
-                                                          ),]),
+                                                         dcc.Dropdown(
+                                                             id=id_leaf_info_dropdown,
+                                                             style={'margin-bottom': '20px'},
+                                                             options=[
+                                                             ],
+                                                             value='SEQID'
+                                                         ),
+                                                         html.H5(["Affinity tree node details:", html.P(
+                                                             id=id_consensus_node_details_header
+                                                         ), ]),
 
-                                                          html.Img(
-                                                              id=id_consensus_node_details_distribution,
-                                                              style={'max-width': '100%', 'margin-bottom':'2%'}
-                                                          ),
-                                                          dcc.Loading(dash_table.DataTable(
-                                                              id=id_consensus_node_details_table,
-                                                              style_table={
-                                                                  'maxHeight': '800',
-                                                                  'overflowY': 'scroll'
-                                                              },
-                                                              style_cell={'textAlign': 'left'},
-                                                              sorting=True
-                                                          ), type="circle")], width=3)], className="vis_row")
+                                                         html.Img(
+                                                             id=id_consensus_node_details_distribution,
+                                                             style={'max-width': '100%', 'margin-bottom': '2%'}
+                                                         ),
+                                                         dcc.Loading(dash_table.DataTable(
+                                                             id=id_consensus_node_details_table,
+                                                             style_table={
+                                                                 'maxHeight': '800',
+                                                                 'overflowY': 'scroll'
+                                                             },
+                                                             style_cell={'textAlign': 'left'},
+                                                             sorting=True
+                                                         ), type="circle")], width=3)], className="vis_row")
 
 _consensus_table_row = dbc.Row(children=[dbc.Col(html.H4("Consensuses on current cut level"), width=12),
-                                  dbc.Col(html.Div(id=id_consensus_table_container,
-                                                   children=dcc.Loading(dash_table.DataTable(id=id_consensuses_table,
-                                                                       sorting=True,
-                                                                       sorting_type="multi"), type="circle")), width=12, style={'overflow-x': 'scroll'})], className="vis_row")
+                                         dbc.Col(html.Div(id=id_consensus_table_container,
+                                                          children=dcc.Loading(
+                                                              dash_table.DataTable(id=id_consensuses_table,
+                                                                                   sorting=True,
+                                                                                   sorting_type="multi"),
+                                                              type="circle")), width=12,
+                                                 style={'overflow-x': 'scroll'})], className="vis_row")
 
-loading_style="circle"
+loading_style = "circle"
 _pangviz_tab_content = dbc.Container([
     dcc.Store(id=id_visualisation_session_info, data=""),
     dcc.Store(id=id_elements_cache_info, data=""),
