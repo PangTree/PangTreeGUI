@@ -175,246 +175,174 @@ def tools():
     ])
 
 
-_data_type_form = dbc.FormGroup(
-    [
-        dbc.Label("Data Type", html_for=id_data_type, width=3, className="poapangenome_label"),
-        dbc.Col([dbc.RadioItems(value="Nucleotides", options=[{"label": "Nucleotides", "value": "Nucleotides"},
-                                                              {"label": "Aminoacids", "value": "Proteins"}],
-                                id=id_data_type),
-                 dbc.FormText(
-                     "Type of aligned sequences provided in the uploaded multialignment file.",
-                     color="secondary",
-                 )], width=6)
+def pang_task_form(label, label_id, form, text, extra_label_id=None):
+    form_group_children = [
+        dbc.Label(label, html_for=label_id, width=3, className="poapangenome_label"),
+        dbc.Col(form + [dbc.FormText(text, color="secondary")], width=6)
+    ]
+    if extra_label_id: form_group_children.append(dbc.Label(id=extra_label_id, width=3, className="poapangenome_label"))
+
+    return dbc.FormGroup(form_group_children, row=True)
+
+
+_data_type_form = pang_task_form(
+    label_id=id_data_type,
+    label="Data Type",
+    form=[
+        dbc.RadioItems(value="Nucleotides",
+                       id=id_data_type,
+                       options=[{"label": l, "value": v}
+                                for l, v in [("Nucleotides", "Nucleotides"), ("Proteins", "Aminoacids")]])
     ],
-    row=True,
-    style={"display": "none"}
+    text="Type of aligned sequences provided in the uploaded multialignment file."
 )
 
-_metadata_upload_form = dbc.FormGroup(
-    [
-        dbc.Label("Sequences metadata", html_for=id_metadata_upload, width=3, className="poapangenome_label"),
-        dbc.Col([dcc.Upload(id=id_metadata_upload,
-                            multiple=False,
-                            children=[
-                                dbc.Row([dbc.Col(html.I(className="fas fa-file-csv fa-2x"),
-                                                 className="col-md-2"),
-                                         html.P(
-                                             "Drag & drop or select file...",
-                                             className="col-md-10")])
-
-                            ], className="file_upload"),
-                 dcc.Store(id=id_metadata_upload_state),
-                 dbc.FormText(
-                     [
-                         "CSV with sequences metadata. It will be included in the visualisation. "
-                         "The 'seqid' column is obligatory and must match"
-                         " sequences identifiers from MULTIALIGNMENT file. "
-                         "Other columns are optional. Example file: ",
-                         html.A("metadata.csv",
-                                href="https://github.com/meoke/pangtree/blob/master/data/Fabricated/f_metadata.csv",
-                                target="_blank")],
-                     color="secondary",
-                 )
-                 ], width=6),
-        dbc.Label(id=id_metadata_upload_state_info, width=3, className="poapangenome_label")
+_metadata_upload_form = pang_task_form(
+    label_id=id_metadata_upload,
+    label="Sequences metadata",
+    extra_label_id=id_metadata_upload_state_info,
+    form=[
+        dcc.Upload(id=id_metadata_upload, multiple=False, children=[
+            dbc.Row([
+                dbc.Col(html.I(className="fas fa-file-csv fa-2x"), className="col-md-2"),
+                html.P("Drag & drop or select file...", className="col-md-10")
+            ])
+        ], className="file_upload"),
+        dcc.Store(id=id_metadata_upload_state)
     ],
-    row=True
+    text=[
+        """CSV with sequences metadata. It will be included in the visualisation. The 'seqid' column is obligatory and 
+        must match sequences identifiers from MULTIALIGNMENT file. Other columns are optional. Example file: """,
+        html.A("metadata.csv",
+               href="https://github.com/meoke/pang/blob/master/data/Fabricated/f_metadata.csv",
+               target="_blank")],
 )
 
-_multialignment_upload_form = dbc.FormGroup(
-    [
-        dbc.Label("Multialignment", html_for=id_multialignment_upload, width=3, className="poapangenome_label"),
-        dbc.Col([dcc.Upload(id=id_multialignment_upload,
-                            multiple=False,
-                            children=[
-                                dbc.Row([dbc.Col(html.I(className="fas fa-align-justify fa-2x"),
-                                                 className="col-md-2"),
-                                         html.P(
-                                             "Drag & drop or select file...",
-                                             className="col-md-10")])
-
-                            ], className="file_upload"),
-                 dcc.Store(id=id_multialignment_upload_state),
-                 dbc.FormText(
-                     [
-                         "Accepted formats: ",
-                         html.A(
-                             href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
-                             target="_blank", children="maf"), ", ",
-                         html.A(
-                             href="https://github.com/meoke/pangtree/blob/master/Documentation.md#po-file-format-specification",
-                             target="_blank", children="po"),
-                         ". See example file: ",
-                         html.A(
-                             href="https://github.com/meoke/pangtree/blob/master/data/Ebola/multialignment.maf",
-                             target="_blank",
-                             children="example.maf")],
-                     color="secondary",
-                 )
-                 ], width=6),
-        dbc.Label(id=id_multialignment_upload_state_info, width=3, className="poapangenome_label")
+_multialignment_upload_form = pang_task_form(
+    label_id=id_multialignment_upload,
+    label="Multialignment",
+    extra_label_id=id_multialignment_upload_state_info,
+    form=[
+        dcc.Upload(id=id_multialignment_upload, multiple=False, children=[
+            dbc.Row([
+                dbc.Col(html.I(className="fas fa-align-justify fa-2x"), className="col-md-2"),
+                html.P("Drag & drop or select file...", className="col-md-10")
+            ])
+        ], className="file_upload"),
+        dcc.Store(id=id_multialignment_upload_state),
     ],
-    row=True
+    text=["Accepted formats: ",
+          html.A(href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+                 target="_blank",
+                 children="maf"),
+          ", ",
+          html.A(href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+                 target="_blank",
+                 children="po"),
+          ". See example file: ",
+          html.A(href="https://github.com/meoke/pang/blob/master/data/Fabricated/f.maf",
+                 target="_blank",
+                 children="example.maf")],
 )
 
-_missing_data_form = dbc.Collapse([dbc.FormGroup(
-    [
-        dbc.Label("Missing nucleotides source", html_for=id_fasta_provider_choice, width=3,
-                  className="poapangenome_label"),
-        dbc.Col([dbc.RadioItems(value="NCBI", options=[{'label': "NCBI", 'value': 'NCBI'},
-                                                       {'label': 'Fasta File',
-                                                        'value': 'File'},
-                                                       {'label': 'Custom symbol',
-                                                        'value': 'Symbol'}],
-                                id=id_fasta_provider_choice),
-                 dbc.FormText(
-                     "MAF file may not include full sequences. Specify source of missing nucleotides.",
-                     color="secondary",
-                 )], width=6)
-    ],
-    row=True
-), dbc.Collapse(id=id_missing_symbol_param, children=[dbc.FormGroup(
-    children=[
-        dbc.Label("Missing symbol for unknown nucleotides", html_for=id_fasta_provider_choice,
-                  width=3, className="poapangenome_label"),
-        dbc.Col([dbc.Input(value="?",
-                           id=id_missing_symbol_input, type='text', maxLength=1, minLength=1),
-                 dbc.FormText(
-                     "Any single character is accepted but it must be present in BLOSUM file. Default BLOSUM file uses '?'.",
-                     color="secondary",
-                 )], width=6)], row=True
-)]),
-    dbc.Collapse(id=id_fasta_upload_param, children=[dbc.FormGroup(
-        children=[
-            dbc.Label("Missing symbols file source", html_for=id_fasta_provider_choice,
-                      width=3, className="poapangenome_label"),
-            dbc.Col([dcc.Upload(id=id_fasta_upload,
-                                multiple=False,
-                                children=[
-                                    dbc.Row([dbc.Col(html.I(className="fas fa-align-left fa-2x"),
-                                                     className="col-md-2"),
-                                             html.P(
-                                                 "Drag & drop or select file...",
-                                                 className="col-md-10")])
-
-                                ], className="file_upload"),
-                     dcc.Store(id=id_fasta_upload_state),
-                     dbc.FormText(
-                         [
-                             "Provide zip with fasta files or single fasta file. It must contain all full sequeneces which are not fully represented in provided MAF file."],
-                         color="secondary",
-                     )
-                     ], width=6),
-            dbc.Label(id=id_fasta_upload_state_info, width=3, className="poapangenome_label")], row=True
-    )])
+_missing_data_form = dbc.Collapse([
+    pang_task_form(
+        label_id=id_fasta_provider_choice,
+        label="Missing nucleotides source",
+        form=[dbc.RadioItems(value="NCBI",
+                             options=[{"label": l, "value": v}
+                                      for l, v in [("NCBI", "NCBI"), ("Fasta File", "File"), ("Custom symbol", "Symbol")]],
+                             id=id_fasta_provider_choice)],
+        text="MAF file may not inlcude full sequences. Specify source of missing nucleotides/proteins."
+    ),
+    dbc.Collapse(id=id_missing_symbol_param, children=pang_task_form(
+        label_id=id_fasta_provider_choice,
+        label="Missing symbol for unknown nucleotides/proteins",
+        form=[dbc.Input(value="?", id=id_missing_symbol_input, type='text', maxLength=1, minLength=1)],
+        text="Any single character is accepted but it must be present in BLOSUM file. Default BLOSUM file uses '?'."
+    )),
+    dbc.Collapse(id=id_fasta_upload_param, children=pang_task_form(
+        label_id=id_fasta_provider_choice,
+        label="Missing symbols file source",
+        extra_label_id=id_fasta_upload_state_info,
+        form=[
+            dcc.Upload(id=id_fasta_upload, multiple=False, children=[
+                dbc.Row([
+                    dbc.Col(html.I(className="fas fa-align-left fa-2x"),className="col-md-2"),
+                    html.P("Drag & drop or select file...", className="col-md-10")
+                ])
+            ], className="file_upload"),
+            dcc.Store(id=id_fasta_upload_state)
+        ],
+        text="""Provide zip with fasta files or single fasta file. It must contain full sequeneces which are not 
+        fully represented in provided MAF file."""
+    ))
 ], id=id_maf_specific_params)
 
-_consensus_algorithm_form = dbc.FormGroup(
-    [
-        dbc.Label("Affinity tree algorithm", html_for=id_data_type, width=3, className="poapangenome_label"),
-        dbc.Col([dbc.RadioItems(value="tree", options=[
-            {'label': "Poa", 'value': 'poa'},
-            {'label': 'Tree', 'value': 'tree'},
-        ],
-                                id=id_consensus_algorithm_choice),
-                 dbc.FormText(
-                     [
-                         "There are two available algorithms for affinity tree generation. 'Poa' by ",
-                         html.A(
-                             "Lee et al.",
-                             href="https://doi.org/10.1093/bioinformatics/btg109"),
-                         " and 'Tree' algorithm described ",
-                         html.A("here",
-                                href="https://github.com/meoke/pangtree/blob/master/Documentation.md#idea-and-algorithm-description")],
-                     color="secondary",
-                 )], width=6)
+_consensus_algorithm_form = pang_task_form(
+    label_id=id_data_type,
+    label="Consensus algorithm",
+    form=[
+        dbc.RadioItems(value="tree",
+                       options=[{'label': "Poa", 'value': 'poa'}, {'label': 'Tree', 'value': 'tree'}],
+                       id=id_consensus_algorithm_choice)
     ],
-    row=True
+    text=["There are two available algorithms for consensus tree generation. 'Poa' by ",
+          html.A("Lee et al.", href="https://doi.org/10.1093/bioinformatics/btg109"),
+          " and 'Tree' algorithm described ",
+          html.A("here", href="https://github.com/meoke/pang#idea-and-algorithm-description")]
 )
 
-_blosum_upload_form = dbc.FormGroup(
-    [
-        dbc.Label("BLOSUM", html_for=id_blosum_upload, width=3, className="poapangenome_label"),
-        dbc.Col([dcc.Upload(id=id_blosum_upload,
-                            multiple=False,
-                            children=[
-                                dbc.Row([dbc.Col(html.I(className="fas fa-table fa-2x"),
-                                                 className="col-md-2"),
-                                         html.P(
-                                             "Drag & drop or select file...",
-                                             className="col-md-10")])
-
-                            ], className="file_upload"),
-                 dcc.Store(id=id_blosum_upload_state),
-                 dbc.FormText(
-                     [
-                         "This parameter is optional as default BLOSUM file is ", html.A(
-                         href="https://github.com/meoke/pangtree/blob/master/bin/blosum80.mat",
-                         target="_blank", children="BLOSUM80"),
-                         ". The BLOSUM matrix must contain '?' or the custom symbol for missing nucleotides, if specified."],
-                     color="secondary",
-                 )
-                 ], width=6),
-        dbc.Label(id=id_blosum_upload_state_info, width=3, className="poapangenome_label")
+_blosum_upload_form = pang_task_form(
+    label_id=id_blosum_upload,
+    label="BLOSUM",
+    extra_label_id=id_blosum_upload_state_info,
+    form=[
+        dcc.Upload(id=id_blosum_upload,
+                   multiple=False,
+                   children=[dbc.Row([
+                       dbc.Col(html.I(className="fas fa-table fa-2x"), className="col-md-2"),
+                       html.P("Drag & drop or select file...", className="col-md-10")])], className="file_upload"),
+        dcc.Store(id=id_blosum_upload_state)
     ],
-    row=True
+    text=["This parameter is optional as default BLOSUM file is ",
+          html.A(href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat", target="_blank", children="BLOSUM80"),
+          ". The BLOSUM matrix must contain '?' or the custom symbol for missing nucleotides, if specified."]
 )
 
-_poa_hbmin_form = dbc.Collapse([dbc.FormGroup(
-    [
-        dbc.Label("HBMIN", html_for=id_hbmin_input, width=3,
-                  className="poapangenome_label"),
-        dbc.Col([dbc.Input(value=0.9, type='number', min=0, max=1,
-                           id=id_hbmin_input),
-                 dbc.FormText(
-                     "HBMIN is required minimum value of similarity between sequence and assigned consensus. It must be a value  from range [0,1].",
-                     color="secondary",
-                 )], width=6)
-    ],
-    row=True
-)
-], id=id_poa_specific_params)
+_poa_hbmin_form = dbc.Collapse(pang_task_form(
+    label_id=id_hbmin_input,
+    label="HBMIN",
+    form=[dbc.Input(value=0.9, type='number', min=0, max=1, id=id_hbmin_input)],
+    text="""HBMIN is required minimum value of similarity between sequence and assigned consensus. It must be a value 
+    from range [0,1]."""
+), id=id_poa_specific_params)
 
-_tree_params_form = dbc.Collapse([dbc.FormGroup([
-    dbc.Label("P", html_for=id_hbmin_input, width=3,
-              className="poapangenome_label"),
-    dbc.Col([dbc.Input(value=1, type='number', min=0,
-                       id=id_p_input),
-             dbc.FormText(
-                 [
-                     "P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0. ",
-                     html.A("Read more...",
-                            href="https://github.com/meoke/pangtree",
-                            target="_blank")],
-                 color="secondary",
-             )], width=6)
-],
-    row=True), dbc.FormGroup([
-    dbc.Label("Stop", html_for=id_hbmin_input, width=3,
-              className="poapangenome_label"),
-    dbc.Col([dbc.Input(value=1, type='number', min=0, max=1,
-                       id=id_stop_input),
-             dbc.FormText(
-                 "Minimum value of compatibility in affinity tree leaves. It must be a value  from range [0,1].",
-                 color="secondary",
-             )], width=6)
-],
-    row=True)], id=id_tree_specific_params)
+_tree_params_form = dbc.Collapse([
+    pang_task_form(
+        label_id=id_hbmin_input,
+        label="P",
+        form=[dbc.Input(value=1, type='number', min=0, id=id_p_input)],
+        text=["""P is used during cutoff search. P < 1 decreases distances between small compatibilities and increases 
+        distances between the bigger ones while P > 1 works in the opposite way. This value must be > 0. """,
+              html.A("Read more...", href="https://github.com/meoke/pang", target="_blank")]
+    ),
+    pang_task_form(
+        label_id=id_hbmin_input,
+        label="Stop",
+        form=[dbc.Input(value=1, type='number', min=0, max=1, id=id_stop_input)],
+        text="Minimum value of compatibility in tree leaves. It must be a value  from range [0,1]."
+    )
+], id=id_tree_specific_params)
 
-_output_form = dbc.FormGroup(
-    [
-        dbc.Label("Additional output generation", html_for=id_output_configuration, width=3,
-                  className="poapangenome_label"),
-        dbc.Col([dbc.Checklist(id=id_output_configuration,
-                               options=[
-                                   {
-                                       'label': 'FASTA (all sequences and consensuses in fasta format)',
-                                       'value': 'fasta'},
-                                   {'label': 'PO (poagraph in PO format)', 'value': 'po'},
-                               ],
-                               values=['fasta', 'po'])], width=6)
-        ,
-    ], row=True
+_output_form = pang_task_form(
+    label_id=id_output_configuration,
+    label="Additional output generation",
+    form=[dbc.Checklist(id=id_output_configuration,
+                        options=[{'label': 'FASTA (all sequences and consensuses in fasta format)', 'value': 'fasta'},
+                                 {'label': 'PO (poagraph in PO format)', 'value': 'po'}],
+                        values=['fasta', 'po'])],
+    text=""
 )
 
 _poapangenome_form = dbc.Form([
@@ -443,23 +371,6 @@ _poapangenome_tab_content = html.Div([
             ], className="col-md-6 offset-md-1", id='poapangenome_form'),
         dbc.Col([
             html.H3("Example Input Data"),
-            # dbc.Card(
-            #     [
-            #         dbc.CardHeader(
-            #             dbc.Button("Simulated", id="collapse_simulated_button",
-            #                        className="mb-3 btn-block my-auto opac-button")),
-            #         dbc.Collapse(
-            #             id="simulated_collapse",
-            #             children=
-            #             dbc.CardBody(
-            #                 [
-            #                     dbc.CardText(["This dataset is very small and consists of simulated sequences."
-            #                                   "Its aim is to demonstrate how the processing and visualisation works",
-            #                                   html.Button("a", className="btn btn-primary btn-block dataset")]),
-            #                 ]
-            #             )),
-            #     ]
-            # ),
             dbc.Card(
                 [
                     dbc.CardHeader(
