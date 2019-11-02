@@ -25,17 +25,21 @@ app.layout = html.Div([
     html.Div([], className="area"),
     dbc.Navbar([
         html.Ul([
-            html.Li(html.A([html.I(className="fas fas-nav fa-home"), html.Span("Home", className="nav-text")],
+            html.Li(html.A([html.I(className="fas fas-nav fa-home"),
+                            html.Span("Home", className="nav-text")],
                            href="/#"), className="high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-seedling"), html.Span("PangTreeBuild", className="nav-text")],
+            html.Li(html.A([html.I(className="fas fas-nav fa-seedling"),
+                            html.Span("PangTreeBuild", className="nav-text")],
                            href="/pangtreebuild"), className="has-subnav high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-tree"), html.Span("PangTreeVis", className="nav-text")],
+            html.Li(html.A([html.I(className="fas fas-nav fa-tree"),
+                            html.Span("PangTreeVis", className="nav-text")],
                            href="/pangtreevis"), className="has-subnav high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-archive"), html.Span("Package", className="nav-text")],
+            html.Li(html.A([html.I(className="fas fas-nav fa-archive"),
+                            html.Span("Package", className="nav-text")],
                            href="/package"), className="has-subnav high"),
-            html.Li(
-                html.A([html.I(className="fas fas-nav fa-address-book"), html.Span("Contact", className="nav-text")],
-                       href="/contact"), className="has-subnav high"),
+            html.Li(html.A([html.I(className="fas fas-nav fa-address-book"),
+                            html.Span("Contact", className="nav-text")],
+                           href="/contact"), className="has-subnav high"),
         ])
     ], className="main-menu", sticky="left"),
     html.Div(id=layout_ids.id_page_content, style={'margin-left': '60px'})
