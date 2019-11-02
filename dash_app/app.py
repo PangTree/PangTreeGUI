@@ -20,7 +20,6 @@ for css in external_css:
 app.config.suppress_callback_exceptions = True
 draw_poagraph = True
 
-
 app.layout = html.Div([
     dcc.Location(id=layout_ids.id_url, refresh=False),
     html.Div([], className="area"),
@@ -34,22 +33,24 @@ app.layout = html.Div([
             #                href="/pangtreevis"), className="has-subnav high"),
             html.Li(html.A([html.I(className="fas fas-nav fa-archive"), html.Span("Package", className="nav-text")],
                            href="/package"), className="has-subnav high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-address-book"), html.Span("Contact", className="nav-text")],
-                           href="/contact"), className="has-subnav high"),
+            html.Li(
+                html.A([html.I(className="fas fas-nav fa-address-book"), html.Span("Contact", className="nav-text")],
+                       href="/contact"), className="has-subnav high"),
         ])
     ], className="main-menu", sticky="left"),
     html.Div(id=layout_ids.id_page_content, style={'margin-left': '60px'})
 ])
 
-@app.callback(
-    Output("navbar-collapse", "is_open"),
-    [Input("navbar-toggler", "n_clicks")],
-    [State("navbar-collapse", "is_open")],
-)
-def toggle_navbar_collapse(n, is_open):
-    if n:
-        return not is_open
-    return is_open
+
+# @app.callback(
+#     Output("navbar-collapse", "is_open"),
+#     [Input("navbar-toggler", "n_clicks")],
+#     [State("navbar-collapse", "is_open")],
+# )
+# def toggle_navbar_collapse(n, is_open):
+#     if n:
+#         return not is_open
+#     return is_open
 
 
 @app.callback(Output(layout_ids.id_page_content, 'children'),
@@ -63,6 +64,7 @@ def display_page(pathname):
         return pages.contact()
     else:
         return pages.index()
+
 
 from .callbacks import consensustable
 from .callbacks import consensustree

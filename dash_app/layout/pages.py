@@ -36,104 +36,106 @@ def contact():
 def index():
     return dbc.Container(
         html.Div([
-            dbc.Jumbotron(children=[dbc.Row(
-                [dbc.Col([html.H2("PangtreeBuild"),
-                          html.P("is a tool for multiple sequence alignment analysis."),
-                          html.H2("PangtreeVis"),
-                          html.P("visualises the results of PangtreeBuild in browser.")
-                          ],
-                         className="col-md-8"),
-                 dbc.Col(html.I(className="fas fa-seedling fa-10x logo"), className="col-md-4")])]),
-            dbc.Row(
-                dbc.CardDeck(
-                    [
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(dbc.Row([dbc.Col(html.I(className="fas fa-bezier-curve fa-2x"),
-                                                                className="col-md-3 my-auto"),
-                                                        html.P(
-                                                            "Build graph representation of multiple sequence alignment",
-                                                            className="col-md-9 my-auto")])),
-                                dbc.CardBody(
-                                    [
-                                        dbc.CardText(
-                                            html.Ul([html.Li(
-                                                ["Input formats: ",
-                                                 html.A("MAF",
-                                                        href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
-                                                        target="_blank"), ", ",
-                                                 html.A("PO",
-                                                        href="https://github.com/meoke/pangtree/blob/master/Documentation.md#po-file-format-specification",
-                                                        target="_blank")]),
-                                                html.Li(["Internal representation: ", html.A("Partial Order graph",
-                                                                                             href="https://doi.org/10.1093/bioinformatics/18.3.452",
-                                                                                             target="_blank")]),
-                                                html.Li(["Cycles in graph removed with ", html.A("Mafgraph",
-                                                                                                 href="https://github.com/anialisiecka/Mafgraph",
-                                                                                                 target="_blank")]),
-                                                html.Li("Complement missing parts from NCBI or fasta")]))
-                                    ]
-                                ),
-                            ]
-                        ),
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(dbc.Row([dbc.Col(html.I(className="fas fa-grip-lines fa-2x"),
-                                                                className="col-md-3 my-auto"),
-                                                        html.P("Find sequences consensus",
-                                                               className="col-md-9 my-auto")])),
-                                dbc.CardBody(
-                                    [
-                                        dbc.CardText(
-                                            ["This tool extends Partial Order Alignment (POA) algorithm introduced by ",
-                                             html.A("Lee et al.",
-                                                    href="https://doi.org/10.1093/bioinformatics/18.3.452",
-                                                    target="_blank"), ". It provides:",
-                                             html.Ul([html.Li([html.Strong("Consensuses"),
-                                                               " - agreed representations of input subsets"]),
-                                                      html.Li([html.Strong("Affinity Tree"),
-                                                               " - a structure similar to phylogenetic tree but it has a consensus assigned to every node"]),
-                                                      html.Li([html.Strong("Compatibility"),
-                                                               " - a measure of similarity between sequence and consensus"])])
-                                             ]),
-                                    ]
-                                ),
-                            ]
-                        ),
-                        dbc.Card(
-                            [
-                                dbc.CardHeader(dbc.Row([dbc.Col(html.I(className="fas fa-eye fa-2x"),
-                                                                className="col-md-3 my-auto"),
-                                                        html.P("Visualise results",
-                                                               className="col-md-9 my-auto")])),
-                                dbc.CardBody(
-                                    [
-                                        dbc.CardText(
-                                            [
-                                                html.Ul([
-                                                    # html.Li("MAF blocks graph"),
-                                                    html.Li("Multiple sequence alignment as Partial Order Graph"),
-                                                    html.Li("Affinity tree"),
-                                                    html.Li("Compatibilities relations")]
-                                                )])
-                                    ]
-                                ),
-                            ]
-                        ),
-                    ]
-                )
-            )
-
+            dbc.Row([
+                dbc.Col([
+                    html.A(href="/pangtreebuild",
+                           children=html.Img(className="tools-logo circle-img",
+                                             src="https://s3.amazonaws.com/media-p.slid.es/uploads/1047434/images/6497196/pasted-from-clipboard.png")),
+                    html.Div([
+                        html.H4('PangTreeBuild'),
+                        html.P("tool for multiple sequence alignment analysis.")
+                    ], style={"line-height": "40px"}),
+                ], className='tools-logo'),
+                dbc.Col([
+                    html.A(href="/pangtreevis",
+                           children=html.Img(className="tools-logo circle-img",
+                                             src="https://s3.amazonaws.com/media-p.slid.es/uploads/1047434/images/6497198/pasted-from-clipboard.png")),
+                    html.Div([
+                        html.H4('PangTreeVis'),
+                        html.P("visualises the results in browser.")
+                    ], style={"line-height": "40px"}),
+                ], className='tools-logo')
+            ]),
+            dbc.Row(dbc.CardDeck([
+                dbc.Card([
+                    dbc.CardHeader(dbc.Row([
+                        dbc.Col(html.I(className="fas fa-bezier-curve fa-2x"), className="col-md-3 my-auto"),
+                        html.P("Build graph representation of multiple sequence alignment", className="col-md-9 my-auto")
+                    ])),
+                    dbc.CardBody([
+                        html.P(html.Ul([
+                            html.Li([
+                                "Input formats: ",
+                                html.A("MAF",
+                                       href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html#format5",
+                                       target="_blank"),
+                                ", ",
+                                html.A("PO",
+                                       href="https://github.com/meoke/pang/blob/master/README.md#po-file-format-specification",
+                                       target="_blank")
+                            ]),
+                            html.Li([
+                                "Internal representation: ",
+                                html.A("Partial Order graph",
+                                       href="https://doi.org/10.1093/bioinformatics/18.3.452",
+                                       target="_blank")
+                            ]),
+                            html.Li([
+                                "Cycles in graph removed with ",
+                                html.A("Mafgraph",
+                                       href="https://github.com/anialisiecka/Mafgraph",
+                                       target="_blank")
+                            ]),
+                            html.Li("Complement missing parts from NCBI or fasta")]), className='card-text')
+                    ]),
+                ]),
+                dbc.Card([
+                    dbc.CardHeader(dbc.Row([
+                        dbc.Col(html.I(className="fas fa-grip-lines fa-2x"), className="col-md-3 my-auto"),
+                        html.P("Find sequences consensus", className="col-md-9 my-auto")
+                    ])),
+                    dbc.CardBody([
+                        html.P([
+                            "This tool extends Partial Order Alignment (POA) algorithm introduced by ",
+                            html.A("Lee et al.",
+                                   href="https://doi.org/10.1093/bioinformatics/18.3.452",
+                                   target="_blank"),
+                            ". It provides:",
+                            html.Ul([
+                                html.Li([
+                                    html.Strong("Consensuses"),
+                                    " - agreed representations of input subsets"]),
+                                html.Li([
+                                    html.Strong("Consensus Tree"),
+                                    " - a structure similar to phylogenetic tree but it has a consensus assigned to every node"]),
+                                html.Li([
+                                    html.Strong("Compatibility"),
+                                    " - a measure of similarity between sequence and consensus"])])
+                        ], className='card-text'),
+                    ]),
+                ]),
+                dbc.Card([
+                    dbc.CardHeader(dbc.Row([
+                        dbc.Col(html.I(className="fas fa-eye fa-2x"), className="col-md-3 my-auto"),
+                        html.P("Visualise results", className="col-md-9 my-auto")
+                    ])),
+                    dbc.CardBody([
+                        html.P([html.Ul([
+                            html.Li("MAF blocks graph"),
+                            html.Li("Multiple sequence alignment as Partial Order Graph"),
+                            html.Li("Consensus tree"),
+                            html.Li("Compatibilities relations")]
+                        )], className='card-text')
+                    ]),
+                ]),
+            ]))
         ])
     )
 
 
 def package():
     return dbc.Container([dbc.Row(html.Span(["The underlying software is available at ",
-                                             html.A("GitHub", href="https://github.com/meoke/pangtree",
-                                                    target="_blank"),
-                                             # " and ",
-                                             # html.A("PyPI", href="", target="_blank"),
+                                             html.A("GitHub", href="https://github.com/meoke/pangtree", target="_blank"),
                                              ". It can be incorporated into your Python application in this simple way:"])),
                           dbc.Card(dbc.CardBody(dcc.Markdown('''
 
