@@ -60,7 +60,8 @@ def index():
                 dbc.Card([
                     dbc.CardHeader(dbc.Row([
                         dbc.Col(html.I(className="fas fa-bezier-curve fa-2x"), className="col-md-3 my-auto"),
-                        html.P("Build graph representation of multiple sequence alignment", className="col-md-9 my-auto")
+                        html.P("Build graph representation of multiple sequence alignment",
+                               className="col-md-9 my-auto")
                     ])),
                     dbc.CardBody([
                         html.P(html.Ul([
@@ -135,7 +136,8 @@ def index():
 
 def package():
     return dbc.Container([dbc.Row(html.Span(["The underlying software is available at ",
-                                             html.A("GitHub", href="https://github.com/meoke/pangtree", target="_blank"),
+                                             html.A("GitHub", href="https://github.com/meoke/pangtree",
+                                                    target="_blank"),
                                              ". It can be incorporated into your Python application in this simple way:"])),
                           dbc.Card(dbc.CardBody(dcc.Markdown('''
 
@@ -161,19 +163,15 @@ def package():
                          )
 
 
-def tools():
-    return html.Div([
-        dbc.Tabs(
-            [
-                dbc.Tab(_poapangenome_tab_content, id=id_poapangenome_tab, label="PangtreeBuild",
-                        tab_style={"margin-left": "auto"}, className="tools_tab"),
-                dbc.Tab(_pangviz_tab_content, id=id_pangviz_tab, label="PangtreeVis", label_style={"color": "#00AEF9"},
-                        className="tools_tab"),
-            ], className="nav-justified",
-            id=id_tools_tabs,
-        )
-    ])
+def pangtreebuild():
+    return _poapangenome_tab_content
 
+
+def pangtreevis():
+    return _pangviz_tab_content
+
+
+"""############################################### PANGTREEBUILD ####################################################"""
 
 def pang_task_form(label, label_id, form, text, extra_label_id=None):
     form_group_children = [
@@ -251,7 +249,8 @@ _missing_data_form = dbc.Collapse([
         label="Missing nucleotides source",
         form=[dbc.RadioItems(value="NCBI",
                              options=[{"label": l, "value": v}
-                                      for l, v in [("NCBI", "NCBI"), ("Fasta File", "File"), ("Custom symbol", "Symbol")]],
+                                      for l, v in
+                                      [("NCBI", "NCBI"), ("Fasta File", "File"), ("Custom symbol", "Symbol")]],
                              id=id_fasta_provider_choice)],
         text="MAF file may not inlcude full sequences. Specify source of missing nucleotides/proteins."
     ),
@@ -268,7 +267,7 @@ _missing_data_form = dbc.Collapse([
         form=[
             dcc.Upload(id=id_fasta_upload, multiple=False, children=[
                 dbc.Row([
-                    dbc.Col(html.I(className="fas fa-align-left fa-2x"),className="col-md-2"),
+                    dbc.Col(html.I(className="fas fa-align-left fa-2x"), className="col-md-2"),
                     html.P("Drag & drop or select file...", className="col-md-10")
                 ])
             ], className="file_upload"),
@@ -306,7 +305,8 @@ _blosum_upload_form = pang_task_form(
         dcc.Store(id=id_blosum_upload_state)
     ],
     text=["This parameter is optional as default BLOSUM file is ",
-          html.A(href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat", target="_blank", children="BLOSUM80"),
+          html.A(href="https://github.com/meoke/pang/blob/master/bin/blosum80.mat", target="_blank",
+                 children="BLOSUM80"),
           ". The BLOSUM matrix must contain '?' or the custom symbol for missing nucleotides, if specified."]
 )
 
@@ -361,75 +361,73 @@ _poapangenome_tab_content = html.Div([
     dcc.Store(id=id_session_state),
     dcc.Store(id=id_session_dir),
     dbc.Row([
-        dbc.Col(
-            [
-                html.H3("Task Parameters"),
-                _poapangenome_form,
-                dbc.Row(
-                    dbc.Col(dbc.Button("Run", id=id_pang_button, color="primary", className="offset-md-5 col-md-4 ")),
-                    dbc.Col(dcc.Loading(id="l2", children=html.Div(id=id_running_indicator), type="default")))
-            ], className="col-md-6 offset-md-1", id='poapangenome_form'),
+        dbc.Col([
+            html.H3("Task Parameters"),
+            _poapangenome_form,
+            dbc.Row(
+                dbc.Col(dbc.Button("Run", id=id_pang_button, color="primary", className="offset-md-5 col-md-4 ")),
+                dbc.Col(dcc.Loading(id="l2", children=html.Div(id=id_running_indicator), type="default")))
+        ], className="col-md-7 offset-md-1", id='poapangenome_form'),
         dbc.Col([
             html.H3("Example Input Data"),
-            dbc.Card(
-                [
-                    dbc.CardHeader(
-                        dbc.Button("Ebola", id="collapse-ebola-button",
-                                   className="mb-3 btn-block my-auto opac-button")),
-                    dbc.Collapse(
-                        id="ebola_collapse",
-                        children=dbc.CardBody(
-                            [
-                                html.P(["This dataset orginates from ", html.A("UCSC Ebola Portal",
-                                                                               href="https://genome.ucsc.edu/ebolaPortal/",
-                                                                               target="_blank")],
-                                       className='card-text'),
-                                html.P([html.A(
-                                    href="https://github.com/meoke/pangtree/blob/master/data/Ebola/multialignment.maf",
-                                    target="_blank",
-                                    children="See example file...")], className='card-text'),
-                            ]
-                        ))
-                ],
-            ),
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Button("Ebola", id="collapse-ebola-button", className="mb-3 btn-block my-auto opac-button")),
+                dbc.Collapse(id="ebola_collapse", children=dbc.CardBody([
+                    html.P([
+                        "This dataset orginates from ",
+                        html.A("UCSC Ebola Portal", href="https://genome.ucsc.edu/ebolaPortal/", target="_blank")
+                    ], className='card-text'),
+                    html.P([
+                        html.A(
+                            href="https://github.com/meoke/pangtree/blob/master/data/Ebola/multialignment.maf",
+                            target="_blank",
+                            children="See example file...")
+                    ], className='card-text'),
+                ]))
+            ]),
         ], className="col-md-3 offset-md-1")
     ], className="poapangenome_content"),
-    dbc.Collapse(id=id_poapangenome_result, children=dbc.Row(
-        children=[dbc.Col([dbc.Row([html.I(id=id_result_icon), html.H3("Task completed!", className="next_to_icon")]),
-                           dbc.Col(html.Div(id=id_poapangenome_result_description), className="col-md-11")],
-                          className="col-md-6 offset-md-1"),
-                  dbc.Col([
-                      html.A(dbc.Button("Download result files", block=True, className="result_btn", color="info"),
-                             id=id_download_processing_result),
-                      dbc.Button("Go to visualisation", id=id_go_to_vis_tab,
-                                 n_clicks_timestamp=0, block=True, className="result_btn", color="success",
-                                 style={"visibility": "hidden"})],
-                      className="col-md-3 offset-md-1")]
+    dbc.Collapse(id=id_poapangenome_result, children=dbc.Row(children=[
+        dbc.Col([
+            dbc.Row([html.I(id=id_result_icon), html.H3("Task completed!", className="next_to_icon")]),
+            dbc.Col(html.Div(id=id_poapangenome_result_description), className="col-md-11")
+        ], className="col-md-6 offset-md-1"),
+        dbc.Col([
+            html.A(
+                dbc.Button("Download result files", block=True, className="result_btn", color="info"),
+                id=id_download_processing_result),
+            dbc.Button("Go to visualisation",
+                       id=id_go_to_vis_tab,
+                       n_clicks_timestamp=0,
+                       block=True,
+                       className="result_btn",
+                       color="success",
+                       style={"visibility": "hidden"})
+        ], className="col-md-3 offset-md-1")]
 
     ))
 ])
 
-_load_pangenome_row = dbc.Row(id=id_pangviz_load_row,
-                              children=[
-                                  dbc.Col(dcc.Upload(id=id_pangenome_upload,
-                                                     multiple=False,
-                                                     children=[
-                                                         dbc.Row([dbc.Col(html.I(className="fas fa-seedling fa-2x"),
-                                                                          className="col-md-2"),
-                                                                  html.P(
-                                                                      "Drag & drop pangenome.json file or select file..",
-                                                                      className="col-md-10")])
+"""###############################################  PANGTREEVIS  ####################################################"""
 
-                                                     ], className="file_upload"), width={"size": 4, "offset": 4})
-                              ])
+_load_pangenome_row = dbc.Row(id=id_pangviz_load_row, children=[
+    dbc.Col(dcc.Upload(id=id_pangenome_upload, multiple=False, children=[
+        dbc.Row([
+            dbc.Col(html.I(className="fas fa-seedling fa-2x"), className="col-md-2"),
+            html.P("Drag & drop pangenome.json file or select file..", className="col-md-10")
+        ])
+    ], className="file_upload"), width={"size": 6, "offset": 3})
+])
 
-_task_parameters_row = dbc.Row(id=id_task_parameters_row,
-                               children=html.Div([html.Div(html.H3("Task parameters"), className="panel-heading"),
-                                                  dcc.Loading(
-                                                      html.Div(id=id_task_parameters_vis, className="panel-body"),
-                                                      type="circle")],
-                                                 ),
-                               className="vis_row")
+_task_parameters_row = dbc.Row(
+    id=id_task_parameters_row,
+    className="vis_row",
+    children=html.Details([
+        html.Summary('Task parameters', style={'text-align': 'left'}),
+        dcc.Loading(type="circle", children=html.Div(id=id_task_parameters_vis, className="panel-body"))
+    ], style={'width': '100%'})
+)
 
 _input_data_row = dbc.Row(style={'display': 'none'}, children=[
     dbc.Col(html.Div(id=id_input_dagmaf_vis,
@@ -451,49 +449,54 @@ _input_data_row = dbc.Row(style={'display': 'none'}, children=[
                                            type="circle")]
                      ))])
 
-_pangenome_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - Cut Width statistic"), width=12),
-                                   dbc.Col([html.P("Representation of full poagraph as Cut Width statistics."),
-                                            html.P("Cut Width - edges count between two consecutive columns."),
-                                            html.I(id="arrow_icon",
-                                                   className="fas fa-level-down-alt fa-flip-horizontal fa-5x")],
-                                           width=2),
-                                   dbc.Col(html.Div(id=id_full_pangenome_container,
-                                                    style={'visibility': 'hidden'},
-                                                    children=[dcc.Loading(dcc.Graph(
-                                                        id=id_full_pangenome_graph,
-                                                        # style={'width': 'auto'},
-                                                        style={'height': '200px', 'width': 'auto'},
-                                                        figure={},
-                                                        config={
-                                                            'displayModeBar': False,
-                                                        }
-                                                    ), type="circle")]), width=10)], className="vis_row")
+_pangenome_row = html.Div(
+    children=[
+        html.H4("Pangenome - Cut Width statistic\n"),
+        html.P("Representation of full poagraph as Cut Width statistics."),
+        html.P("Cut Width - edges count between two consecutive columns."),
+        # html.I(id="arrow_icon", className="fas fa-level-down-alt fa-flip-horizontal fa-5x"),
+        html.Div(
+            id=id_full_pangenome_container,
+            style={'visibility': 'hidden', 'width': '100%'},
+            children=[dcc.Loading(dcc.Graph(
+                id=id_full_pangenome_graph,
+                style={'height': '250px', 'width': '100%'},
+                figure={},
+                config={'displayModeBar': False}
+            ), type="circle")]
+        )
+    ]
+)
 
-_poagraph_row = dbc.Row(children=[dbc.Col(html.H4("Pangenome - a closer view on graph details"), width=12),
-                                  dbc.Col([html.P(
-                                      "This is a visualisation of pangenome internal representation as a PoaGraph"),
-                                      html.Div(id=id_poagraph_node_info)], width=2),
-                                  dbc.Col(html.Div(id=id_poagraph_container,
-                                                   children=dcc.Loading(cyto.Cytoscape(id=id_poagraph,
-                                                                                       layout={
-                                                                                           'name': 'preset'},
-                                                                                       stylesheet=poagraph_component.get_poagraph_stylesheet(),
-                                                                                       elements=[
-                                                                                       ],
-                                                                                       style={'width': 'auto',
-                                                                                              'height': '500px',
-                                                                                              'background-color': 'white'},
-                                                                                       zoom=20,
-                                                                                       # minZoom=0.9,
-                                                                                       # maxZoom=1.1,
-                                                                                       # panningEnabled=False,
-                                                                                       # userPanningEnabled=False,
-                                                                                       boxSelectionEnabled=False,
-                                                                                       # autoungrabify=True,
-                                                                                       autolock=True,
-                                                                                       autounselectify=True
-                                                                                       ), type="circle")), width=10)],
-                        className="vis_row")
+_poagraph_row = dbc.Row(
+    children=[
+        html.Details([
+            html.Summary('Pangenome', style={'text-align': 'left'}),
+            _pangenome_row,
+            html.Div([
+                html.H4("Pangenome - a closer view on graph details\n"),
+                html.P("This is a visualisation of pangenome internal representation as a PoaGraph"),
+                html.Div(id=id_poagraph_node_info),
+                html.Div(
+                    id=id_poagraph_container,
+                    style={'width': '100%', 'text-align': 'center'},
+                    children=dcc.Loading(cyto.Cytoscape(
+                        id=id_poagraph,
+                        layout={'name': 'preset'},
+                        stylesheet=poagraph_component.get_poagraph_stylesheet(),
+                        elements=[],
+                        # style={'width': 'auto', 'height': '500px', 'background-color': 'white'},
+                        style={'height': '500px', 'background-color': 'white'},
+                        # zoom=20,
+                        minZoom=0.9,
+                        maxZoom=3,
+                        # autolock=True,
+                        # autounselectify=True
+                    ), type="circle"),
+                )
+            ])
+        ], style={'width': '100%'})
+    ], className="vis_row")
 
 _affinity_tree_row = dbc.Row(children=[dbc.Col([html.H4("Affinity Tree")], width=12),
                                        dbc.Col([html.P(
@@ -574,7 +577,7 @@ _pangviz_tab_content = dbc.Container([
         id=id_pangviz_result_collapse,
         children=[_task_parameters_row,
                   _input_data_row,
-                  _pangenome_row,
+                  # _pangenome_row,
                   _poagraph_row,
                   _affinity_tree_row,
                   _consensus_table_row])
@@ -599,59 +602,35 @@ def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():
         cons_type_paragraph = [html.P(f"P: {jsonpangenome.task_parameters.p}"),
                                html.P(f"Stop: {jsonpangenome.task_parameters.stop}")]
 
-    return dbc.CardDeck(
-        [
-            dbc.Card(
-                [
-                    dbc.CardBody(
-                        [
-                            dbc.CardText([
-                                html.P(f"Multialignment: {jsonpangenome.task_parameters.multialignment_file_path}"),
-                                html.P(f"Metadata : {jsonpangenome.task_parameters.metadata_file_path}"),
-                                fasta_provider_paragraph
-                            ]
-                            ),
-                        ]
-                    ),
-                    dbc.CardFooter("PoaGraph Configuration", className="text-center"),
-                ],
-                outline=True,
-                color="dark",
-            ),
-            dbc.Card(
-                [
-                    dbc.CardBody(
-                        [
-                            dbc.CardText([
-                                             html.P(f"Algorithm: {jsonpangenome.task_parameters.consensus_type}"),
-                                             html.P(f"Blosum file: {jsonpangenome.task_parameters.blosum_file_path}")]
-                                         + cons_type_paragraph
-
-                                         ),
-                        ]
-                    ),
-                    dbc.CardFooter("Consensus Configuration", className="text-center"),
-                ],
-                outline=True,
-                color="dark",
-            ),
-            dbc.Card(
-                [
-                    dbc.CardBody(
-                        [
-                            dbc.CardText([
+    return dbc.CardDeck([
+        dbc.Card([
+            dbc.CardBody([
+                html.P([
+                    html.P(f"Multialignment: {jsonpangenome.task_parameters.multialignment_file_path}"),
+                    html.P(f"Metadata : {jsonpangenome.task_parameters.metadata_file_path}"),
+                    fasta_provider_paragraph
+                ], className='card-text'),
+            ]),
+            dbc.CardFooter("PoaGraph Configuration", className="text-center"),
+        ], outline=True, color="dark"),
+        dbc.Card([
+            dbc.CardBody([
+                html.P([
+                                 html.P(f"Algorithm: {jsonpangenome.task_parameters.consensus_type}"),
+                                 html.P(f"Blosum file: {jsonpangenome.task_parameters.blosum_file_path}")
+                             ] + cons_type_paragraph, className='card-text'),
+            ]),
+            dbc.CardFooter("Consensus Configuration", className="text-center")
+        ], outline=True, color="dark"),
+        dbc.Card([
+            dbc.CardBody([
+                html.P([
                                 html.P(f"Time: {jsonpangenome.task_parameters.running_time}"),
                                 html.P(f"Poagraph nodes count: {len(jsonpangenome.nodes)}"),
                                 html.P(f"Sequences count: {len(jsonpangenome.sequences)}"),
                                 html.P(f"Consensuses count: {len(jsonpangenome.consensuses)}"),
-                            ]
-                            ),
-                        ]
-                    ),
-                    dbc.CardFooter("Processing info", className="text-center"),
-                ],
-                outline=True,
-                color="dark",
-            ),
-        ]
-    )
+                            ], className='card-text'),
+            ]),
+            dbc.CardFooter("Processing info", className="text-center")
+        ], outline=True, color="dark"),
+    ])

@@ -27,10 +27,10 @@ app.layout = html.Div([
         html.Ul([
             html.Li(html.A([html.I(className="fas fas-nav fa-home"), html.Span("Home", className="nav-text")],
                            href="/#"), className="high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-seedling"), html.Span("Tools", className="nav-text")],
-                           href="/tools"), className="has-subnav high"),
-            # html.Li(html.A([html.I(className="fas fas-nav fa-tree"), html.Span("PangTreeVis", className="nav-text")],
-            #                href="/pangtreevis"), className="has-subnav high"),
+            html.Li(html.A([html.I(className="fas fas-nav fa-seedling"), html.Span("PangTreeBuild", className="nav-text")],
+                           href="/pangtreebuild"), className="has-subnav high"),
+            html.Li(html.A([html.I(className="fas fas-nav fa-tree"), html.Span("PangTreeVis", className="nav-text")],
+                           href="/pangtreevis"), className="has-subnav high"),
             html.Li(html.A([html.I(className="fas fas-nav fa-archive"), html.Span("Package", className="nav-text")],
                            href="/package"), className="has-subnav high"),
             html.Li(
@@ -56,12 +56,14 @@ app.layout = html.Div([
 @app.callback(Output(layout_ids.id_page_content, 'children'),
               [Input(layout_ids.id_url, 'pathname')])
 def display_page(pathname):
-    if pathname == '/tools':
-        return pages.tools()
+    if pathname == '/contact':
+        return pages.contact()
     elif pathname == '/package':
         return pages.package()
-    elif pathname == '/contact':
-        return pages.contact()
+    elif pathname == '/pangtreebuild':
+        return pages.pangtreebuild()
+    elif pathname == '/pangtreevis':
+        return pages.pangtreevis()
     else:
         return pages.index()
 
