@@ -282,7 +282,7 @@ _missing_data_form = dbc.Collapse([dbc.FormGroup(
         dbc.Label("Missing symbol for unknown nucleotides", html_for=id_fasta_provider_choice,
                   width=3, className="poapangenome_label"),
         dbc.Col([dbc.Input(value="?",
-                           id=id_missing_symbol_input, type='text', maxlength=1, minlength=1),
+                           id=id_missing_symbol_input, type='text', maxLength=1, minLength=1),
                  dbc.FormText(
                      "Any single character is accepted but it must be present in BLOSUM file. Default BLOSUM file uses '?'.",
                      color="secondary",
@@ -472,13 +472,13 @@ _poapangenome_tab_content = html.Div([
                         id="ebola_collapse",
                         children=dbc.CardBody(
                             [
-                                dbc.CardText(["This dataset orginates from ", html.A("UCSC Ebola Portal",
+                                html.P(["This dataset orginates from ", html.A("UCSC Ebola Portal",
                                                                                      href="https://genome.ucsc.edu/ebolaPortal/",
-                                                                                     target="_blank")]),
-                                dbc.CardText([html.A(
+                                                                                     target="_blank")], className='card-text'),
+                                html.P([html.A(
                              href="https://github.com/meoke/pangtree/blob/master/data/Ebola/multialignment.maf",
                              target="_blank",
-                             children="See example file...")]),
+                             children="See example file...")], className='card-text'),
                             ]
                         ))
                 ],
