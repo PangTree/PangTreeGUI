@@ -1,11 +1,11 @@
 import dash_bootstrap_components as dbc
-import dash_html_components as html
 import dash_core_components as dcc
+import dash_cytoscape as cyto
+import dash_html_components as html
+import dash_table
 from pangtreebuild.output.PangenomeJSON import PangenomeJSON
 
 from .layout_ids import *
-import dash_cytoscape as cyto
-import dash_table
 from ..components import mafgraph as mafgraph_component
 from ..components import poagraph as poagraph_component
 
@@ -42,31 +42,54 @@ def index_info_card(header, fa_icon, info):
 
 
 def index():
-    build_logo_src = "https://s3.amazonaws.com/media-p.slid.es/uploads/" \
-                     "1047434/images/6497196/pasted-from-clipboard.png"
-    vis_logo_src = "https://s3.amazonaws.com/media-p.slid.es/uploads/" \
-                   "1047434/images/6497198/pasted-from-clipboard.png"
+    build_logo_src = "https://image.flaticon.com/icons/svg/346/346195.svg"
+    vis_logo_src = "https://image.flaticon.com/icons/svg/346/346190.svg"
     tools_logos = dbc.Row([
         dbc.Col([
+            html.Div(
+
+
             html.A(href="/pangtreebuild",
+                   # className="tools-logo circle-img",
                    children=html.Img(
-                       className="tools-logo circle-img",
+                       className="small_icon",
                        src=build_logo_src)),
+                className="tools-logo circle-img",
+            ),
             html.Div([
                 html.H4('PangTreeBuild'),
                 html.P("tool for multiple sequence alignment analysis.")
             ], style={"line-height": "40px"}),
         ], className='tools-logo'),
         dbc.Col([
-            html.A(href="/pangtreevis",
-                   children=html.Img(
-                       className="tools-logo circle-img",
-                       src=vis_logo_src)),
+            html.Div(
+                html.A(href="/pangtreevis",
+                       # className="tools-logo circle-img",
+                       children=html.Img(
+                           className="medium_icon",
+                           src=vis_logo_src)),
+                className="tools-logo circle-img",
+            ),
+
             html.Div([
                 html.H4('PangTreeVis'),
                 html.P("visualises the results in browser.")
             ], style={"line-height": "40px"}),
         ], className='tools-logo')
+    ])
+    credits = html.Div([
+        "PangTreeBuild and PangTreeVis icons made by ",
+        html.A(
+            "Freepik",
+            href="https://www.flaticon.com/authors/freepik",
+            target="_blank"
+        ),
+        " from ",
+        html.A(
+            "www.flaticon.com",
+            href="https://www.flaticon.com/",
+            target="_blank"
+        )
     ])
 
     maf_info = html.A(
@@ -142,7 +165,9 @@ def index():
                         html.Li("Compatibilities relations")
                     ])
                 )
-            ]))
+            ])),
+            html.Br(),
+            credits
         ])
     )
 

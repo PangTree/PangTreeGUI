@@ -1,9 +1,10 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-from dash.dependencies import Input, Output, State
 import dash_html_components as html
-from .server import app
+from dash.dependencies import Input, Output
+
 from .layout import layout_ids, pages
+from .server import app
 
 app.title = 'PangtreeVis'
 # app.css.config.serve_locally = True
@@ -44,17 +45,6 @@ app.layout = html.Div([
     ], className="main-menu", sticky="left"),
     html.Div(id=layout_ids.id_page_content, style={'margin-left': '60px'})
 ])
-
-
-# @app.callback(
-#     Output("navbar-collapse", "is_open"),
-#     [Input("navbar-toggler", "n_clicks")],
-#     [State("navbar-collapse", "is_open")],
-# )
-# def toggle_navbar_collapse(n, is_open):
-#     if n:
-#         return not is_open
-#     return is_open
 
 
 @app.callback(Output(layout_ids.id_page_content, 'children'),

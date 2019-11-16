@@ -170,10 +170,24 @@ i{
     width: 225px;
     height: 225px;
     opacity: 0.8;
+    background-color: white;
 }
 
 .circle-img:hover{
     opacity: 1;
+}
+
+.small_icon {
+    margin-top: 110px;
+    width: 100px;
+    height: auto;
+}
+
+.medium_icon {
+    margin-top: 10px;
+    width: 200px;
+    height: auto;
+    border-radius: 45%;
 }
 
 summary{
