@@ -1,7 +1,7 @@
 import dash_bootstrap_components as dbc
 import dash_html_components as html
 import dash_core_components as dcc
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.serialization.json import PangenomeJSON
 
 from .layout_ids import *
 import dash_cytoscape as cyto
@@ -727,7 +727,7 @@ def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():
                                 html.P(f"Time: {jsonpangenome.task_parameters.running_time}"),
                                 html.P(f"Poagraph nodes count: {len(jsonpangenome.nodes)}"),
                                 html.P(f"Sequences count: {len(jsonpangenome.sequences)}"),
-                                html.P(f"Consensuses count: {len(jsonpangenome.consensuses)}"),
+                                html.P(f"Consensuses count: {len(jsonpangenome.affinitytree)}"),
                             ]
                             ),
                         ]

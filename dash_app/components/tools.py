@@ -6,12 +6,12 @@ from pathlib import Path
 from typing import Any, Optional
 from base64 import b64decode
 import pandas as pd
-from pangtreebuild.output import PangenomeJSON
+from pangtreebuild.serialization.json import PangenomeJSON, str_to_PangenomeJSON
 import uuid
 from io import StringIO
 
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
-    return PangenomeJSON.str_to_PangenomeJSON(jsonified_pangenome)
+    return str_to_PangenomeJSON(jsonified_pangenome)
 
 
 def jsonify_builtin_types(data: Any) -> str:

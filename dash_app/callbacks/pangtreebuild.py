@@ -8,13 +8,11 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from pangtreebuild.consensus.input_types import Blosum, Hbmin, Stop, P
-from pangtreebuild.datamodel.DataType import DataType
-from pangtreebuild.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
-from pangtreebuild.datamodel.fasta_providers.FromFile import FromFile
-from pangtreebuild.datamodel.fasta_providers.FromNCBI import FromNCBI
-from pangtreebuild.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
-from pangtreebuild.output.PangenomeJSON import to_json
+from pangtreebuild.affinity_tree.parameters import Blosum, Hbmin, Stop, P
+from pangtreebuild.pangenome.graph import DataType
+from pangtreebuild.pangenome.parameters.missings import ConstBaseProvider, FromFile, FromNCBI, MissingBase
+from pangtreebuild.pangenome.parameters.msa import Maf, Po, MetadataCSV
+from pangtreebuild.serialization.json import to_json
 
 from dash_app.components import tools
 from dash_app.components import pangtreebuild
@@ -328,14 +326,14 @@ def run_pangenome(run_processing_btn_click,
     tools.create_dir(current_processing_output_dir_name)
 
     if "maf" in multialignment_filename:
-        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)), filename=multialignment_filename)
+        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)), file_name=multialignment_filename)
     elif "po" in multialignment_filename:
-        multialignment = Po(StringIO(tools.decode_content(multialignment_content)), filename=multialignment_filename)
+        multialignment = Po(StringIO(tools.decode_content(multialignment_content)), file_name=multialignment_filename)
     else:
         session_state["error"] = "Cannot create Poagraph. Only MAF and PO files are supported."
         return session_state
 
-    missing_symbol = MissingSymbol(missing_symbol) if missing_symbol != "" else MissingSymbol()
+    missing_symbol = MissingBase(missing_symbol) if missing_symbol != "" else MissingBase()
 
     fasta_path = None
     if fasta_provider_choice == "NCBI":

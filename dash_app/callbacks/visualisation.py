@@ -44,14 +44,14 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
     if not jsonified_pangenome or not jsonified_partial_consensustable:
         return []
     jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
-    if not jsonpangenome.consensuses:
+    if not jsonpangenome.affinitytree:
         return []
     partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
     current_consensuses_names = [column_name for column_name in list(partial_consensustable_data) if
                                  "CONSENSUS" in column_name]
-    colors = poagraph.get_distinct_colors(len(jsonpangenome.consensuses))
+    colors = poagraph.get_distinct_colors(len(jsonpangenome.affinitytree))
     stylesheet = poagraph.get_poagraph_stylesheet()
-    for i, consensus in enumerate(jsonpangenome.consensuses):
+    for i, consensus in enumerate(jsonpangenome.affinitytree):
         if consensus.name in current_consensuses_names:
             stylesheet.append(
                 {
