@@ -8,7 +8,7 @@ from typing import List, Dict, Tuple, Set, Optional, Any, Union
 
 import math
 import pandas as pd
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON, Sequence
+from pangtreebuild.serialization.json import PangenomeJSON, Sequence
 import plotly.graph_objs as go
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
@@ -248,6 +248,7 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         return {'data': {'label': cl, 'source': source, 'target': target, 'weight': weight}, 'classes': cl}
 
     def get_poagraph_elements() -> Tuple[List[CytoscapeNode], Dict[int, List[CytoscapeEdge]]]:
+        print(nodes)
         sequences_nodes = [get_cytoscape_node(id=node_id,
                                      label=node_info[3],
                                      x=node_info[0],
@@ -295,8 +296,8 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
                         weight=1,
                         cl='s_edge_aligned')]
 
-        # if jsonpangenome.consensuses:
-        #     for consensus in jsonpangenome.consensuses:
+        # if jsonpangenome.affinitytree:
+        #     for consensus in jsonpangenome.affinitytree:
         #         for i in range(len(consensus.nodes_ids)-1):
         #             c_edge = get_cytoscape_edge(
         #                                          source=consensus.nodes_ids[i],
@@ -374,6 +375,7 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
 
 
 def get_poagraph_elements_faster(elements_cache_info, relayout_data):
+    print(elements_cache_info)
     with open(elements_cache_info, 'rb') as i:
         poagraph_elements = pickle.load(i)
     max_column_id = len(poagraph_elements["cw"])+1

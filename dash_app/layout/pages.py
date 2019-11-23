@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_cytoscape as cyto
 import dash_html_components as html
 import dash_table
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.serialization.json import PangenomeJSON
 
 from .layout_ids import *
 from ..components import mafgraph as mafgraph_component

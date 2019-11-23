@@ -6,8 +6,8 @@ from ..layout.colors import colors
 import plotly.graph_objs as go
 import pandas as pd
 
-from pangtreebuild.consensus.ConsensusTree import ConsensusNodeID
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON, ConsensusNode
+from pangtreebuild.affinity_tree.tree import AffinityNodeID
+from pangtreebuild.serialization.json import PangenomeJSON, AffinityNode
 import networkx as nx
 from networkx.readwrite import json_graph
 
@@ -20,9 +20,9 @@ def get_consensustree_dict(jsonpangenome: PangenomeJSON) -> Dict:
 
 def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
     tree_graph = nx.DiGraph()
-    for consensus in sorted(jsonpangenome.consensuses, key=lambda c: c.consensus_node_id):
+    for consensus in sorted(jsonpangenome.affinitytree, key=lambda c: c.affinity_node_id):
         node_is_leaf = True if not consensus.children else False
-        tree_graph.add_node(consensus.consensus_node_id,
+        tree_graph.add_node(consensus.affinity_node_id,
                             name=consensus.name,
                             comp=consensus.comp_to_all_sequences,
                             sequences_ids=consensus.sequences_int_ids,
@@ -33,7 +33,7 @@ def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
                             mincomp=consensus.mincomp,
                             is_leaf=node_is_leaf)
         if consensus.parent is not None:
-            tree_graph.add_edge(consensus.parent, consensus.consensus_node_id, weight=len(consensus.sequences_int_ids))
+            tree_graph.add_edge(consensus.parent, consensus.affinity_node_id, weight=len(consensus.sequences_int_ids))
 
     return tree_graph
 
@@ -46,7 +46,7 @@ def dict_to_tree(tree_data: Dict) -> nx.DiGraph:
     return json_graph.tree_graph(tree_data)
 
 
-def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[ConsensusNodeID, int]:
+def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[AffinityNodeID, int]:
     node_id_to_y = {}
     leafs_ids = []
     for node_id in tree.nodes:
@@ -206,7 +206,7 @@ def get_leaf_info_dropdown_options(metadata: List[str]) -> List[Dict[str, str]]:
     return [ {'label': m, 'value': m} for m in metadata]
 
 
-def get_offspring_ids(tree: nx.DiGraph, current_node_id: ConsensusNodeID) -> List[ConsensusNodeID]:
+def get_offspring_ids(tree: nx.DiGraph, current_node_id: AffinityNodeID) -> List[AffinityNodeID]:
     nodes_to_visit = deque(tree.nodes[current_node_id]['children_consensuses'])
     offspring_ids = []
     while nodes_to_visit:

@@ -3,8 +3,8 @@ import io
 from collections import deque
 from typing import List, Dict
 import matplotlib.pyplot as plt
-from pangtreebuild.consensus.ConsensusTree import ConsensusNodeID
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON
+from pangtreebuild.affinity_tree.tree import AffinityNodeID
+from pangtreebuild.serialization.json import PangenomeJSON
 from dash_app.components import consensustree
 import pandas as pd
 import networkx as nx
@@ -15,8 +15,8 @@ from matplotlib.colors import ColorConverter
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
     if not jsonpangenome.sequences:
         return pd.DataFrame()
-    if jsonpangenome.consensuses:
-        all_consensuses_ids = [get_consensus_column_name(c.consensus_node_id) for c in jsonpangenome.consensuses]
+    if jsonpangenome.affinitytree:
+        all_consensuses_ids = [get_consensus_column_name(c.affinity_node_id) for c in jsonpangenome.affinitytree]
     else:
         all_consensuses_ids = []
     first_consensus = jsonpangenome.sequences[0]
@@ -28,12 +28,12 @@ def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
                "SEQID": seq.sequence_str_id}
         for m, v in seq.metadata.items():
             row[m] = v
-        for c in jsonpangenome.consensuses:
+        for c in jsonpangenome.affinitytree:
             if seq.sequence_str_id in c.comp_to_all_sequences:
-                row[get_consensus_column_name(c.consensus_node_id)] = get_mapped_compatibility(
+                row[get_consensus_column_name(c.affinity_node_id)] = get_mapped_compatibility(
                     c.comp_to_all_sequences[seq.sequence_str_id])
             else:
-                row[get_consensus_column_name(c.consensus_node_id)] = None
+                row[get_consensus_column_name(c.affinity_node_id)] = None
         consensus_df = consensus_df.append(row, ignore_index=True)
     return consensus_df
 
@@ -42,8 +42,8 @@ def get_mapped_compatibility(compatibility: float) -> str:
     return "{:.{}f}".format(compatibility, 4)
 
 
-def get_consensus_column_name(consensus_id: ConsensusNodeID) -> str:
-    return f"CONSENSUS{consensus_id}"
+def get_consensus_column_name(affinity_node_id: AffinityNodeID) -> str:
+    return f"CONSENSUS{affinity_node_id}"
 
 
 def get_metadata_list(full_consensustable: pd.DataFrame) -> List[str]:
@@ -77,11 +77,11 @@ def hide_children(consensus_tree, parent_id):
     return consensus_tree
 
 
-def get_consensus_details_df(consensus_node_id: ConsensusNodeID,
+def get_consensus_details_df(affinity_node_id: AffinityNodeID,
                              full_consensustable: pd.DataFrame,
                              tree: nx.DiGraph) -> pd.DataFrame:
-    sequences_ids = tree.nodes[consensus_node_id]['sequences_ids']
-    columns_names_to_show = get_metadata_list(full_consensustable) + [get_consensus_column_name(consensus_node_id)]
+    sequences_ids = tree.nodes[affinity_node_id]['sequences_ids']
+    columns_names_to_show = get_metadata_list(full_consensustable) + [get_consensus_column_name(affinity_node_id)]
     return full_consensustable[columns_names_to_show].loc[full_consensustable["ID"].isin(sequences_ids)]
 
 
@@ -104,7 +104,7 @@ def get_cell_styling_dict(consensus_colname, mincomp):
     }
 
 
-def get_node_distribution_fig(node_id: ConsensusNodeID, full_consensustable: pd.DataFrame):
+def get_node_distribution_fig(node_id: AffinityNodeID, full_consensustable: pd.DataFrame):
     x = full_consensustable[get_consensus_column_name(node_id)]
     plt.figure()
     sns.kdeplot(x, shade=True, bw=.01, color=ColorConverter().to_rgba(colors['dark_background']))
