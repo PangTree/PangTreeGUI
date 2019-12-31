@@ -259,14 +259,13 @@ def toggle_ebola_example_collapse(ebola_btn_clicks, is_open):
         return not is_open
     return is_open
 
-
 @app.callback(
-    Output("simulated_collapse", "is_open"),
-    [Input("collapse_simulated_button", "n_clicks")],
-    [State("simulated_collapse", "is_open")],
+    Output("toy_example_collapse", "is_open"),
+    [Input("collapse-toy-example-button", "n_clicks")],
+    [State("toy_example_collapse", "is_open")],
 )
-def toggle_collapse(simulated_btn_clicks, is_open):
-    if simulated_btn_clicks:
+def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
+    if toy_example_btn_clicks:
         return not is_open
     return is_open
 
@@ -287,7 +286,7 @@ def toggle_collapse(simulated_btn_clicks, is_open):
      State(id_blosum_upload, "contents"),
      State(id_blosum_upload, "filename"),
      State(id_consensus_algorithm_choice, "value"),
-     State(id_output_configuration, "values"),
+     State(id_output_configuration, "value"),
      State(id_metadata_upload, "contents"),
      State(id_metadata_upload, "filename"),
      State(id_hbmin_input, "value"),

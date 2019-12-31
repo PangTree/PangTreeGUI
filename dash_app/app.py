@@ -7,8 +7,8 @@ from .layout import layout_ids, pages
 from .server import app
 
 app.title = 'PangtreeVis'
-# app.css.config.serve_locally = True
-# app.scripts.config.serve_locally = True
+app.css.config.serve_locally = False
+app.scripts.config.serve_locally = False
 
 
 external_css = [

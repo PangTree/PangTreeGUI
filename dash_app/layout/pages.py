@@ -94,12 +94,11 @@ def index():
 
     maf_info = html.A(
         "MAF",
-        href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html"
-             "#format5",
+        href="http://genome.ucsc.edu/FAQ/FAQformat.html#format5",
         target="_blank")
     po_info = html.A(
         "PO",
-        href="https://github.com/meoke/pang/blob/master/README.md"
+        href="https://github.com/meoke/pang/blob/master/Documentation.md"
              "#po-file-format-specification",
         target="_blank")
     pograph_info = html.A(
@@ -190,20 +189,26 @@ def package():
         dbc.Card(
             dbc.CardBody(
                 dcc.Markdown('''
-    from pangtreebuild import Poagraph, input_types, fasta_provider, consensus
+    #imports from pangtreebuild here...
 
-    poagraph = Poagraph.build_from_dagmaf(
-        input_types.Maf("example.maf"), 
-        fasta_provider.FromNCBI()
-    )
-    affinity_tree = consensus.tree_generator.get_affinity_tree(
-        poagraph,
-        Blosum("BLOSUM80.mat"),
-        output_dir,
-        stop=1,
-        p=1
-    )
-    pangenomejson = to_PangenomeJSON(poagraph, affinity_tree)
+    fasta_path = "example.fasta"
+
+    fasta_provider = missings.FromFile(fasta_path)
+
+    maf = msa.Maf(pathtools.get_file_content_stringio(maf_path), "example.maf")
+
+    poagraph, dagmaf = builder.build_from_dagmaf(maf, fasta_provider)
+
+    at = at_builders.build_affinity_tree(poagraph,\
+                                         None,\
+                                         current_output_dir,\
+                                         at_params.Stop(0.99),\
+                                         at_params.P(1),\
+                                         True)\
+    
+    pangenomejson = json.to_PangenomeJSON(poagraph=poagraph,\
+                                          affinity_tree=at)
+
                 ''')
             ),
             style={"margin": '30px 0px', 'padding': '10px'}),
@@ -211,11 +216,10 @@ def package():
         dbc.Card(
             dbc.CardBody(
                 dcc.Markdown('''
-    pangtreebuild --multialignment "example.maf" --consensus tree --p 1 --stop 1
+    pangtreebuild --multialignment "example.maf" --fasta_provider "file" --fasta_path "example.fasta" --affinity tree
                 ''')
             ),
-            style={"margin": '30px 0px', 'padding': '10px'}),
-        dbc.Row("Check out full documentation at the above link.")
+            style={"margin": '30px 0px', 'padding': '10px'})
     ])
 
 
@@ -306,14 +310,12 @@ _multialignment_upload_form = pang_task_form(
     text=[
         "Accepted formats: ",
         html.A(
-            href="http://www1.bioinf.uni-leipzig.de/UCSC/FAQ/FAQformat.html"
-                 "#format5",
+            href="http://genome.ucsc.edu/FAQ/FAQformat.html#format5",
             target="_blank",
             children="maf"),
         ", ",
         html.A(
-            href="https://github.com/meoke/pang/blob/master/README.md"
-                 "#po-file-format-specification",
+            href="https://github.com/meoke/pangtree/blob/master/Documentation.md#po-file-format-specification",
             target="_blank",
             children="po"),
         ". See example file: ",
@@ -458,7 +460,7 @@ _tree_params_form = dbc.Collapse([
 ], id=id_tree_specific_params)
 
 _output_form = pang_task_form(
-    label_id=id_output_configuration,
+    label_id=id_label_output_configuration,
     label="Additional output generation",
     form=[
         dbc.Checklist(
@@ -468,7 +470,7 @@ _output_form = pang_task_form(
                 'value': 'fasta'},
                 {'label': 'PO (poagraph in PO format)',
                  'value': 'po'}],
-            values=['fasta', 'po'])],
+            value=['fasta', 'po'])],
     text=""
 )
 
@@ -492,7 +494,7 @@ _poapangenome_tab_content = html.Div([
             html.H3("Task Parameters"),
             _poapangenome_form,
             dbc.Row(
-                dbc.Col(
+                [dbc.Col(
                     dbc.Button(
                         "Run",
                         id=id_pang_button,
@@ -502,7 +504,7 @@ _poapangenome_tab_content = html.Div([
                     dcc.Loading(
                         id="l2",
                         children=html.Div(id=id_running_indicator),
-                        type="default")))
+                        type="default"))])
         ], className="col-md-7 offset-md-1", id='poapangenome_form'),
         dbc.Col([
             html.H3("Example Input Data"),
@@ -524,12 +526,33 @@ _poapangenome_tab_content = html.Div([
                         html.P([
                             html.A(
                                 href="https://github.com/meoke/pangtree/blob/"
-                                     "master/data/Ebola/multialignment.maf",
+                                     "master/example_data/Ebola/multialignment.maf",
                                 target="_blank",
                                 children="See example file...")
                         ], className='card-text'),
                     ]))
             ]),
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Button(
+                        "Toy example",
+                        id="collapse-toy-example-button",
+                        className="mb-3 btn-block my-auto opac-button")),
+                dbc.Collapse(
+                    id="toy_example_collapse",
+                    children=dbc.CardBody([
+                        html.P([
+                            "This is a toy example of small multialignment in MAF format, CSV metadata and FASTA for missing nucleotides.",
+                        ], className='card-text'),
+                        html.P([
+                            html.A(
+                                href="https://github.com/meoke/pangtree/blob/"
+                                     "master/example_data/Simulated/toy_example",
+                                target="_blank",
+                                children="See example files...")
+                        ], className='card-text'),
+                    ]))
+            ])
         ], className="col-md-3 offset-md-1")
     ], className="poapangenome_content"),
     dbc.Collapse(
@@ -714,7 +737,7 @@ _affinity_tree_row = dbc.Row(
                     'overflowY': 'scroll'
                 },
                 style_cell={'textAlign': 'left'},
-                sorting=True
+                sort_action='native'
             ), type="circle")], width=3)],
     className="vis_row")
 
@@ -727,8 +750,8 @@ _consensus_table_row = dbc.Row(
                 children=dcc.Loading(
                     dash_table.DataTable(
                         id=id_consensuses_table,
-                        sorting=True,
-                        sorting_type="multi"),
+                        sort_action="native",
+                        sort_mode="multi"),
                     type="circle")), width=12,
             style={'overflow-x': 'scroll'})], className="vis_row")
 

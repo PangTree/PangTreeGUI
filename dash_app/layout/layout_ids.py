@@ -53,6 +53,7 @@ id_consensus_algorithm_choice = "tree_algorithm_choice"
 
 
 id_output_configuration="id_output_configuration"
+id_label_output_configuration = "id_label_output_configuration"
 
 id_metadata_upload_param = "metadata_upload_param"
 
