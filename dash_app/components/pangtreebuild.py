@@ -76,12 +76,14 @@ def run_pangtreebuild(output_dir: Path,
                       consensus_choice: str,
                       output_po: bool,
                       output_fasta: bool,
+                      output_newick: bool,
                       missing_symbol: MissingBase,
                       metadata: Optional[MetadataCSV]=None,
                       hbmin: Optional[Hbmin] = None,
                       stop: Optional[Stop] = None,
                       p: Optional[P] = None,
-                      fasta_path: Optional[Path] = None
+                      fasta_path: Optional[Path] = None,
+                      include_nodes: Optional[bool] = None
                       ) -> PangenomeJSON:
     start = time.time()
     logprocess.add_file_handler_to_logger(output_dir, "details", "details.log", propagate=False)
@@ -120,6 +122,18 @@ def run_pangtreebuild(output_dir: Path,
             consensuses_fasta = affinity_tree_to_fasta(poagraph, consensus_tree)
             tools.save_to_file(consensuses_fasta, tools.get_child_path(output_dir, "consensuses.fasta"))
 
+    if output_newick:
+        if metadata is not None:
+            seq_id_to_metadata = {seq_id: seq.seqmetadata
+                                  for seq_id, seq in poagraph.sequences.items()}
+        else:
+            seq_id_to_metadata = None
+
+        affinity_tree_newick = consensus_tree.as_newick(seq_id_to_metadata,
+                                                        separate_leaves=True)
+
+        tools.save_to_file(affinity_tree_newick, tools.get_child_path(output_dir, "affinity_tree.newick"))
+
     end = time.time()
 
     task_parameters = TaskParameters(running_time=f"{end - start}s",
@@ -131,7 +145,7 @@ def run_pangtreebuild(output_dir: Path,
                                      output_path=None,
                                      output_po=output_po,
                                      output_fasta=output_fasta,
-                                     output_with_nodes=True,
+                                     output_with_nodes=include_nodes,
                                      verbose=True,
                                      raw_maf=False,
                                      fasta_provider=str(type(fasta_provider).__name__),

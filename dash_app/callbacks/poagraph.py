@@ -57,6 +57,8 @@ def get_poagraph_elements(elements_cache_info, relayout_data, pangenome_upload_c
 
     def cache_new_poagraph_elements():
         jsonpangenome = visualisation.read_pangenome_upload(pangenome_upload_contents)
+        if jsonpangenome.nodes is None:
+            return
         poagraph.update_cached_poagraph_elements_faster(elements_cache_info, jsonpangenome)
 
     def read_poagraph_elements_to_redraw():

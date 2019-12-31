@@ -461,15 +461,19 @@ _tree_params_form = dbc.Collapse([
 
 _output_form = pang_task_form(
     label_id=id_label_output_configuration,
-    label="Additional output generation",
+    label="Additional output options",
     form=[
         dbc.Checklist(
             id=id_output_configuration,
             options=[{
-                'label': 'FASTA (all sequences and consensuses in fasta format)',
+                'label': 'Create FASTA (all sequences and consensuses in fasta format)',
                 'value': 'fasta'},
-                {'label': 'PO (poagraph in PO format)',
-                 'value': 'po'}],
+                {'label': 'Create PO (poagraph in PO format)',
+                 'value': 'po'},
+                 {'label': 'Create NEWICK (Affinity Tree in newick format)',
+                 'value': 'newick'},
+                 {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
+                 'value': 'nodes'},],
             value=['fasta', 'po'])],
     text=""
 )
@@ -830,10 +834,10 @@ def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():
                 html.P([
                     html.P(
                         f"Time: {jsonpangenome.task_parameters.running_time}"),
-                    html.P(f"Poagraph nodes count: {len(jsonpangenome.nodes)}"),
+                    html.P(["Poagraph nodes count: ", f"{len(jsonpangenome.nodes)}" if jsonpangenome.nodes else "unknown"]),
                     html.P(f"Sequences count: {len(jsonpangenome.sequences)}"),
                     html.P(
-                        f"Consensuses count: {len(jsonpangenome.consensuses)}"),
+                        f"Consensuses count: {len(jsonpangenome.affinitytree)}"),
                 ], className='card-text'),
             ]),
             dbc.CardFooter("Processing info", className="text-center")

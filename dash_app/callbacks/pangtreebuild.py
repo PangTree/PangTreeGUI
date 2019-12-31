@@ -368,12 +368,14 @@ def run_pangenome(run_processing_btn_click,
                                                  consensus_choice=consensus_choice,
                                                  output_po=True if "po" in output_config else False,
                                                  output_fasta=True if "fasta" in output_config else False,
+                                                 output_newick=True if "newick" in output_config else False,
                                                  missing_symbol=missing_symbol,
                                                  metadata=metadata,
                                                  hbmin=Hbmin(hbmin_value) if hbmin_value else None,
                                                  stop=Stop(stop_value) if stop_value else None,
                                                  p=P(p_value) if p_value else None,
-                                                 fasta_path=fasta_filename if fasta_filename else None)
+                                                 fasta_path=fasta_filename if fasta_filename else None,
+                                                 include_nodes = True if "nodes" in output_config else False)
     pangenome_json_str = to_json(pangenomejson)
 
     current_processing_output_zip = tools.dir_to_zip(current_processing_output_dir_name)

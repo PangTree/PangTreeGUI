@@ -4,6 +4,7 @@ from ..components import tools
 from flask import Flask, session
 from ..layout.colors import colors
 import colorsys
+from pathlib import Path
 from typing import List, Dict, Tuple, Set, Optional, Any, Union
 
 import math
@@ -148,7 +149,8 @@ def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
             ),
             name="Pangenome Cut Width"
         )
-
+    if jsonpangenome.nodes is None:
+        return None
     columns_cut_width = get_columns_cut_width(jsonpangenome)
     pangenome_trace = get_cut_width_trace(columns_cut_width)
 
@@ -248,7 +250,6 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         return {'data': {'label': cl, 'source': source, 'target': target, 'weight': weight}, 'classes': cl}
 
     def get_poagraph_elements() -> Tuple[List[CytoscapeNode], Dict[int, List[CytoscapeEdge]]]:
-        print(nodes)
         sequences_nodes = [get_cytoscape_node(id=node_id,
                                      label=node_info[3],
                                      x=node_info[0],
@@ -307,7 +308,6 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         #             all_edges[consensus.nodes_ids[i]].append(c_edge)
 
         return sequences_nodes, all_edges
-
     nodes = [None] * len(jsonpangenome.nodes)  # id ~ (x, y, aligned_to)
     nodes_to_sequences = dict()  # id ~ [sequences_ids]
     cols_occupancy: Dict[int, Dict[int, int]] = dict()
@@ -375,7 +375,8 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
 
 
 def get_poagraph_elements_faster(elements_cache_info, relayout_data):
-    print(elements_cache_info)
+    if not Path(elements_cache_info).exists():
+        return
     with open(elements_cache_info, 'rb') as i:
         poagraph_elements = pickle.load(i)
     max_column_id = len(poagraph_elements["cw"])+1
