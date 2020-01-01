@@ -46,6 +46,8 @@ def decode_zip_content(content: str) -> str:
 
 def create_output_dir() -> Path:
     parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath("../../users_temp_data/")
+    if not parent_output_dir.exists():
+        create_dir(parent_output_dir)
     current_time = get_current_time()
     uid = str(uuid.uuid4()).replace("-", "_")
 
