@@ -474,7 +474,7 @@ _output_form = pang_task_form(
                  'value': 'newick'},
                  {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
                  'value': 'nodes'},],
-            value=['fasta', 'po'])],
+            values=['fasta', 'po'])],
     text=""
 )
 
