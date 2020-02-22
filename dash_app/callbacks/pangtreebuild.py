@@ -8,13 +8,11 @@ import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from pangtreebuild.consensus.input_types import Blosum, Hbmin, Stop, P
-from pangtreebuild.datamodel.DataType import DataType
-from pangtreebuild.datamodel.fasta_providers.ConstSymbolProvider import ConstSymbolProvider
-from pangtreebuild.datamodel.fasta_providers.FromFile import FromFile
-from pangtreebuild.datamodel.fasta_providers.FromNCBI import FromNCBI
-from pangtreebuild.datamodel.input_types import Maf, Po, MissingSymbol, MetadataCSV
-from pangtreebuild.output.PangenomeJSON import to_json
+from pangtreebuild.affinity_tree.parameters import Blosum, Hbmin, Stop, P
+from pangtreebuild.pangenome.graph import DataType
+from pangtreebuild.pangenome.parameters.missings import ConstBaseProvider, FromFile, FromNCBI, MissingBase
+from pangtreebuild.pangenome.parameters.msa import Maf, Po, MetadataCSV
+from pangtreebuild.serialization.json import to_json
 
 from dash_app.components import tools
 from dash_app.components import pangtreebuild
@@ -261,14 +259,13 @@ def toggle_ebola_example_collapse(ebola_btn_clicks, is_open):
         return not is_open
     return is_open
 
-
 @app.callback(
-    Output("simulated_collapse", "is_open"),
-    [Input("collapse_simulated_button", "n_clicks")],
-    [State("simulated_collapse", "is_open")],
+    Output("toy_example_collapse", "is_open"),
+    [Input("collapse-toy-example-button", "n_clicks")],
+    [State("toy_example_collapse", "is_open")],
 )
-def toggle_collapse(simulated_btn_clicks, is_open):
-    if simulated_btn_clicks:
+def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
+    if toy_example_btn_clicks:
         return not is_open
     return is_open
 
@@ -289,7 +286,7 @@ def toggle_collapse(simulated_btn_clicks, is_open):
      State(id_blosum_upload, "contents"),
      State(id_blosum_upload, "filename"),
      State(id_consensus_algorithm_choice, "value"),
-     State(id_output_configuration, "values"),
+     State(id_output_configuration, "value"),
      State(id_metadata_upload, "contents"),
      State(id_metadata_upload, "filename"),
      State(id_hbmin_input, "value"),
@@ -328,14 +325,14 @@ def run_pangenome(run_processing_btn_click,
     tools.create_dir(current_processing_output_dir_name)
 
     if "maf" in multialignment_filename:
-        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)), filename=multialignment_filename)
+        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)), file_name=multialignment_filename)
     elif "po" in multialignment_filename:
-        multialignment = Po(StringIO(tools.decode_content(multialignment_content)), filename=multialignment_filename)
+        multialignment = Po(StringIO(tools.decode_content(multialignment_content)), file_name=multialignment_filename)
     else:
         session_state["error"] = "Cannot create Poagraph. Only MAF and PO files are supported."
         return session_state
 
-    missing_symbol = MissingSymbol(missing_symbol) if missing_symbol != "" else MissingSymbol()
+    missing_symbol = MissingBase(missing_symbol) if missing_symbol != "" else MissingBase()
 
     fasta_path = None
     if fasta_provider_choice == "NCBI":
@@ -371,12 +368,14 @@ def run_pangenome(run_processing_btn_click,
                                                  consensus_choice=consensus_choice,
                                                  output_po=True if "po" in output_config else False,
                                                  output_fasta=True if "fasta" in output_config else False,
+                                                 output_newick=True if "newick" in output_config else False,
                                                  missing_symbol=missing_symbol,
                                                  metadata=metadata,
                                                  hbmin=Hbmin(hbmin_value) if hbmin_value else None,
                                                  stop=Stop(stop_value) if stop_value else None,
                                                  p=P(p_value) if p_value else None,
-                                                 fasta_path=fasta_filename if fasta_filename else None)
+                                                 fasta_path=fasta_filename if fasta_filename else None,
+                                                 include_nodes = True if "nodes" in output_config else False)
     pangenome_json_str = to_json(pangenomejson)
 
     current_processing_output_zip = tools.dir_to_zip(current_processing_output_dir_name)

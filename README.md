@@ -12,10 +12,10 @@ PangtreeVis is a web-browser tool. It enables direct calling [PangtreeBuild](htt
 
 ### Installing
 
-Firstly make sure the [PangtreeBuild](https://github.com/meoke/pangtreebuild) package is installed. Then run:
+Firstly make sure the [PangtreeBuild](https://github.com/meoke/pangtreebuild) package is installed.
 
 ```
-python3 setup.py install
+pip install pangtreebuild
 ```
 
 
@@ -36,4 +36,3 @@ into DNA sequencing data analysis](https://www.mimuw.edu.pl/~dojer/rmg/)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-

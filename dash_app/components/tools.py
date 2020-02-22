@@ -6,12 +6,12 @@ from pathlib import Path
 from typing import Any, Optional
 from base64 import b64decode
 import pandas as pd
-from pangtreebuild.output import PangenomeJSON
+from pangtreebuild.serialization.json import PangenomeJSON, str_to_PangenomeJSON
 import uuid
 from io import StringIO
 
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
-    return PangenomeJSON.str_to_PangenomeJSON(jsonified_pangenome)
+    return str_to_PangenomeJSON(jsonified_pangenome)
 
 
 def jsonify_builtin_types(data: Any) -> str:
@@ -46,6 +46,8 @@ def decode_zip_content(content: str) -> str:
 
 def create_output_dir() -> Path:
     parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath("../../users_temp_data/")
+    if not parent_output_dir.exists():
+        create_dir(parent_output_dir)
     current_time = get_current_time()
     uid = str(uuid.uuid4()).replace("-", "_")
 

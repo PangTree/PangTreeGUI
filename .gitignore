@@ -103,10 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-/example_inputs/*
 /.idea/*
 /users_temp_data/*
 *.xml
 /dash_app/cache/*
 /.fastacache/*
-/scripts
