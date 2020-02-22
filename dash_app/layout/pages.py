@@ -216,7 +216,8 @@ def package():
         dbc.Card(
             dbc.CardBody(
                 dcc.Markdown('''
-    pangtreebuild --multialignment "example.maf" --fasta_provider "file" --fasta_path "example.fasta" --affinity tree
+    pangtreebuild --multialignment "example.maf" --fasta_provider "file" 
+    --fasta_path "example.fasta" --affinity tree
                 ''')
             ),
             style={"margin": '30px 0px', 'padding': '10px'})
@@ -693,59 +694,7 @@ _poagraph_row = dbc.Row(
         ], style={'width': '100%'})
     ], className="vis_row")
 
-_affinity_tree_row = dbc.Row(
-    children=[
-        dbc.Col([html.H4("Affinity Tree")], width=12),
-        dbc.Col(html.P("This is affinity tree generated using this software. "
-                       "It is similar to a phylogenetic tree but every node "
-                       "has a consensus sequence assigned."),
-                width=2),
-        dbc.Col([
-            dcc.Graph(
-                id=id_consensus_tree_graph,
-                style={'height': '600px', 'width': 'auto'},
-                config={'displayModeBar': True},
-            ),
-            html.Div(
-                dcc.Slider(
-                    id=id_consensus_tree_slider,
-                    min=0,
-                    max=1,
-                    marks={i / 10: str(i / 10) for i in range(11)},
-                    step=0.01,
-                    value=0.5,
-                    dots=True
-                ), style={"margin": '-1% 20% 0% 3%'})], width=7,
-            id="consensus_tree_col"),
-        dbc.Col(children=[
-            html.H5("Metadata in affinity tree leaves:"),
-            dcc.Dropdown(
-                id=id_leaf_info_dropdown,
-                style={'margin-bottom': '20px'},
-                options=[],
-                value='SEQID'
-            ),
-            html.H5([
-                "Affinity tree node details:",
-                html.P(id=id_consensus_node_details_header)
-            ]),
-            html.Img(
-                id=id_consensus_node_details_distribution,
-                style={'max-width': '100%',
-                       'margin-bottom': '2%'}
-            ),
-            dcc.Loading(dash_table.DataTable(
-                id=id_consensus_node_details_table,
-                style_table={
-                    'maxHeight': '800',
-                    'overflowY': 'scroll'
-                },
-                style_cell={'textAlign': 'left'},
-                sort_action='native'
-            ), type="circle")], width=3)],
-    className="vis_row")
-
-_consensus_table_row = dbc.Row(
+_consensus_table = html.Div(
     children=[
         dbc.Col(html.H4("Consensuses on current cut level"), width=12),
         dbc.Col(
@@ -758,6 +707,64 @@ _consensus_table_row = dbc.Row(
                         sort_mode="multi"),
                     type="circle")), width=12,
             style={'overflow-x': 'scroll'})], className="vis_row")
+
+_affinity_tree_row = dbc.Row(
+    children=[
+        html.Details([
+            html.Summary('Affinity Tree', style={'text-align': 'left'}),
+            # dbc.Col([html.H4("Affinity Tree")], width=12),
+            dbc.Col([
+                html.P("This is affinity tree generated using this software. "
+                       "It is similar to a phylogenetic tree but every node "
+                       "has a consensus sequence assigned."),
+                dcc.Graph(
+                    id=id_consensus_tree_graph,
+                    style={'height': '600px', 'width': 'auto'},
+                    config={'displayModeBar': True},
+                ),
+                dcc.Slider(
+                    id=id_consensus_tree_slider,
+                    min=0,
+                    max=1,
+                    marks={i / 10: str(i / 10) for i in range(11)},
+                    step=0.01,
+                    value=0.5,
+                    dots=True
+                )],
+                id="consensus_tree_col"
+            ),
+            dbc.Col(children=[
+                html.H5("Metadata in affinity tree leaves:"),
+                dcc.Dropdown(
+                    id=id_leaf_info_dropdown,
+                    style={'margin-bottom': '20px'},
+                    options=[],
+                    value='SEQID'
+                ),
+                html.H5([
+                    "Affinity tree node details:",
+                    html.P(id=id_consensus_node_details_header)
+                ]),
+                html.Img(
+                    id=id_consensus_node_details_distribution,
+                    style={'max-width': '100%',
+                           'margin-bottom': '2%'}
+                ),
+                dcc.Loading(dash_table.DataTable(
+                    id=id_consensus_node_details_table,
+                    style_table={
+                        'maxHeight': '800',
+                        'overflowY': 'scroll'
+                    },
+                    style_cell={'textAlign': 'left'},
+                    sort_action='native'
+                ), type="circle")], width=3),
+
+            _consensus_table],
+            style={'width': '100%'},
+            className="vis_row"
+        )
+    ])
 
 loading_style = "circle"
 _pangviz_tab_content = dbc.Container([
@@ -781,7 +788,7 @@ _pangviz_tab_content = dbc.Container([
             _input_data_row,
             _poagraph_row,
             _affinity_tree_row,
-            _consensus_table_row])
+        ])
 ], fluid=True)
 
 

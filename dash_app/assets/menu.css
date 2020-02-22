@@ -41,8 +41,6 @@ margin:7px 0;
     position:relative;
     display:block;
     width:250px;
-    border-right-style: solid;
-    border-right-width: 2px;
 }
 
 .main-menu li>a {
