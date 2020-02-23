@@ -4,6 +4,7 @@ from dash.dependencies import Input, Output, State
 from ..layout.layout_ids import *
 from ..components import mafgraph
 
+
 @app.callback(Output(id_mafgraph_graph, 'elements'),
               [Input(id_pangenome_hidden, 'children')],
               [State(id_mafgraph_graph, 'elements')])

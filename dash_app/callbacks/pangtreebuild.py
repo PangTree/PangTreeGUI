@@ -286,7 +286,7 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
      State(id_blosum_upload, "contents"),
      State(id_blosum_upload, "filename"),
      State(id_consensus_algorithm_choice, "value"),
-     State(id_output_configuration, "value"),
+     State(id_output_configuration, "values"),
      State(id_metadata_upload, "contents"),
      State(id_metadata_upload, "filename"),
      State(id_hbmin_input, "value"),

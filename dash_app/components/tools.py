@@ -1,14 +1,16 @@
+import json
 import os
 import shutil
+import uuid
+from base64 import b64decode
 from datetime import datetime
-import json
+from io import StringIO
 from pathlib import Path
 from typing import Any, Optional
-from base64 import b64decode
+
 import pandas as pd
 from pangtreebuild.serialization.json import PangenomeJSON, str_to_PangenomeJSON
-import uuid
-from io import StringIO
+
 
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
     return str_to_PangenomeJSON(jsonified_pangenome)
@@ -45,7 +47,8 @@ def decode_zip_content(content: str) -> str:
 
 
 def create_output_dir() -> Path:
-    parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath("../../users_temp_data/")
+    parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath(
+        "../../users_temp_data/")
     if not parent_output_dir.exists():
         create_dir(parent_output_dir)
     current_time = get_current_time()
@@ -77,7 +80,7 @@ def get_child_dir(parent_dir_path: Path, child_dir_name: str) -> Path:
 
 
 def create_dir(dir_path: Path):
-        dir_path.mkdir()
+    dir_path.mkdir()
 
 
 def get_child_path(output_dir: Path, file_name: str) -> Path:
@@ -90,6 +93,7 @@ def save_to_file(filecontent: str, filename: Path, mode: Optional[str] = 'w') ->
     with open(filename, mode) as output:
         output.write(filecontent)
 
+
 def read_file_to_stream(path: Path):
     with open(path) as in_file:
         filecontent = in_file.read()
@@ -101,5 +105,5 @@ def dir_to_zip(dir_name: Path) -> Path:
     return Path(str(dir_name) + ".zip")
 
 
-def remove_file(path: Path)-> None:
+def remove_file(path: Path) -> None:
     os.remove(path)

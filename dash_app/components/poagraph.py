@@ -1,16 +1,14 @@
-import pickle
-
-from ..components import tools
-from flask import Flask, session
-from ..layout.colors import colors
 import colorsys
-from pathlib import Path
-from typing import List, Dict, Tuple, Set, Optional, Any, Union
-
 import math
-import pandas as pd
-from pangtreebuild.serialization.json import PangenomeJSON, Sequence
+import pickle
+from pathlib import Path
+from typing import List, Dict, Tuple, Any, Union
+
 import plotly.graph_objs as go
+from pangtreebuild.serialization.json import PangenomeJSON
+
+# from ..components import tools
+from ..layout.colors import colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
@@ -18,7 +16,7 @@ CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
 
 def HSVToRGB(h, s, v):
     (r, g, b) = colorsys.hsv_to_rgb(h, s, v)
-    return (int(255*r), int(255*g), int(255*b))
+    return (int(255 * r), int(255 * g), int(255 * b))
 
 
 def get_distinct_colors(n):
@@ -30,9 +28,7 @@ def get_poagraph_stylesheet():
     return [
         {
             'selector': 'node',
-            'style': {
-                'background-color': 'white',
-            }
+            'style': {'background-color': 'white'}
         },
         {
             'selector': '.s_node',
@@ -59,9 +55,7 @@ def get_poagraph_stylesheet():
         },
         {
             'selector': 'edge',
-            'style': {
-
-            }
+            'style': {}
         },
         {
             'selector': '.s_edge',
@@ -121,20 +115,19 @@ def _get_pangenome_graph_x_range_faster(max_column_id: int) -> Tuple:
 
 
 def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
-
     def get_columns_cut_width(jsonpangenome) -> List[int]:
         col_ids = set([node.column_id for node in jsonpangenome.nodes])
         columns_cut_widths = [set() for _ in col_ids]
 
         for sequence in jsonpangenome.sequences:
             for path in sequence.nodes_ids:
-                for i in range(len(path)-1):
+                for i in range(len(path) - 1):
                     current = path[i]
-                    next = path[i+1]
+                    next = path[i + 1]
 
                     current_col = jsonpangenome.nodes[current].column_id
                     next_col = jsonpangenome.nodes[next].column_id
-                    for k in range(next_col-1, current_col-1, -1):
+                    for k in range(next_col - 1, current_col - 1, -1):
                         columns_cut_widths[k].add((current, next))
         return [len(x) for x in columns_cut_widths]
 
@@ -149,12 +142,13 @@ def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
             ),
             name="Pangenome Cut Width"
         )
+
     if jsonpangenome.nodes is None:
         return None
     columns_cut_width = get_columns_cut_width(jsonpangenome)
     pangenome_trace = get_cut_width_trace(columns_cut_width)
 
-    pangenome_x_range = _get_pangenome_graph_x_range_faster(len(columns_cut_width)-1)
+    pangenome_x_range = _get_pangenome_graph_x_range_faster(len(columns_cut_width) - 1)
     max_y = max(columns_cut_width)
     y_range = [0, max_y + 1]
     return go.Figure(
@@ -230,8 +224,8 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
                               for node_id in continuous_path]
         y_candidate = 0
         while True:
-            if any([y_candidate == y and node_id not in continuous_path for co in columns_occupied_y for node_id, y in
-                    co.items()]):
+            if any([y_candidate == y and node_id not in continuous_path
+                    for co in columns_occupied_y for node_id, y in co.items()]):
                 y_candidate += node_y_distance
             else:
                 for node_id in continuous_path:
@@ -239,26 +233,27 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
                 return y_candidate
 
     def get_cytoscape_node(id, label, x, y, cl, sequences_ids, consensus_ids) -> CytoscapeNode:
-            return {'data': {'id': id,
-                             'label': f"{label}",
-                             'sequences_ids': sequences_ids,
-                             'consensus_ids': consensus_ids},
-                    'position': {'x': x, 'y': y},
-                    'classes': cl}
+        return {'data': {'id': id,
+                         'label': f"{label}",
+                         'sequences_ids': sequences_ids,
+                         'consensus_ids': consensus_ids},
+                'position': {'x': x, 'y': y},
+                'classes': cl}
 
     def get_cytoscape_edge(source, target, weight, cl) -> CytoscapeEdge:
-        return {'data': {'label': cl, 'source': source, 'target': target, 'weight': weight}, 'classes': cl}
+        return {'data': {'label': cl, 'source': source, 'target': target, 'weight': weight},
+                'classes': cl}
 
     def get_poagraph_elements() -> Tuple[List[CytoscapeNode], Dict[int, List[CytoscapeEdge]]]:
         sequences_nodes = [get_cytoscape_node(id=node_id,
-                                     label=node_info[3],
-                                     x=node_info[0],
-                                     y=node_info[1],
-                                     cl='s_node',
-                                     sequences_ids=nodes_to_sequences[node_id],
-                                     consensus_ids=[])
-                                     # consensus_ids=node_data['consensus_ids'])
-                 for node_id, node_info in enumerate(nodes)]
+                                              label=node_info[3],
+                                              x=node_info[0],
+                                              y=node_info[1],
+                                              cl='s_node',
+                                              sequences_ids=nodes_to_sequences[node_id],
+                                              consensus_ids=[])
+                           # consensus_ids=node_data['consensus_ids'])
+                           for node_id, node_info in enumerate(nodes)]
         # consensuses_nodes = [get_cytoscape_node(id=node_id,
         #                                       label=node_info[3],
         #                                       x=node_info[0],
@@ -272,24 +267,24 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         for src_node_id, targets in edges.items():
             targets_unique = set(targets)
             all_edges[src_node_id] = [get_cytoscape_edge(src_node_id,
-                                                     t,
-                                                     math.log10(targets.count(t)+1),
-                                                     's_edge')
-                                  for t in targets_unique]
+                                                         t,
+                                                         math.log10(targets.count(t) + 1),
+                                                         's_edge')
+                                      for t in targets_unique]
             for t in targets_unique:
                 if jsonpangenome.nodes[t].column_id != jsonpangenome.nodes[src_node_id].column_id + 1:
                     all_edges[src_node_id].append(get_cytoscape_edge(source=src_node_id,
-                                                                 target=t,
-                                                                 weight=0,
-                                                                 cl='s_edge'))
+                                                                     target=t,
+                                                                     weight=0,
+                                                                     cl='s_edge'))
         for i, node in enumerate(nodes):
             if node[3] != None:
                 if i in all_edges:
                     all_edges[i].append(get_cytoscape_edge(
-                                      source=i,
-                                      target= node[3],
-                                      weight=1,
-                                      cl='s_edge_aligned'))
+                        source=i,
+                        target=node[3],
+                        weight=1,
+                        cl='s_edge_aligned'))
                 else:
                     all_edges[i] = [get_cytoscape_edge(
                         source=i,
@@ -308,15 +303,17 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         #             all_edges[consensus.nodes_ids[i]].append(c_edge)
 
         return sequences_nodes, all_edges
+
     nodes = [None] * len(jsonpangenome.nodes)  # id ~ (x, y, aligned_to)
     nodes_to_sequences = dict()  # id ~ [sequences_ids]
     cols_occupancy: Dict[int, Dict[int, int]] = dict()
-    columns = [None] * (max([n.column_id for n in jsonpangenome.nodes])+1)  # column_id ~ [nodes_ids]
+    columns = [None] * (
+                max([n.column_id for n in jsonpangenome.nodes]) + 1)  # column_id ~ [nodes_ids]
     edges = dict()  # node_id ~ [nodes_ids]
     edges_reverted = dict()  # node_id ~ [nodes_ids]
     node_width = 10
     node_y_distance = node_width * 1.5
-    continuous_path_nodes_distance = node_width * 2/3
+    continuous_path_nodes_distance = node_width * 2 / 3
 
     for sequence in jsonpangenome.sequences:
         for path in sequence.nodes_ids:
@@ -353,7 +350,6 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
                 nodes[last_node_id] = (x, y, current_node.aligned_to, current_node.base, col_id)
 
     continuous_paths = get_continuous_paths()
-
     for continuous_path in continuous_paths:
         first_node_x = nodes[continuous_path[0]][0]
         last_node_x = nodes[continuous_path[-1]][0]
@@ -363,9 +359,9 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         node_x = new_first_node_x
         path_y = find_out_y(continuous_path)
         for node_id in continuous_path:
-            nodes[node_id] = (node_x, path_y, nodes[node_id][2], nodes[node_id][3], nodes[node_id][4])
+            nodes[node_id] = (
+            node_x, path_y, nodes[node_id][2], nodes[node_id][3], nodes[node_id][4])
             node_x += continuous_path_nodes_distance
-
     sequences_nodes, edges = get_poagraph_elements()
     d = {"sn": sequences_nodes,
          "e": edges,
@@ -376,23 +372,23 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
 
 def get_poagraph_elements_faster(elements_cache_info, relayout_data):
     if not Path(elements_cache_info).exists():
-        return
+        print("help")
     with open(elements_cache_info, 'rb') as i:
         poagraph_elements = pickle.load(i)
-    max_column_id = len(poagraph_elements["cw"])+1
+    max_column_id = len(poagraph_elements["cw"]) + 1
     try:
         min_x = int(relayout_data['xaxis.range[0]'])
         max_x = int(relayout_data['xaxis.range[1]'])
         visible_axis_length = abs(max_x - min_x)
-        min_x = max(0, min_x + int(max_column_id *0.3))
-        max_x = min(min_x + int(0.3 * max_column_id), max_column_id)#visible_axis_length // 3 * 2
+        min_x = max(0, min_x + int(max_column_id * 0.3))
+        max_x = min(min_x + int(0.3 * max_column_id), max_column_id)  # visible_axis_length // 3 * 2
     except KeyError:
-        min_x = int(0.3*max_column_id)
-        max_x = int(0.6*max_column_id)
+        min_x = int(0.3 * max_column_id)
+        max_x = int(0.6 * max_column_id)
     c_to_n = poagraph_elements["cw"]
-    nodes_ids_to_display = [n for nodes_ids in c_to_n[min_x:max_x+1] for n in nodes_ids]
+    nodes_ids_to_display = [n for nodes_ids in c_to_n[min_x:max_x + 1] for n in nodes_ids]
     if nodes_ids_to_display:
-        nodes = poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display)+1]
+        nodes = poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display) + 1]
         edges = [e for src in nodes_ids_to_display for e in poagraph_elements["e"][src]]
     else:
         nodes = []

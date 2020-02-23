@@ -48,12 +48,11 @@ def index():
         dbc.Col([
             html.Div(
 
-
-            html.A(href="/pangtreebuild",
-                   # className="tools-logo circle-img",
-                   children=html.Img(
-                       className="small_icon",
-                       src=build_logo_src)),
+                html.A(href="/pangtreebuild",
+                       # className="tools-logo circle-img",
+                       children=html.Img(
+                           className="small_icon",
+                           src=build_logo_src)),
                 className="tools-logo circle-img",
             ),
             html.Div([
@@ -471,10 +470,10 @@ _output_form = pang_task_form(
                 'value': 'fasta'},
                 {'label': 'Create PO (poagraph in PO format)',
                  'value': 'po'},
-                 {'label': 'Create NEWICK (Affinity Tree in newick format)',
+                {'label': 'Create NEWICK (Affinity Tree in newick format)',
                  'value': 'newick'},
-                 {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
-                 'value': 'nodes'},],
+                {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
+                 'value': 'nodes'}, ],
             values=['fasta', 'po'])],
     text=""
 )
@@ -505,11 +504,11 @@ _poapangenome_tab_content = html.Div([
                         id=id_pang_button,
                         color="primary",
                         className="offset-md-5 col-md-4 ")),
-                dbc.Col(
-                    dcc.Loading(
-                        id="l2",
-                        children=html.Div(id=id_running_indicator),
-                        type="default"))])
+                    dbc.Col(
+                        dcc.Loading(
+                            id="l2",
+                            children=html.Div(id=id_running_indicator),
+                            type="default"))])
         ], className="col-md-7 offset-md-1", id='poapangenome_form'),
         dbc.Col([
             html.H3("Example Input Data"),
@@ -661,7 +660,7 @@ _pangenome_row = html.Div(
                         id=id_full_pangenome_graph,
                         style={'height': '250px', 'width': '100%'},
                         figure={},
-                        config={'displayModeBar': False}
+                        config={'displayModeBar': False},
                     ), type="circle")]
         )
     ]
@@ -841,7 +840,8 @@ def get_task_description_layout(jsonpangenome: PangenomeJSON) -> dbc.CardDeck():
                 html.P([
                     html.P(
                         f"Time: {jsonpangenome.task_parameters.running_time}"),
-                    html.P(["Poagraph nodes count: ", f"{len(jsonpangenome.nodes)}" if jsonpangenome.nodes else "unknown"]),
+                    html.P(["Poagraph nodes count: ",
+                            f"{len(jsonpangenome.nodes)}" if jsonpangenome.nodes else "unknown"]),
                     html.P(f"Sequences count: {len(jsonpangenome.sequences)}"),
                     html.P(
                         f"Consensuses count: {len(jsonpangenome.affinitytree)}"),
