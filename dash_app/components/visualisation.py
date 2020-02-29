@@ -1,7 +1,7 @@
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
 from pangtreebuild.serialization.json import TaskParameters, PangenomeJSON
-from ..components import tools
+from dash_app.components import tools
 import os
 from pathlib import Path
 

@@ -1,7 +1,7 @@
 from typing import Dict, Union, Any, Tuple, List
 
 from pangtreebuild.serialization.json import PangenomeJSON
-from ..layout.colors import colors
+from dash_app.layout.colors import colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]

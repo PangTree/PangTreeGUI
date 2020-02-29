@@ -8,7 +8,7 @@ import plotly.graph_objs as go
 from pangtreebuild.serialization.json import PangenomeJSON
 
 # from ..components import tools
-from ..layout.colors import colors
+from dash_app.layout.colors import colors
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
 CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]

@@ -1,12 +1,8 @@
-import dash_html_components as html
 import os
 from io import StringIO
 from pathlib import Path
 import time
 from typing import Union, Optional
-
-
-
 
 from pangtreebuild.affinity_tree.builders import build_poa_affinity_tree, build_affinity_tree
 from pangtreebuild.affinity_tree.parameters import Blosum, Hbmin, Stop, P

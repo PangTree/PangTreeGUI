@@ -9,8 +9,9 @@ from dash_app.components import consensustree
 import pandas as pd
 import networkx as nx
 import seaborn as sns
-from ..layout.colors import colors
+from dash_app.layout.colors import colors
 from matplotlib.colors import ColorConverter
+
 
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
     if not jsonpangenome.sequences:

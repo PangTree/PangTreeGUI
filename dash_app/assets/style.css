@@ -164,6 +164,7 @@ i{
     margin: auto;
     margin-bottom: 0px;
     text-align: center;
+    line-height: 40px;
 }
 
 .circle-img{
@@ -199,4 +200,9 @@ i{
 summary{
     font-size: 24px;
     font-weight: bold;
+}
+
+.package_markdown {
+    margin: 30px 0px;
+    padding: 10px;
 }

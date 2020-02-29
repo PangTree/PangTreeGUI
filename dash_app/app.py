@@ -3,8 +3,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from .layout import layout_ids, pages
-from .server import app
+from dash_app.layout import layout_ids, pages
+from dash_app.server import app
 
 app.title = 'PangtreeVis'
 app.css.config.serve_locally = False
