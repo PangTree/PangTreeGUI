@@ -2,15 +2,17 @@ import base64
 import io
 from collections import deque
 from typing import List, Dict
+
 import matplotlib.pyplot as plt
+import networkx as nx
+import pandas as pd
+import seaborn as sns
+from matplotlib.colors import ColorConverter
 from pangtreebuild.affinity_tree.tree import AffinityNodeID
 from pangtreebuild.serialization.json import PangenomeJSON
+
 from dash_app.components import consensustree
-import pandas as pd
-import networkx as nx
-import seaborn as sns
 from dash_app.layout.colors import colors
-from matplotlib.colors import ColorConverter
 
 
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:

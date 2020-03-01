@@ -1,3 +1,5 @@
+import json
+import pandas as pd
 from dash.dependencies import Input, Output
 
 from dash_app.components import consensustable, consensustree, tools
@@ -13,7 +15,7 @@ def update_consensustree_hidden(jsonified_pangenome):
         return []
     jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     consensustree_dict = consensustree.get_consensustree_dict(jsonpangenome)
-    return tools.jsonify_builtin_types(consensustree_dict)
+    return json.dumps(consensustree_dict)
 
 
 @app.callback(
@@ -23,10 +25,10 @@ def update_consensustree_hidden(jsonified_pangenome):
 def update_current_tree_state(jsonified_full_consensustree):
     if not jsonified_full_consensustree:
         return []
-    full_consensustree_data = tools.unjsonify_builtin_types(jsonified_full_consensustree)
+    full_consensustree_data = json.loads(jsonified_full_consensustree)
     full_consensus_tree = consensustree.dict_to_tree(full_consensustree_data)
     current_consensustree_data = consensustree.tree_to_dict(full_consensus_tree)
-    return tools.jsonify_builtin_types(current_consensustree_data)
+    return json.dumps(current_consensustree_data)
 
 
 @app.callback(
@@ -39,9 +41,9 @@ def to_consensustree_graph(jsonified_current_consensustree, slider_value, leaf_i
                            jsonified_full_consensustable):
     if not jsonified_current_consensustree or not jsonified_full_consensustable:
         return {}
-    current_consensustree_data = tools.unjsonify_builtin_types(jsonified_current_consensustree)
+    current_consensustree_data = json.loads(jsonified_current_consensustree)
     current_consensustree_tree = consensustree.dict_to_tree(current_consensustree_data)
-    full_consensustable_data = tools.unjsonify_df(jsonified_full_consensustable)
+    full_consensustable_data = pd.read_json(jsonified_full_consensustable)
     return consensustree.get_consensustree_graph(current_consensustree_tree, slider_value,
                                                  leaf_info, full_consensustable_data)
 
@@ -70,11 +72,11 @@ def to_consensus_node_details_table(tree_click_data, jsonified_full_consensustab
         return []
     clicked_node = tree_click_data['points'][0]
     node_id = clicked_node['pointIndex']
-    full_consensustable = tools.unjsonify_df(jsonified_full_consensustable)
-    consensustree_data = tools.unjsonify_builtin_types(jsonified_consensustree)
+    full_consensustable = pd.read_json(jsonified_full_consensustable)
+    consensustree_data = json.loads(jsonified_consensustree)
     tree = consensustree.dict_to_tree(consensustree_data)
     node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
-    return tools.jsonify_df(node_details_df)
+    return node_details_df.to_json()
 
 
 @app.callback(
@@ -84,7 +86,7 @@ def to_consensus_node_details_table(tree_click_data, jsonified_full_consensustab
 def to_consensusnode_details_content(jsonified_consensus_details_table):
     if not jsonified_consensus_details_table:
         return []
-    consensus_details_table_data = tools.unjsonify_df(jsonified_consensus_details_table)
+    consensus_details_table_data = pd.read_json(jsonified_consensus_details_table)
     return consensus_details_table_data.to_dict("rows")
 
 
@@ -98,7 +100,7 @@ def to_consensus_node_details_distribution(tree_click_data, jsonified_full_conse
         return ""
     clicked_node = tree_click_data['points'][0]
     node_id = clicked_node['pointIndex']
-    full_consensustable = tools.unjsonify_df(jsonified_full_consensustable)
+    full_consensustable = pd.read_json(jsonified_full_consensustable)
     distribution_figure = consensustable.get_node_distribution_fig(node_id, full_consensustable)
     return distribution_figure
 
@@ -110,7 +112,7 @@ def to_consensus_node_details_distribution(tree_click_data, jsonified_full_conse
 def update_columns(jsonified_consensus_details_table):
     if not jsonified_consensus_details_table:
         return [{}]
-    consensus_details_table_data = tools.unjsonify_df(jsonified_consensus_details_table)
+    consensus_details_table_data = pd.read_json(jsonified_consensus_details_table)
     return [{"name": i, "id": i} for i in list(consensus_details_table_data.columns)]
 
 
@@ -140,6 +142,6 @@ def show_consensus_tree_info(click_data):
 def to_consensustree_leaf_info_options_dropdown(jsonified_full_consensustable):
     if not jsonified_full_consensustable:
         return []
-    full_consensustable = tools.unjsonify_df(jsonified_full_consensustable)
+    full_consensustable = pd.read_json(jsonified_full_consensustable)
     metadata = consensustable.get_metadata_list(full_consensustable)
     return consensustree.get_leaf_info_dropdown_options(metadata)

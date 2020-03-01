@@ -1,3 +1,4 @@
+import pandas as pd
 from typing import List
 
 from dash.dependencies import Input, Output, State
@@ -50,7 +51,7 @@ def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_conse
     jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     if not jsonpangenome.affinitytree:
         return []
-    partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
+    partial_consensustable_data = pd.read_json(jsonified_partial_consensustable)
     current_consensuses_names = [column_name for column_name in list(partial_consensustable_data) if
                                  "CONSENSUS" in column_name]
     colors = poagraph.get_distinct_colors(len(jsonpangenome.affinitytree))

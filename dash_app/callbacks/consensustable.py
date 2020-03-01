@@ -1,7 +1,10 @@
+import json
+
+import pandas as pd
 from dash.dependencies import Input, Output, State
+from pangtreebuild.serialization.json import str_to_PangenomeJSON
 
 from dash_app.components import consensustable, consensustree
-from dash_app.components import tools
 from dash_app.server import app
 
 
@@ -12,9 +15,9 @@ from dash_app.server import app
 def update_full_consensustable_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
-    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
+    jsonpangenome = str_to_PangenomeJSON(jsonified_pangenome)
     consensustable_data = consensustable.get_full_table_data(jsonpangenome)
-    return tools.jsonify_df(consensustable_data)
+    return consensustable_data.to_json()
 
 
 @app.callback(
@@ -27,51 +30,36 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
                               slider_value: float):
     if not jsonified_full_consensustable or not jsonified_tree:
         return []
-    full_consensustable_data = tools.unjsonify_df(jsonified_full_consensustable)
-    full_consensustree_data = tools.unjsonify_builtin_types(jsonified_tree)
+    full_consensustable_data = pd.read_json(jsonified_full_consensustable)
+    full_consensustree_data = json.loads(jsonified_tree)
     full_consensustree_tree = consensustree.dict_to_tree(full_consensustree_data)
     table_without_consensuses_smaller_than_slider = consensustable.remove_smaller_than_slider(
         full_consensustable_data,
         full_consensustree_tree,
         slider_value)
-    return tools.jsonify_df(table_without_consensuses_smaller_than_slider)
+    return table_without_consensuses_smaller_than_slider.to_json()
 
 
 @app.callback(
-    Output("consensuses_table", 'data'),
-    [Input("partial_consensustable_hidden", 'children')]
-)
-def to_consensustable_content(jsonified_partial_consensustable):
-    if not jsonified_partial_consensustable:
-        return []
-    partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
-    return partial_consensustable_data.to_dict("rows")
-
-
-@app.callback(
-    Output("consensuses_table", 'columns'),
-    [Input("partial_consensustable_hidden", 'children')]
-)
-def update_columns(jsonified_partial_consensustable):
-    if not jsonified_partial_consensustable:
-        return [{}]
-    partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
-    return [{"name": i, "id": i} for i in partial_consensustable_data.columns]
-
-
-@app.callback(
-    Output("consensuses_table", 'style_data_conditional'),
+    [Output("consensuses_table", 'data'),
+     Output("consensuses_table", 'columns'),
+     Output("consensuses_table", 'style_data_conditional')],
     [Input("partial_consensustable_hidden", 'children')],
     [State("full_consensustree_hidden", 'children')]
 )
-def color_consensuses_table_cells(jsonified_partial_consensustable, jsonified_consensus_tree):
-    if not jsonified_partial_consensustable or not jsonified_consensus_tree:
-        return []
-    partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
-    consensustree_data = tools.unjsonify_builtin_types(jsonified_consensus_tree)
-    tree = consensustree.dict_to_tree(consensustree_data)
+def update_consensus_table(jsonified_partial_consensustable, jsonified_consensus_tree):
+    if not jsonified_partial_consensustable:
+        return [], [{}], []
+    partial_consensustable_data = pd.read_json(jsonified_partial_consensustable)
+    consensustable_columns = [{"name": i, "id": i} for i in partial_consensustable_data.columns]
+    consensustable_content = partial_consensustable_data.to_dict("rows")
 
-    return consensustable.get_cells_styling(tree, partial_consensustable_data)
+    if not jsonified_consensus_tree:
+        return consensustable_content, consensustable_columns, []
+    consensustree_data = json.loads(jsonified_consensus_tree)
+    tree = consensustree.dict_to_tree(consensustree_data)
+    color_cells = consensustable.get_cells_styling(tree, partial_consensustable_data)
+    return consensustable_content, consensustable_columns, color_cells
 
 
 @app.callback(
@@ -80,5 +68,4 @@ def color_consensuses_table_cells(jsonified_partial_consensustable, jsonified_co
 def show_consensus_tree_container(jsonified_current_consensustree):
     if jsonified_current_consensustree:
         return {'display': 'block'}
-    else:
-        return {'display': 'none'}
+    return {'display': 'none'}
