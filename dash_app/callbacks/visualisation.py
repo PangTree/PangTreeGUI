@@ -1,16 +1,16 @@
 from typing import List
 
-from dash.exceptions import PreventUpdate
-from ..server import app
 from dash.dependencies import Input, Output, State
-from ..layout.layout_ids import *
-from ..layout.pages import get_task_description_layout
-from ..components import tools, poagraph
+from dash.exceptions import PreventUpdate
+
+from dash_app.components import tools, poagraph
+from dash_app.layout.pages import get_task_description_layout
+from dash_app.server import app
 
 
 @app.callback(
-    Output(id_pangenome_hidden, 'children'),
-    [Input(id_pangenome_upload, 'contents')])
+    Output("pangenome_hidden", 'children'),
+    [Input("pangenome_upload", 'contents')])
 def load_visualisation(pangenome_content: str) -> str:
     if not pangenome_content:
         raise PreventUpdate()
@@ -20,16 +20,16 @@ def load_visualisation(pangenome_content: str) -> str:
 
 
 @app.callback(
-    Output(id_pangviz_result_collapse, 'is_open'),
-    [Input(id_pangenome_upload, 'contents')])
+    Output("pangviz_result_collapse", 'is_open'),
+    [Input("pangenome_upload", 'contents')])
 def show_visualisation(pangenome_content: str) -> str:
     if not pangenome_content:
         return False
     return True
 
 
-@app.callback(Output(id_task_parameters_vis, 'children'),
-              [Input(id_pangenome_hidden, 'children')])
+@app.callback(Output("task_parameters_vis", 'children'),
+              [Input("pangenome_hidden", 'children')])
 def show_task_parameters(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
@@ -38,10 +38,10 @@ def show_task_parameters(jsonified_pangenome):
 
 
 @app.callback(
-    Output(id_poagraph, 'stylesheet'),
-    [Input(id_pangenome_hidden, 'children'),
-     Input(id_partial_consensustable_hidden, 'children')],
-    [State(id_poagraph_container, 'children')]
+    Output("poagraph", 'stylesheet'),
+    [Input("pangenome_hidden", 'children'),
+     Input("partial_consensustable_hidden", 'children')],
+    [State("poagraph_container", 'children')]
 )
 def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_consensustable,
                                stylesheet: List) -> List:

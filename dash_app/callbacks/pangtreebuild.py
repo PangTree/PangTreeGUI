@@ -10,13 +10,11 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from pangtreebuild.affinity_tree.parameters import Blosum, Hbmin, Stop, P
 from pangtreebuild.pangenome.graph import DataType
-from pangtreebuild.pangenome.parameters.missings import ConstBaseProvider, FromFile, FromNCBI, MissingBase
+from pangtreebuild.pangenome.parameters.missings import FromFile, FromNCBI, MissingBase
 from pangtreebuild.pangenome.parameters.msa import Maf, Po, MetadataCSV
 from pangtreebuild.serialization.json import to_json
 
-from dash_app.components import tools
-from dash_app.components import pangtreebuild
-from dash_app.layout.layout_ids import *
+from dash_app.components import pangtreebuild, tools
 from dash_app.layout.pages import get_task_description_layout
 from dash_app.server import app
 
@@ -33,10 +31,10 @@ def get_error_info(message):
 
 # Metadata Validation
 
-@app.callback(Output(id_metadata_upload_state, 'data'),
-              [Input(id_metadata_upload, 'contents')],
-              [State(id_metadata_upload, 'filename'),
-               State(id_session_state, 'data')])
+@app.callback(Output("metadata_upload_state", 'data'),
+              [Input("metadata_upload", 'contents')],
+              [State("metadata_upload", 'filename'),
+               State("session_state", 'data')])
 def validate_metadata_file(file_content, file_name, session_state):
     if file_content is None or file_name is None:
         return None
@@ -49,8 +47,8 @@ def validate_metadata_file(file_content, file_name, session_state):
             return {"is_correct": False, "filename": file_name, "error": error_message}
 
 
-@app.callback(Output(id_metadata_upload_state_info, 'children'),
-              [Input(id_metadata_upload_state, 'data')])
+@app.callback(Output("metadata_upload_state_info", 'children'),
+              [Input("metadata_upload_state", 'data')])
 def show_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
         return []
@@ -64,9 +62,9 @@ def show_validation_result(upload_state_data):
 
 # Multialignment validation
 
-@app.callback(Output(id_multialignment_upload_state, 'data'),
-              [Input(id_multialignment_upload, 'contents')],
-              [State(id_multialignment_upload, 'filename')])
+@app.callback(Output("multialignment_upload_state", 'data'),
+              [Input("multialignment_upload", 'contents')],
+              [State("multialignment_upload", 'filename')])
 def validate_metadata_file(file_content, file_name):
     if file_content is None or file_name is None:
         return None
@@ -79,8 +77,8 @@ def validate_metadata_file(file_content, file_name):
             return {"is_correct": False, "filename": file_name, "error": error_message}
 
 
-@app.callback(Output(id_multialignment_upload_state_info, 'children'),
-              [Input(id_multialignment_upload_state, 'data')])
+@app.callback(Output("multialignment_upload_state_info", 'children'),
+              [Input("multialignment_upload_state", 'data')])
 def show_multialignment_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
         return []
@@ -94,8 +92,8 @@ def show_multialignment_validation_result(upload_state_data):
 
 # MAF specific parameters toggling
 
-@app.callback(Output(id_maf_specific_params, 'is_open'),
-              [Input(id_multialignment_upload_state, 'data')])
+@app.callback(Output("maf_specific_params", 'is_open'),
+              [Input("multialignment_upload_state", 'data')])
 def toggle_maf_specific_params(multialignment_upload_state_data):
     if multialignment_upload_state_data is None or "maf" not in multialignment_upload_state_data["filename"]:
         return False
@@ -103,8 +101,8 @@ def toggle_maf_specific_params(multialignment_upload_state_data):
         return True
 
 
-@app.callback(Output(id_missing_symbol_param, 'is_open'),
-              [Input(id_fasta_provider_choice, 'value')])
+@app.callback(Output("missing_symbol_param", 'is_open'),
+              [Input("fasta_provider_choice", 'value')])
 def toggle_mising_symbol_param(fasta_provider_choice):
     if fasta_provider_choice is None or fasta_provider_choice != "Symbol":
         return False
@@ -112,8 +110,8 @@ def toggle_mising_symbol_param(fasta_provider_choice):
         return True
 
 
-@app.callback(Output(id_fasta_upload_param, 'is_open'),
-              [Input(id_fasta_provider_choice, 'value')])
+@app.callback(Output("fasta_upload_param", 'is_open'),
+              [Input("fasta_provider_choice", 'value')])
 def toggle_fasta_upload_param(fasta_provider_choice):
     if fasta_provider_choice is None or fasta_provider_choice != "File":
         return False
@@ -124,10 +122,10 @@ def toggle_fasta_upload_param(fasta_provider_choice):
 # FASTA VALIDATION
 
 
-@app.callback(Output(id_fasta_upload_state, 'data'),
-              [Input(id_fasta_upload, 'contents'),
-               Input(id_session_dir, 'data')],
-              [State(id_fasta_upload, 'filename')])
+@app.callback(Output("fasta_upload_state", 'data'),
+              [Input("fasta_upload", 'contents'),
+               Input("session_dir", 'data')],
+              [State("fasta_upload", 'filename')])
 def validate_fasta_file(file_content, session_dir, file_name):
     if file_content is None or file_name is None or session_dir is None:
         return None
@@ -149,8 +147,8 @@ def validate_fasta_file(file_content, session_dir, file_name):
             return {"is_correct": False, "filename": file_name, "error": error_message}
 
 
-@app.callback(Output(id_fasta_upload_state_info, 'children'),
-              [Input(id_fasta_upload_state, 'data')])
+@app.callback(Output("fasta_upload_state_info", 'children'),
+              [Input("fasta_upload_state", 'data')])
 def show_fasta_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
         return []
@@ -164,11 +162,11 @@ def show_fasta_validation_result(upload_state_data):
 
 # Blosum Validation
 
-@app.callback(Output(id_blosum_upload_state, 'data'),
-              [Input(id_blosum_upload, 'contents'),
-               Input(id_missing_symbol_input, 'value'),
-               Input(id_fasta_provider_choice, "value")],
-              [State(id_blosum_upload, 'filename')])
+@app.callback(Output("blosum_upload_state", 'data'),
+              [Input("blosum_upload", 'contents'),
+               Input("missing_symbol_input", 'value'),
+               Input("fasta_provider_choice", "value")],
+              [State("blosum_upload", 'filename')])
 def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, file_name):
     if file_content is None or file_name is None:
         return None
@@ -202,8 +200,8 @@ def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, fi
                 "validation_message": validation_message}
 
 
-@app.callback(Output(id_blosum_upload_state_info, 'children'),
-              [Input(id_blosum_upload_state, 'data')])
+@app.callback(Output("blosum_upload_state_info", 'children'),
+              [Input("blosum_upload_state", 'data')])
 def show_validation_result(blosum_upload_state_data):
     if blosum_upload_state_data is None or len(blosum_upload_state_data) == 0:
         return []
@@ -218,8 +216,9 @@ def show_validation_result(blosum_upload_state_data):
 
 # POA specific parameters toggling
 
-@app.callback(Output(id_poa_specific_params, 'is_open'),
-              [Input(id_consensus_algorithm_choice, 'value')])
+
+@app.callback(Output("poa_specific_params", 'is_open'),
+              [Input("consensus_algorithm_choice", 'value')])
 def toggle_poa_specific_params(consensus_algorithm_choice):
     if consensus_algorithm_choice is None or consensus_algorithm_choice != "poa":
         return False
@@ -228,8 +227,9 @@ def toggle_poa_specific_params(consensus_algorithm_choice):
 
 # TREE specific parameters toggling
 
-@app.callback(Output(id_tree_specific_params, 'is_open'),
-              [Input(id_consensus_algorithm_choice, 'value')])
+
+@app.callback(Output("tree_specific_params", 'is_open'),
+              [Input("consensus_algorithm_choice", 'value')])
 def toggle_tree_specific_params(consensus_algorithm_choice):
     if consensus_algorithm_choice is None or consensus_algorithm_choice != "tree":
         return False
@@ -238,9 +238,10 @@ def toggle_tree_specific_params(consensus_algorithm_choice):
 
 # HANDLE SESSION DIR
 
-@app.callback(Output(id_session_dir, 'data'),
-              [Input(id_fasta_upload, 'contents')],
-              [State(id_session_dir, 'data')])
+
+@app.callback(Output("session_dir", 'data'),
+              [Input("fasta_upload", 'contents')],
+              [State("session_dir", 'data')])
 def create_output_dir(_, session_dir):
     if session_dir is None:
         output_dir = tools.create_output_dir()
@@ -248,6 +249,7 @@ def create_output_dir(_, session_dir):
     return session_dir
 
 # EXAMPLE DATASETS
+
 
 @app.callback(
     Output("ebola_collapse", "is_open"),
@@ -272,26 +274,26 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
 
 # RUN PROCESSING
 @app.callback(
-    Output(id_session_state, 'data'),
-    [Input(id_pang_button, 'n_clicks')],
-    [State(id_session_state, 'data'),
-     State(id_session_dir, 'data'),
-     State(id_data_type, "value"),
-     State(id_multialignment_upload, "contents"),
-     State(id_multialignment_upload, "filename"),
-     State(id_fasta_provider_choice, "value"),
-     State(id_fasta_upload, "contents"),
-     State(id_fasta_upload, "filename"),
-     State(id_missing_symbol_input, "value"),
-     State(id_blosum_upload, "contents"),
-     State(id_blosum_upload, "filename"),
-     State(id_consensus_algorithm_choice, "value"),
-     State(id_output_configuration, "values"),
-     State(id_metadata_upload, "contents"),
-     State(id_metadata_upload, "filename"),
-     State(id_hbmin_input, "value"),
-     State(id_stop_input, "value"),
-     State(id_p_input, "value")],
+    Output("session_state", 'data'),
+    [Input("pang_button", 'n_clicks')],
+    [State("session_state", 'data'),
+     State("session_dir", 'data'),
+     State("data_type", "value"),
+     State("multialignment_upload", "contents"),
+     State("multialignment_upload", "filename"),
+     State("fasta_provider_choice", "value"),
+     State("fasta_upload", "contents"),
+     State("fasta_upload", "filename"),
+     State("missing_symbol_input", "value"),
+     State("blosum_upload", "contents"),
+     State("blosum_upload", "filename"),
+     State("consensus_algorithm_choice", "value"),
+     State("output_configuration", "values"),
+     State("metadata_upload", "contents"),
+     State("metadata_upload", "filename"),
+     State("hbmin_input", "value"),
+     State("stop_input", "value"),
+     State("p_input", "value")],
 )
 def run_pangenome(run_processing_btn_click,
                   session_state: Dict,
@@ -360,22 +362,23 @@ def run_pangenome(run_processing_btn_click,
     blosum = Blosum(blosum_contents, blosum_path)
 
     metadata = MetadataCSV(StringIO(tools.decode_content(metadata_content)), metadata_filename) if metadata_content else None
-    pangenomejson = pangtreebuild.run_pangtreebuild(output_dir=current_processing_output_dir_name,
-                                                 datatype=DataType[datatype],
-                                                 multialignment=multialignment,
-                                                 fasta_provider=fasta_provider,
-                                                 blosum=blosum,
-                                                 consensus_choice=consensus_choice,
-                                                 output_po=True if "po" in output_config else False,
-                                                 output_fasta=True if "fasta" in output_config else False,
-                                                 output_newick=True if "newick" in output_config else False,
-                                                 missing_symbol=missing_symbol,
-                                                 metadata=metadata,
-                                                 hbmin=Hbmin(hbmin_value) if hbmin_value else None,
-                                                 stop=Stop(stop_value) if stop_value else None,
-                                                 p=P(p_value) if p_value else None,
-                                                 fasta_path=fasta_filename if fasta_filename else None,
-                                                 include_nodes = True if "nodes" in output_config else False)
+    pangenomejson = pangtreebuild.run_pangtreebuild(
+        output_dir=current_processing_output_dir_name,
+        datatype=DataType[datatype],
+        multialignment=multialignment,
+        fasta_provider=fasta_provider,
+        blosum=blosum,
+        consensus_choice=consensus_choice,
+        output_po=True if "po" in output_config else False,
+        output_fasta=True if "fasta" in output_config else False,
+        output_newick=True if "newick" in output_config else False,
+        missing_symbol=missing_symbol,
+        metadata=metadata,
+        hbmin=Hbmin(hbmin_value) if hbmin_value else None,
+        stop=Stop(stop_value) if stop_value else None,
+        p=P(p_value) if p_value else None,
+        fasta_path=fasta_filename if fasta_filename else None,
+        include_nodes = True if "nodes" in output_config else False)
     pangenome_json_str = to_json(pangenomejson)
 
     current_processing_output_zip = tools.dir_to_zip(current_processing_output_dir_name)
@@ -387,8 +390,8 @@ def run_pangenome(run_processing_btn_click,
 
 # DOWNLOAD RESULTS
 
-@app.callback(Output(id_download_processing_result, "href"),
-              [Input(id_session_state, 'data')])
+@app.callback(Output("download_processing_result", "href"),
+              [Input("session_state", 'data')])
 def update_download_result_content(session_state_data):
     if session_state_data is None:
         raise PreventUpdate()
@@ -417,15 +420,17 @@ def export_pang_result_zip():
         cache_timeout=0
     )
 
-@app.callback(Output(id_poapangenome_result, "is_open"),
-              [Input(id_session_state, 'data')])
+
+@app.callback(Output("poapangenome_result", "is_open"),
+              [Input("session_state", 'data')])
 def open_poapangenome_result(session_state_data):
     if session_state_data is None or "jsonpangenome" not in session_state_data:
         return False
     return True
 
-@app.callback(Output(id_poapangenome_result_description, "children"),
-              [Input(id_session_state, 'data')])
+
+@app.callback(Output("poapangenome_result_description", "children"),
+              [Input("session_state", 'data')])
 def get_poapangenome_result_description(session_state_data):
     if session_state_data is None or "jsonpangenome" not in session_state_data:
         return []
@@ -434,8 +439,8 @@ def get_poapangenome_result_description(session_state_data):
     return poapangenome_task_description
 
 
-@app.callback(Output(id_result_icon, "className"),
-              [Input(id_session_state, 'data')])
+@app.callback(Output("result_icon", "className"),
+              [Input("session_state", 'data')])
 def get_poapangenome_result_description(session_state_data):
     if session_state_data is None or "jsonpangenome" not in session_state_data:
         return ""

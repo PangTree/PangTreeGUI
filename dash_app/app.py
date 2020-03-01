@@ -3,7 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from dash_app.layout import layout_ids, pages
+from dash_app.layout import pages
 from dash_app.server import app
 
 app.title = 'PangtreeVis'
@@ -22,7 +22,7 @@ app.config.suppress_callback_exceptions = True
 draw_poagraph = True
 
 app.layout = html.Div([
-    dcc.Location(id=layout_ids.id_url, refresh=False),
+    dcc.Location(id="url", refresh=False),
     html.Div([], className="area"),
     dbc.Navbar([
         html.Ul([
@@ -43,12 +43,12 @@ app.layout = html.Div([
                            href="/contact"), className="has-subnav high"),
         ])
     ], className="main-menu", sticky="left"),
-    html.Div(id=layout_ids.id_page_content, style={'margin-left': '60px'})
+    html.Div(id="page_content", style={'margin-left': '60px'})
 ])
 
 
-@app.callback(Output(layout_ids.id_page_content, 'children'),
-              [Input(layout_ids.id_url, 'pathname')])
+@app.callback(Output("page_content", 'children'),
+              [Input("url", 'pathname')])
 def display_page(pathname):
     if pathname == '/contact':
         return pages.contact()

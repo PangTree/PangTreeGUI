@@ -3,14 +3,13 @@ from dash.exceptions import PreventUpdate
 from dash_app.components import poagraph
 import dash
 from dash_app.components import tools, visualisation
-from dash_app.layout.layout_ids import *
 
 from dash_app.server import app
 from dash_app.app import draw_poagraph
 
 
-@app.callback(Output(id_full_pangenome_graph, 'figure'),
-              [Input(id_pangenome_upload, 'contents')])
+@app.callback(Output("full_pangenome_graph", 'figure'),
+              [Input("pangenome_upload", 'contents')])
 def get_full_pangenome_graph(pangenome_upload_contents):
     if not pangenome_upload_contents or not draw_poagraph:
         raise PreventUpdate()
@@ -18,8 +17,8 @@ def get_full_pangenome_graph(pangenome_upload_contents):
     return poagraph.get_pangenome_figure_faster(jsonpangenome)
 
 
-@app.callback(Output(id_visualisation_session_info, 'data'),
-              [Input(id_pangenome_upload, 'contents')])
+@app.callback(Output("visualisation_session_info", 'data'),
+              [Input("pangenome_upload", 'contents')])
 def update_pangenome_hash(pangenome_upload_contents):
     if not pangenome_upload_contents:
         raise PreventUpdate()
@@ -27,9 +26,9 @@ def update_pangenome_hash(pangenome_upload_contents):
     return hashed_contents
 
 
-@app.callback(Output(id_elements_cache_info, 'data'),
-              [Input(id_visualisation_session_info, 'data')],
-              [State(id_elements_cache_info, 'data')])
+@app.callback(Output("elements_cache_info", 'data'),
+              [Input("visualisation_session_info", 'data')],
+              [State("elements_cache_info", 'data')])
 def update_elements_cache_info(visualisation_session_info, elements_cache_info):
     if not visualisation_session_info or not draw_poagraph:
         raise PreventUpdate()
@@ -39,14 +38,14 @@ def update_elements_cache_info(visualisation_session_info, elements_cache_info):
     return str(new_elem_cache_info)
 
 
-@app.callback(Output(id_poagraph, 'elements'),
-              [Input(id_elements_cache_info, 'data'),
-               Input(id_full_pangenome_graph, 'relayoutData')],
-              [State(id_pangenome_upload, 'contents'),
-               State(id_poagraph, 'elements')])
+@app.callback(Output("poagraph", 'elements'),
+              [Input("elements_cache_info", 'data'),
+               Input("full_pangenome_graph", 'relayoutData')],
+              [State("pangenome_upload", 'contents'),
+               State("poagraph", 'elements')])
 def get_poagraph_elements(elements_cache_info, relayout_data, pangenome_upload_contents, poagraph_elements):
     def new_pangenome_loaded(trigger):
-        return trigger['prop_id'] == id_elements_cache_info + '.data'
+        return trigger['prop_id'] == "elements_cache_info" + '.data'
 
     def ignore_trigger():
         return not dash.callback_context.triggered or \
@@ -74,9 +73,9 @@ def get_poagraph_elements(elements_cache_info, relayout_data, pangenome_upload_c
     return read_poagraph_elements_to_redraw()
 
 
-@app.callback(Output(id_full_pangenome_graph, 'style'),
-              [Input(id_full_pangenome_graph, 'figure')],
-              [State(id_full_pangenome_graph, 'style')])
+@app.callback(Output("full_pangenome_graph", 'style'),
+              [Input("full_pangenome_graph", 'figure')],
+              [State("full_pangenome_graph", 'style')])
 def expand_graph(fig, s):
     if not fig:
         raise PreventUpdate()

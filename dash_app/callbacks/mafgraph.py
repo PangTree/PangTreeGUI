@@ -1,13 +1,12 @@
-from dash_app.components import tools
-from ..server import app
 from dash.dependencies import Input, Output, State
-from ..layout.layout_ids import *
-from ..components import mafgraph
+
+from dash_app.components import mafgraph, tools
+from dash_app.server import app
 
 
-@app.callback(Output(id_mafgraph_graph, 'elements'),
-              [Input(id_pangenome_hidden, 'children')],
-              [State(id_mafgraph_graph, 'elements')])
+@app.callback(Output("mafgraph_graph", 'elements'),
+              [Input("pangenome_hidden", 'children')],
+              [State("mafgraph_graph", 'elements')])
 def show_input_vis(jsonified_pangenome, mafgraph_elements):
     if not jsonified_pangenome:
         return []
@@ -18,10 +17,11 @@ def show_input_vis(jsonified_pangenome, mafgraph_elements):
     mafgraph_elements.extend(mafgraph_edges)
     return mafgraph_elements
 
+
 @app.callback(
-    Output(id_mafgraph_graph, 'style'),
-    [Input(id_mafgraph_graph, 'elements')],
-    [State(id_mafgraph_graph, 'style')])
+    Output("mafgraph_graph", 'style'),
+    [Input("mafgraph_graph", 'elements')],
+    [State("mafgraph_graph", 'style')])
 def show_mafgraph(mafgraph_elements, mafgraph_style):
     if len(mafgraph_elements) > 0:
         mafgraph_style['visibility'] = 'visible'
