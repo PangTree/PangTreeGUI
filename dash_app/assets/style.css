@@ -81,6 +81,7 @@ div>.jumbotron{
     text-align: center;
     display: flex;
     justify-content: center;
+    cursor: pointer;
 }
 
 .next_to_icon{
@@ -226,4 +227,21 @@ summary{
 
 details {
     width: 100%;
+}
+
+.secondary {
+    font-size: 80%;
+    font-weight: 400;
+    color: #95a5a6;
+}
+
+.center_flex_form {
+    display: inline-flex;
+    justify-content: center;
+    flex-direction: column;
+    vertical-align: middle;
+}
+
+.width50 {
+    width: 50%;
 }

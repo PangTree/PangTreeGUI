@@ -215,6 +215,25 @@ _metadata_upload_form = pang_task_form(
     text=[links.metadata_upload_form_text, links.metadata_example_info],
 )
 
+# _metadata_upload_form = html.Div([
+#     html.Div([
+#         html.H5("Sequences metadata"),
+#         html.Div([
+#             links.metadata_upload_form_text,
+#             links.metadata_example_info],
+#             className="secondary"),
+#     ], className="center_flex_form width50"),
+#     html.Div([
+#         dcc.Upload(id="metadata_upload", multiple=False, children=[
+#             dbc.Row([
+#                 dbc.Col(html.I(className="fas fa-file-csv fa-2x"), className="col-md-2"),
+#                 html.P("Drag & drop or select file...", className="col-md-10")
+#             ]),
+#         ], className="file_upload"),
+#     ], className="center_flex_form width50"),
+#     dcc.Store(id="metadata_upload_state")
+# ])
+
 _multialignment_upload_form = pang_task_form(
     label_id="multialignment_upload",
     label="Multialignment",

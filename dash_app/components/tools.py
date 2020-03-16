@@ -44,35 +44,33 @@ def decode_zip_content(content: str) -> str:
     return b64decode(content_string)
 
 
-# def create_output_dir() -> Path:
-#     parent_output_dir = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath(
-#         "../../users_temp_data/")
-#     if not parent_output_dir.exists():
-#         create_dir(parent_output_dir)
-#     current_time = get_current_time()
-#     uid = str(uuid.uuid4()).replace("-", "_")
-#
-#     output_dir = "_".join([current_time, uid])
-#
-#     output_dir_path = parent_output_dir.joinpath(output_dir)
-#     create_dir(output_dir_path)
-#     return output_dir_path
+def create_output_dir() -> Path:
+    parent_output_dir = Path(os.path.abspath(os.path.join(
+        os.path.dirname(__file__)))).joinpath("../../users_temp_data/")
+    if not parent_output_dir.exists():
+        create_dir(parent_output_dir)
+    current_time = get_current_time()
+    uid = str(uuid.uuid4()).replace("-", "_")
+
+    output_dir = "_".join([current_time, uid])
+
+    output_dir_path = parent_output_dir.joinpath(output_dir)
+    create_dir(output_dir_path)
+    return output_dir_path
 
 
-# def get_current_time() -> str:
-#     """Returns current date and time in format MM_DD__HH_MM_SS"""
-#
-#     return datetime.now().strftime('%m_%d__%H_%M_%S')
+def get_current_time() -> str:
+    return datetime.now().strftime('%m_%d__%H_%M_%S')
 
 
-# def get_child_dir(parent_dir_path: Path, child_dir_name: str) -> Path:
-#     child_dir_path = get_child_path(parent_dir_path, child_dir_name)
-#     create_dir(child_dir_path)
-#     return child_dir_path
+def get_child_dir(parent_dir_path: Path, child_dir_name: str) -> Path:
+    child_dir_path = get_child_path(parent_dir_path, child_dir_name)
+    create_dir(child_dir_path)
+    return child_dir_path
 
 
-# def create_dir(dir_path: Path):
-#     dir_path.mkdir()
+def create_dir(dir_path: Path):
+    dir_path.mkdir()
 
 
 def get_child_path(output_dir: Path, file_name: str) -> Path:

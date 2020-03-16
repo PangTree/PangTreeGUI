@@ -33,18 +33,14 @@ def get_error_info(message):
 
 @app.callback(Output("metadata_upload_state", 'data'),
               [Input("metadata_upload", 'contents')],
-              [State("metadata_upload", 'filename'),
-               State("session_state", 'data')])
-def validate_metadata_file(file_content, file_name, session_state):
+              [State("metadata_upload", 'filename')])
+def validate_metadata_file(file_content, file_name):
     if file_content is None or file_name is None:
         return None
-    else:
-        file_content = tools.decode_content(file_content)
-        error_message = pangtreebuild.metadata_file_is_valid(file_content, file_name)
-        if len(error_message) == 0:
-            return {"is_correct": True, "filename": file_name, "error": error_message}
-        else:
-            return {"is_correct": False, "filename": file_name, "error": error_message}
+    file_content = tools.decode_content(file_content)
+    error_message = pangtreebuild.metadata_file_is_valid(file_content, file_name)
+    is_file_correct = True if len(error_message) == 0 else False
+    return {"is_correct": is_file_correct, "filename": file_name, "error": error_message}
 
 
 @app.callback(Output("metadata_upload_state_info", 'children'),
@@ -52,12 +48,10 @@ def validate_metadata_file(file_content, file_name, session_state):
 def show_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
         return []
-    else:
-        if upload_state_data["is_correct"]:
-            filename = upload_state_data["filename"]
-            return get_success_info(f"File {filename} is uploaded.")
-        else:
-            return get_error_info(upload_state_data["error"])
+    if upload_state_data["is_correct"]:
+        filename = upload_state_data["filename"]
+        return get_success_info(f"File {filename} is uploaded.")
+    return get_error_info(upload_state_data["error"])
 
 
 # Multialignment validation
@@ -95,28 +89,25 @@ def show_multialignment_validation_result(upload_state_data):
 @app.callback(Output("maf_specific_params", 'is_open'),
               [Input("multialignment_upload_state", 'data')])
 def toggle_maf_specific_params(multialignment_upload_state_data):
-    if multialignment_upload_state_data is None or "maf" not in multialignment_upload_state_data["filename"]:
-        return False
-    else:
+    if multialignment_upload_state_data and "maf" in multialignment_upload_state_data["filename"]:
         return True
+    return False
 
 
 @app.callback(Output("missing_symbol_param", 'is_open'),
               [Input("fasta_provider_choice", 'value')])
 def toggle_mising_symbol_param(fasta_provider_choice):
-    if fasta_provider_choice is None or fasta_provider_choice != "Symbol":
-        return False
-    else:
+    if fasta_provider_choice and fasta_provider_choice == "Symbol":
         return True
+    return False
 
 
 @app.callback(Output("fasta_upload_param", 'is_open'),
               [Input("fasta_provider_choice", 'value')])
 def toggle_fasta_upload_param(fasta_provider_choice):
-    if fasta_provider_choice is None or fasta_provider_choice != "File":
-        return False
-    else:
+    if fasta_provider_choice and fasta_provider_choice == "File":
         return True
+    return False
 
 
 # FASTA VALIDATION
@@ -185,15 +176,17 @@ def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, fi
 
     error_message = pangtreebuild.blosum_file_is_valid(blosum_file_content, symbol)
     if len(error_message) == 0:
-        symbol_info = f"It contains symbol for missing nucleotides/proteins: {symbol}." if symbol else ""
+        symbol_info = f"It contains symbol for missing nucleotides/" \
+                      f"proteins: {symbol}." if symbol else ""
         validation_message = f"The {file_source_info} is correct. " + symbol_info
         return {"is_correct": True,
                 "filename": file_name,
                 "symbol": symbol,
                 "validation_message": validation_message}
     else:
-        validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/proteins: {symbol}. " \
-            f"Reason: {error_message}"
+        validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/" \
+                             f"proteins: {symbol}. " \
+                             f"Reason: {error_message}"
         return {"is_correct": False,
                 "filename": file_name,
                 "symbol": symbol,
@@ -209,12 +202,13 @@ def show_validation_result(blosum_upload_state_data):
         validation_message = blosum_upload_state_data["validation_message"]
         if blosum_upload_state_data["is_correct"]:
             return [html.I(className="fas fa-check-circle correct"),
-                    html.P(f"{validation_message}", style={"display": "inline", "margin-left": "10px"})]
+                    html.P(f"{validation_message}",
+                           style={"display": "inline", "margin-left": "10px"})]
         else:
             return [html.I(className="fas fa-exclamation-circle incorrect"),
-                    html.P(f"{validation_message}", style={"display": "inline", "margin-left": "10px"})]
+                    html.P(f"{validation_message}",
+                           style={"display": "inline", "margin-left": "10px"})]
 
-# POA specific parameters toggling
 
 
 @app.callback(Output("poa_specific_params", 'is_open'),
@@ -225,8 +219,6 @@ def toggle_poa_specific_params(consensus_algorithm_choice):
     else:
         return True
 
-# TREE specific parameters toggling
-
 
 @app.callback(Output("tree_specific_params", 'is_open'),
               [Input("consensus_algorithm_choice", 'value')])
@@ -235,8 +227,6 @@ def toggle_tree_specific_params(consensus_algorithm_choice):
         return False
     else:
         return True
-
-# HANDLE SESSION DIR
 
 
 @app.callback(Output("session_dir", 'data'),
@@ -247,8 +237,6 @@ def create_output_dir(_, session_dir):
         output_dir = tools.create_output_dir()
         session_dir = str(output_dir)
     return session_dir
-
-# EXAMPLE DATASETS
 
 
 @app.callback(
@@ -261,6 +249,7 @@ def toggle_ebola_example_collapse(ebola_btn_clicks, is_open):
         return not is_open
     return is_open
 
+
 @app.callback(
     Output("toy_example_collapse", "is_open"),
     [Input("collapse-toy-example-button", "n_clicks")],
@@ -272,7 +261,6 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
     return is_open
 
 
-# RUN PROCESSING
 @app.callback(
     Output("session_state", 'data'),
     [Input("pang_button", 'n_clicks')],
@@ -326,10 +314,12 @@ def run_pangenome(run_processing_btn_click,
     current_processing_output_dir_name = tools.get_child_path(session_dir, tools.get_current_time())
     tools.create_dir(current_processing_output_dir_name)
 
-    if "maf" in multialignment_filename:
-        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)), file_name=multialignment_filename)
-    elif "po" in multialignment_filename:
-        multialignment = Po(StringIO(tools.decode_content(multialignment_content)), file_name=multialignment_filename)
+    if multialignment_filename and "maf" in multialignment_filename:
+        multialignment = Maf(StringIO(tools.decode_content(multialignment_content)),
+                             file_name=multialignment_filename)
+    elif multialignment_filename and "po" in multialignment_filename:
+        multialignment = Po(StringIO(tools.decode_content(multialignment_content)),
+                            file_name=multialignment_filename)
     else:
         session_state["error"] = "Cannot create Poagraph. Only MAF and PO files are supported."
         return session_state
@@ -340,7 +330,8 @@ def run_pangenome(run_processing_btn_click,
     if fasta_provider_choice == "NCBI":
         fasta_provider = FromNCBI(use_cache=True)
     elif fasta_provider_choice == "File":
-        fasta_path = tools.get_child_path(current_processing_output_dir_name, fasta_filename).resolve()
+        fasta_path = tools.get_child_path(current_processing_output_dir_name,
+                                          fasta_filename).resolve()
         save_mode = "wb" if "zip" in fasta_filename else "w"
         if "zip" in fasta_filename:
             fasta_decoded_content = tools.decode_zip_content(fasta_content)
@@ -348,8 +339,8 @@ def run_pangenome(run_processing_btn_click,
             fasta_decoded_content = tools.decode_content(fasta_content)
         tools.save_to_file(fasta_decoded_content, fasta_path, save_mode)
         fasta_provider = FromFile(fasta_path)
-    else:
-        fasta_provider = ConstSymbolProvider(missing_symbol)
+    # else:
+    #     fasta_provider = ConstSymbolProvider(missing_symbol)  # brak importu
 
     if not blosum_contents:
         blosum_path = pangtreebuild.get_default_blosum_path()
@@ -361,7 +352,8 @@ def run_pangenome(run_processing_btn_click,
         blosum_contents = StringIO(blosum_contents)
     blosum = Blosum(blosum_contents, blosum_path)
 
-    metadata = MetadataCSV(StringIO(tools.decode_content(metadata_content)), metadata_filename) if metadata_content else None
+    metadata = MetadataCSV(StringIO(tools.decode_content(metadata_content)),
+                           metadata_filename) if metadata_content else None
     pangenomejson = pangtreebuild.run_pangtreebuild(
         output_dir=current_processing_output_dir_name,
         datatype=DataType[datatype],
@@ -378,7 +370,7 @@ def run_pangenome(run_processing_btn_click,
         stop=Stop(stop_value) if stop_value else None,
         p=P(p_value) if p_value else None,
         fasta_path=fasta_filename if fasta_filename else None,
-        include_nodes = True if "nodes" in output_config else False)
+        include_nodes=True if "nodes" in output_config else False)
     pangenome_json_str = to_json(pangenomejson)
 
     current_processing_output_zip = tools.dir_to_zip(current_processing_output_dir_name)
@@ -387,8 +379,6 @@ def run_pangenome(run_processing_btn_click,
             "jsonpangenome": pangenome_json_str,
             "error": ""}
 
-
-# DOWNLOAD RESULTS
 
 @app.callback(Output("download_processing_result", "href"),
               [Input("session_state", 'data')])
@@ -402,7 +392,6 @@ def update_download_result_content(session_state_data):
 
 @app.server.route('/export/pang')
 def export_pang_result_zip():
-
     zip_short_path = flask.request.args.get('n')
     zip_full_path = Path(os.path.abspath(os.path.join(os.path.dirname(__file__)))).joinpath(
         "../../users_temp_data/").joinpath(zip_short_path)
