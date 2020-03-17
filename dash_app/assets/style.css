@@ -43,7 +43,7 @@ div>.jumbotron{
 }
 
 .poapangenome_content{
-    margin: 30px 5px 5px 0px;
+    margin: 15px 5px 5px 15px;
 }
 
 
@@ -117,10 +117,12 @@ i{
 #poapangenome_form{
     padding: 20px;
     border-radius: 10px;
-    border: 10px solid #75bba7;
-    background-color: white;
+    /* border: 10px solid #75bba7; */
+    text-align: center;
+    background-color: #f1f8f6;
     margin-left: auto;
     margin-right: auto;
+    width: 90%;
 }
 
 /*a{
@@ -169,11 +171,11 @@ i{
     line-height: 40px;
 }
 
-.circle-img{
+.circle-img {
     margin-top: 40px;
     margin-bottom: 10px;
     z-index: 10;
-    border-style: solid;,
+    border-style: solid;
     border-width: 5px;
     border-radius: 50%;
     width: 225px;
@@ -233,6 +235,7 @@ details {
     font-size: 80%;
     font-weight: 400;
     color: #95a5a6;
+    padding: 0px 20px 0px 0px;
 }
 
 .center_flex_form {
@@ -242,6 +245,18 @@ details {
     vertical-align: middle;
 }
 
-.width50 {
+.example {
     width: 50%;
+    padding: 20px;
+    vertical-align: top;
+}
+
+.width40 {
+    width: 40%;
+}
+
+.pang_form {
+    min-height: 80px;
+    padding: 10px 0px 10px 0px;
+    text-align: left;
 }

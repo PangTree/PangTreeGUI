@@ -173,17 +173,31 @@ def pangtreevis():
 """-------------------------- PANGTREEBUILD ---------------------------------"""
 
 
+# def pang_task_form(label, label_id, form, text, extra_label_id=None):
+#     form_group_children = [
+#         dbc.Label(label, html_for=label_id, width=3, className="poapangenome_label"),
+#         dbc.Col(form + [dbc.FormText(text, color="secondary")], width=6)
+#     ]
+#     if extra_label_id:
+#         form_group_children.append(
+#             dbc.Label(id=extra_label_id, width=3, className="poapangenome_label")
+#         )
+
+#     return dbc.FormGroup(form_group_children, row=True)
+
 def pang_task_form(label, label_id, form, text, extra_label_id=None):
-    form_group_children = [
-        dbc.Label(label, html_for=label_id, width=3, className="poapangenome_label"),
-        dbc.Col(form + [dbc.FormText(text, color="secondary")], width=6)
+    form_children = [
+        html.Div([
+            html.H5(label), 
+            html.Div(text, className="secondary")
+            ], className="center_flex_form width40"),
+        html.Div(form, className="center_flex_form width40")
     ]
     if extra_label_id:
-        form_group_children.append(
-            dbc.Label(id=extra_label_id, width=3, className="poapangenome_label")
+        form_children.append(
+            dbc.Label(id=extra_label_id, width=2, className="poapangenome_label center_flex_form")
         )
-
-    return dbc.FormGroup(form_group_children, row=True)
+    return html.Div(form_children, className="pang_form")
 
 
 _data_type_form = pang_task_form(
@@ -214,25 +228,6 @@ _metadata_upload_form = pang_task_form(
     ],
     text=[links.metadata_upload_form_text, links.metadata_example_info],
 )
-
-# _metadata_upload_form = html.Div([
-#     html.Div([
-#         html.H5("Sequences metadata"),
-#         html.Div([
-#             links.metadata_upload_form_text,
-#             links.metadata_example_info],
-#             className="secondary"),
-#     ], className="center_flex_form width50"),
-#     html.Div([
-#         dcc.Upload(id="metadata_upload", multiple=False, children=[
-#             dbc.Row([
-#                 dbc.Col(html.I(className="fas fa-file-csv fa-2x"), className="col-md-2"),
-#                 html.P("Drag & drop or select file...", className="col-md-10")
-#             ]),
-#         ], className="file_upload"),
-#     ], className="center_flex_form width50"),
-#     dcc.Store(id="metadata_upload_state")
-# ])
 
 _multialignment_upload_form = pang_task_form(
     label_id="multialignment_upload",
@@ -404,7 +399,33 @@ _output_form = pang_task_form(
     text=""
 )
 
+_example_input = html.Div([
+    html.H5("Example Input Data"),
+    html.Div([
+        html.H6("Ebola"),
+        html.Div([
+            "This dataset orginates from ",
+            links.blank_link("UCSC Ebola Portal", href="https://genome.ucsc.edu/ebolaPortal/"),
+            '. ',
+            html.Br(),
+            links.blank_link("See example file...", href=links.ebola_data_link),
+        ], className="secondary"),
+        dbc.Button("Use Ebola data", id="use-ebola-button"),
+    ], className="center_flex_form example"),
+    html.Div([
+        html.H6("Toy example"),
+        html.Div([
+            "This is a toy example of small multialignment in MAF format, CSV metadata and "
+            "FASTA for missing nucleotides.",
+            html.Br(),
+            links.blank_link("See example files...", href=links.toy_data_link)
+        ], className="secondary"),
+        dbc.Button("Use Toy data", id="use-toy-button",),
+    ], className="center_flex_form example")
+], className="pang_form")
+
 _poapangenome_form = dbc.Form([
+    _example_input,
     _data_type_form,
     _metadata_upload_form,
     _multialignment_upload_form,
@@ -420,7 +441,7 @@ _poapangenome_tab_content = html.Div([
     dcc.Store(id="session_state"),
     dcc.Store(id="session_dir"),
     dbc.Row([
-        dbc.Col([
+        html.Div([
             html.H3("Task Parameters"),
             _poapangenome_form,
             dbc.Row([
@@ -430,7 +451,7 @@ _poapangenome_tab_content = html.Div([
                         id="pang_button",
                         color="primary",
                         className="offset-md-5 col-md-4 "
-                    )
+                    ),
                 ),
                 dbc.Col(
                     dcc.Loading(
@@ -439,60 +460,7 @@ _poapangenome_tab_content = html.Div([
                         type="default")
                 )
             ])
-        ],
-            className="col-md-8 offset-md-1",
-            id='poapangenome_form'
-        ),
-        dbc.Col([
-            html.H3("Example Input Data"),
-            dbc.Card([
-                dbc.CardHeader(
-                    dbc.Button(
-                        "Ebola",
-                        id="collapse-ebola-button",
-                        className="mb-3 btn-block my-auto opac-button")),
-                dbc.Collapse(
-                    id="ebola_collapse",
-                    children=dbc.CardBody([
-                        html.P([
-                            "This dataset orginates from ",
-                            html.A(
-                                "UCSC Ebola Portal",
-                                href="https://genome.ucsc.edu/ebolaPortal/",
-                                target="_blank")
-                        ], className='card-text'),
-                        html.P([
-                            html.A(
-                                href="https://github.com/meoke/pangtree/blob/"
-                                     "master/example_data/Ebola/multialignment.maf",
-                                target="_blank",
-                                children="See example file...")
-                        ], className='card-text'),
-                    ]))
-            ]),
-            dbc.Card([
-                dbc.CardHeader(
-                    dbc.Button(
-                        "Toy example",
-                        id="collapse-toy-example-button",
-                        className="mb-3 btn-block my-auto opac-button")),
-                dbc.Collapse(
-                    id="toy_example_collapse",
-                    children=dbc.CardBody([
-                        html.P([
-                            "This is a toy example of small multialignment in MAF format, "
-                            "CSV metadata and FASTA for missing nucleotides.",
-                        ], className='card-text'),
-                        html.P([
-                            html.A(
-                                href="https://github.com/meoke/pangtree/blob/"
-                                     "master/example_data/Simulated/toy_example",
-                                target="_blank",
-                                children="See example files...")
-                        ], className='card-text'),
-                    ]))
-            ])
-        ], className="col-md-3 offset-md-1")
+        ], id='poapangenome_form'),
     ], className="poapangenome_content"),
     dbc.Collapse(
         id="poapangenome_result",
@@ -523,7 +491,6 @@ _poapangenome_tab_content = html.Div([
                     color="success",
                     style={"visibility": "hidden"})
             ], className="col-md-3 offset-md-1")]
-
         ))
 ])
 

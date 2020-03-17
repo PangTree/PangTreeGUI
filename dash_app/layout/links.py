@@ -1,5 +1,8 @@
 import dash_html_components as html
 
+def blank_link(string, href):
+    return html.A(string, href=href, target="_blank")
+
 """-------------------------------LINKS--------------------------------------"""
 # INDEX
 build_logo_src = "https://image.flaticon.com/icons/svg/346/346195.svg"
@@ -26,16 +29,18 @@ poa_alg_link = "https://doi.org/10.1093/bioinformatics/btg109"
 tree_alg_link = "https://github.com/PangTree/PangTreeBuild#idea-and-algorithm-description"
 b80_link = "https://github.com/PangTree/PangTreeGUI/blob/master/dash_app/dependencies/blosum80.mat"
 
+ebola_data_link = "https://github.com/PangTree/PangTreeBuild/tree/master/example_data/Ebola"
+toy_data_link = "https://github.com/PangTree/PangTreeBuild/tree/master/example_data/Simulated/toy_example"
 """-------------------------------INDEX--------------------------------------"""
 
 """------------------------------FORMATS-------------------------------------"""
-maf_info = html.A("MAF", href=maf_info_link, target="_blank")
-po_info = html.A("PO", href=po_info_link, target="_blank")
-pograph_info = html.A("Partial Order graph", href=pograph_info_link, target="_blank")
-mafgraph_info = html.A("Mafgraph", href=mafgraph_info_link, target="_blank")
+maf_info = blank_link("MAF", href=maf_info_link)
+po_info = blank_link("PO", href=po_info_link)
+pograph_info = blank_link("Partial Order graph", href=pograph_info_link)
+mafgraph_info = blank_link("Mafgraph", href=mafgraph_info_link)
 
-metadata_example_info = html.A("metadata.csv", href=metadata_form_example_link, target="_blank")
-maf_example_link = html.A("example.maf", href=maf_form_example_link, target="_blank")
+metadata_example_info = blank_link("metadata.csv", href=metadata_form_example_link)
+maf_example_link = blank_link("example.maf", href=maf_form_example_link)
 
 """------------------------------PACKAGE-------------------------------------"""
 package_card_text = """
@@ -61,7 +66,7 @@ package_card_text = """
     """
 
 """-------------------------- PANGTREEBUILD ---------------------------------"""
-metadata_upload_form_text = f"""CSV with sequences metadata. It will be included in the 
+metadata_upload_form_text = """CSV with sequences metadata. It will be included in the 
     visualisation. The 'seqid' column is obligatory and must match sequences identifiers from 
     MULTIALIGNMENT file. Other columns are optional. Example file: """
 
