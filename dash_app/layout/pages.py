@@ -172,19 +172,6 @@ def pangtreevis():
 
 """-------------------------- PANGTREEBUILD ---------------------------------"""
 
-
-# def pang_task_form(label, label_id, form, text, extra_label_id=None):
-#     form_group_children = [
-#         dbc.Label(label, html_for=label_id, width=3, className="poapangenome_label"),
-#         dbc.Col(form + [dbc.FormText(text, color="secondary")], width=6)
-#     ]
-#     if extra_label_id:
-#         form_group_children.append(
-#             dbc.Label(id=extra_label_id, width=3, className="poapangenome_label")
-#         )
-
-#     return dbc.FormGroup(form_group_children, row=True)
-
 def pang_task_form(label, label_id, form, text, extra_label_id=None):
     form_children = [
         html.Div([
@@ -395,7 +382,7 @@ _output_form = pang_task_form(
                 {'label': 'Create NEWICK (Affinity Tree in newick format)', 'value': 'newick'},
                 {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
                  'value': 'nodes'}, ],
-            values=['fasta', 'po'])],
+            value=['fasta', 'po'])],
     text=""
 )
 
