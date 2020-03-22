@@ -431,7 +431,7 @@ _poapangenome_tab_content = html.Div([
                     dbc.Button(
                         "Run",
                         id="pang_button",
-                        color="primary",
+                        # color="primary",
                         className="offset-md-5 col-md-4 "
                     ),
                 ),

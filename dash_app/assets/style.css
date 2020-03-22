@@ -268,3 +268,13 @@ details {
     padding: 10px 0px 10px 0px;
     text-align: left;
 }
+
+.btn-secondary {
+    background-color: #75bba7;
+    border-color: #75bba7;
+}
+
+.btn-secondary:hover {
+    background-color: var(--page-elem);
+    border-color: var(--page-elem);
+}
