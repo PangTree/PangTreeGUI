@@ -374,8 +374,9 @@ _output_form = pang_task_form(
                  'value': 'fasta'},
                 {'label': 'Create PO (poagraph in PO format)', 'value': 'po'},
                 {'label': 'Create NEWICK (Affinity Tree in newick format)', 'value': 'newick'},
-                {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
-                 'value': 'nodes'}, ],
+                # {'label': 'Include nodes ids in pangenome.json (greatly increases file size)',
+                #  'value': 'nodes'}, 
+            ],
             value=['fasta', 'po'])],
     text=""
 )

@@ -32,16 +32,22 @@ def get_error_info(message):
 @app.callback([Output("metadata_upload", 'filename'), 
                Output("metadata_upload", 'contents'),
                Output("multialignment_upload", 'filename'), 
-               Output("multialignment_upload", 'contents')],
+               Output("multialignment_upload", 'contents'),
+               Output("fasta_provider_choice", "value"),
+               Output("fasta_upload", 'filename'),
+               Output("fasta_upload", 'contents')],
               [Input("use-toy-button", 'n_clicks')])
 def get_toy_example(n_clicks):
     metadata_file = "example_data/pangtreebuild/toy_example/metadata.csv"
     multialignment_file = "example_data/pangtreebuild/toy_example/f.maf"
+    fasta_file = "example_data/pangtreebuild/toy_example/sequence.fasta"
     with open(metadata_file) as f:
         metadata_content = tools.encode_content(f.read())
     with open(multialignment_file) as f:
         multialignment_content = tools.encode_content(f.read())
-    return "metadata.csv", metadata_content, "f.maf", multialignment_content
+    with open(fasta_file) as f:
+        fasta_content = tools.encode_content(f.read())
+    return "metadata.csv", metadata_content, "f.maf", multialignment_content, "File", "sequence.fasta", fasta_content
 
 # Metadata Validation
 
@@ -66,7 +72,6 @@ def show_validation_result(upload_state_data):
         filename = upload_state_data["filename"]
         return get_success_info(f"File {filename} is uploaded.")
     return get_error_info(upload_state_data["error"])
-
 
 # Multialignment validation
 
@@ -97,7 +102,6 @@ def show_multialignment_validation_result(upload_state_data):
         else:
             return get_error_info(upload_state_data["error"])
 
-
 # MAF specific parameters toggling
 
 @app.callback(Output("maf_specific_params", 'is_open'),
@@ -108,24 +112,13 @@ def toggle_maf_specific_params(multialignment_upload_state_data):
     return False
 
 
-@app.callback(Output("missing_symbol_param", 'is_open'),
+@app.callback([Output("missing_symbol_param", 'is_open'),
+               Output("fasta_upload_param", 'is_open')],
               [Input("fasta_provider_choice", 'value')])
 def toggle_mising_symbol_param(fasta_provider_choice):
-    if fasta_provider_choice and fasta_provider_choice == "Symbol":
-        return True
-    return False
-
-
-@app.callback(Output("fasta_upload_param", 'is_open'),
-              [Input("fasta_provider_choice", 'value')])
-def toggle_fasta_upload_param(fasta_provider_choice):
-    if fasta_provider_choice and fasta_provider_choice == "File":
-        return True
-    return False
-
+    return fasta_provider_choice == "Symbol", fasta_provider_choice == "File"
 
 # FASTA VALIDATION
-
 
 @app.callback(Output("fasta_upload_state", 'data'),
               [Input("fasta_upload", 'contents'),
@@ -135,13 +128,13 @@ def validate_fasta_file(file_content, session_dir, file_name):
     if file_content is None or file_name is None or session_dir is None:
         return None
     else:
-        if "zip" in file_name:
+        if ".zip" in file_name:
             file_content = tools.decode_zip_content(file_content)
         else:
             file_content = tools.decode_content(file_content)
         output_dir = Path(session_dir)
         fasta_path = tools.get_child_path(output_dir, file_name)
-        if "zip" in file_name:
+        if ".zip" in file_name:
             tools.save_to_file(file_content, fasta_path, 'wb')
         else:
             tools.save_to_file(file_content, fasta_path)
@@ -164,7 +157,6 @@ def show_fasta_validation_result(upload_state_data):
         else:
             return get_error_info(upload_state_data["error"])
 
-
 # Blosum Validation
 
 @app.callback(Output("blosum_upload_state", 'data'),
@@ -175,12 +167,10 @@ def show_fasta_validation_result(upload_state_data):
 def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, file_name):
     if file_content is None or file_name is None:
         return None
-
     if fasta_provider_choice == "Symbol" and missing_symbol != "":
         symbol = missing_symbol
     else:
         symbol = None
-
     if file_content is None:
         blosum_file_content = tools.read_file_to_stream(pangtreebuild.get_default_blosum_path())
         file_source_info = "default BLOSUM file"
@@ -211,7 +201,7 @@ def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, fi
               [Input("blosum_upload_state", 'data')])
 def show_validation_result(blosum_upload_state_data):
     if blosum_upload_state_data is None or len(blosum_upload_state_data) == 0:
-        return []
+        return get_success_info("")
     else:
         validation_message = blosum_upload_state_data["validation_message"]
         if blosum_upload_state_data["is_correct"]:
@@ -224,23 +214,11 @@ def show_validation_result(blosum_upload_state_data):
                            style={"display": "inline", "margin-left": "10px"})]
 
 
-
-@app.callback(Output("poa_specific_params", 'is_open'),
+@app.callback([Output("poa_specific_params", 'is_open'),
+               Output("tree_specific_params", 'is_open')],
               [Input("consensus_algorithm_choice", 'value')])
-def toggle_poa_specific_params(consensus_algorithm_choice):
-    if consensus_algorithm_choice is None or consensus_algorithm_choice != "poa":
-        return False
-    else:
-        return True
-
-
-@app.callback(Output("tree_specific_params", 'is_open'),
-              [Input("consensus_algorithm_choice", 'value')])
-def toggle_tree_specific_params(consensus_algorithm_choice):
-    if consensus_algorithm_choice is None or consensus_algorithm_choice != "tree":
-        return False
-    else:
-        return True
+def consensus_specific_params(consensus_algorithm_choice):
+    return consensus_algorithm_choice == "poa", consensus_algorithm_choice == "tree"
 
 
 @app.callback(Output("session_dir", 'data'),
