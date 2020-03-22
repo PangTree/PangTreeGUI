@@ -2,7 +2,6 @@
     --page_background: #75bba7;
     --page-elem: rgb(80, 133, 165);
     --accent: #272635;
-
 }
 
 canvas{
@@ -45,7 +44,6 @@ div>.jumbotron{
 .poapangenome_content{
     margin: 15px 5px 5px 15px;
 }
-
 
 .poapangenome_label{
     align-self: flex-start !important;
@@ -125,11 +123,6 @@ i{
     width: 90%;
 }
 
-/*a{
-    color: rgb(255, 137, 48);
-}*/
-
-
 .navbar{
     background-color: #272635 !important;
 }
@@ -146,9 +139,20 @@ i{
     background-color: var(--page-elem);
 }
 
-#consensus_tree_col{
+.containter, #consensus_tree_col{
     padding: 20px;
     background-color: var(--background);
+}
+
+.question-answer{
+    padding: 10px;
+    margin: 10px 0px 10px 0px;
+    background-color: var(--page-elem);
+}
+
+.answer{
+    color: whitesmoke;
+    padding: 15px;
 }
 
 #id_consensus_table_container{
@@ -207,9 +211,13 @@ summary{
     text-align: left;
 }
 
-.package_markdown {
+.code_markdown {
     margin: 30px 0px;
     padding: 10px;
+    background-color: #cddddd;
+    color: black;
+    word-break: break-word;
+    font-size: 87.5%;
 }
 
 .upload-icon {

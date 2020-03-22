@@ -18,13 +18,38 @@ def contact_card(name, email_address):
         html.P(email_address, className='card-text')
     ])], outline=True, color="info")
 
+def get_answer(question, answer, extra=[]):
+    return html.Details([
+        html.Summary(question),
+        html.Div([html.P(answer)]+extra, className="answer"),
+    ], className="question-answer")
 
-def contact():
-    return dbc.Container([
-        contact_card("Norbert Dojer, PhD.", "dojer@mimuw.edu.pl"),
-        contact_card("Paulina Dziadkiewicz, M.Sc.", "pedziadkiewicz@gmail.com"),
-        contact_card("Paulina Knut, B.Sc.", "paulina.knut@gmail.com"),
-    ])
+def faq():
+    return html.Div([
+        get_answer(
+            "Do I need GUI to use PangTreeBuild?", 
+            "No, PangTreeBuild is a standalone Python library.",
+            package(),
+        ),
+        contact_card("Norbert Dojer, ", "dojer@mimuw.edu.pl"),
+        contact_card("Paulina Knut, ", "paulina.knut@gmail.com"),
+    ], className="container")
+
+def package():
+    return [
+        html.Span([
+            "The underlying software is available at ",
+            html.A("GitHub", href=links.pangtreebuild_link, target="_blank"),
+            ". It can be incorporated into your Python application in this simple way:"
+        ]),
+        html.Div(dcc.Markdown(links.package_card_text), className="code_markdown"),
+        html.Span("or used as a CLI tool:"),
+        html.Div(dcc.Markdown('''
+            pangtreebuild --multialignment "example.maf" --fasta_provider "file" 
+            --fasta_path "example.fasta" --affinity tree'''),
+            className="code_markdown"
+        )
+    ]
 
 
 """-------------------------------INDEX--------------------------------------"""
@@ -131,32 +156,6 @@ def index():
             credits_footer
         ])
     )
-
-
-"""------------------------------PACKAGE-------------------------------------"""
-
-
-def package():
-    return dbc.Container([
-        dbc.Row(
-            html.Span([
-                "The underlying software is available at ",
-                html.A("GitHub", href=links.pangtreebuild_link, target="_blank"),
-                ". It can be incorporated into your Python application in this simple way:"
-            ])
-        ),
-        dbc.Card(dbc.CardBody(dcc.Markdown(links.package_card_text)), className="package_markdown"),
-        dbc.Row("or used as a CLI tool:"),
-        dbc.Card(
-            dbc.CardBody(
-                dcc.Markdown('''
-                pangtreebuild --multialignment "example.maf" --fasta_provider "file" 
-                --fasta_path "example.fasta" --affinity tree
-                ''')
-            ),
-            className="package_markdown"
-        )
-    ])
 
 
 """-------------------------------TOOLS--------------------------------------"""
