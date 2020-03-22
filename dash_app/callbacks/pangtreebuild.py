@@ -1,5 +1,6 @@
 import io
 import os
+import base64
 from io import StringIO
 from pathlib import Path
 from typing import Dict, List
@@ -28,6 +29,19 @@ def get_error_info(message):
     return [html.I(className="fas fa-exclamation-circle incorrect"),
             html.P(message, style={"display": "inline", "margin-left": "10px"})]
 
+@app.callback([Output("metadata_upload", 'filename'), 
+               Output("metadata_upload", 'contents'),
+               Output("multialignment_upload", 'filename'), 
+               Output("multialignment_upload", 'contents')],
+              [Input("use-toy-button", 'n_clicks')])
+def get_toy_example(n_clicks):
+    metadata_file = "example_data/pangtreebuild/toy_example/metadata.csv"
+    multialignment_file = "example_data/pangtreebuild/toy_example/f.maf"
+    with open(metadata_file) as f:
+        metadata_content = tools.encode_content(f.read())
+    with open(multialignment_file) as f:
+        multialignment_content = tools.encode_content(f.read())
+    return "metadata.csv", metadata_content, "f.maf", multialignment_content
 
 # Metadata Validation
 
@@ -47,7 +61,7 @@ def validate_metadata_file(file_content, file_name):
               [Input("metadata_upload_state", 'data')])
 def show_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
-        return []
+        return get_error_info("")
     if upload_state_data["is_correct"]:
         filename = upload_state_data["filename"]
         return get_success_info(f"File {filename} is uploaded.")
@@ -75,7 +89,7 @@ def validate_metadata_file(file_content, file_name):
               [Input("multialignment_upload_state", 'data')])
 def show_multialignment_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
-        return []
+        return get_error_info("")
     else:
         if upload_state_data["is_correct"]:
             filename = upload_state_data["filename"]
@@ -142,7 +156,7 @@ def validate_fasta_file(file_content, session_dir, file_name):
               [Input("fasta_upload_state", 'data')])
 def show_fasta_validation_result(upload_state_data):
     if upload_state_data is None or len(upload_state_data) == 0:
-        return []
+        return get_error_info("")
     else:
         if upload_state_data["is_correct"]:
             filename = upload_state_data["filename"]
@@ -276,7 +290,7 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
      State("blosum_upload", "contents"),
      State("blosum_upload", "filename"),
      State("consensus_algorithm_choice", "value"),
-     State("output_configuration", "values"),
+     State("output_configuration", "value"),
      State("metadata_upload", "contents"),
      State("metadata_upload", "filename"),
      State("hbmin_input", "value"),

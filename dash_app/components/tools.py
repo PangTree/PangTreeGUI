@@ -1,7 +1,7 @@
 import os
 import shutil
 import uuid
-from base64 import b64decode
+import base64
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
@@ -30,18 +30,23 @@ def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
 #     return pd.read_json(jsonified_df)
 
 
+def encode_content(content: str) -> str:
+    encoded = base64.b64encode(content.encode('ascii'))
+    return "data:text/csv;base64,"+str(encoded)[2:-1]
+
+
 def decode_content(content: str) -> str:
     if not content:
         return ''
     content_string = content.split(',')[1]
-    return b64decode(content_string).decode('ascii')
+    return base64.b64decode(content_string).decode('ascii')
 
 
 def decode_zip_content(content: str) -> str:
     if not content:
         return ''
     content_string = content.split(',')[1]
-    return b64decode(content_string)
+    return base64.b64decode(content_string)
 
 
 def create_output_dir() -> Path:
