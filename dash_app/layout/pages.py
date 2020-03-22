@@ -9,8 +9,7 @@ from dash_app.layout import links
 from dash_app.components import mafgraph as mafgraph_component
 from dash_app.components import poagraph as poagraph_component
 
-"""------------------------------CONTACT-------------------------------------"""
-
+"""--------------------------------FAQ---------------------------------------"""
 
 def contact_card(name, email_address):
     return dbc.Card([dbc.CardBody([
@@ -25,21 +24,10 @@ def get_answer(question, answer, extra=[]):
     ], className="question-answer")
 
 def faq():
-    return html.Div([
-        get_answer(
-            "Do I need GUI to use PangTreeBuild?", 
-            "No, PangTreeBuild is a standalone Python library.",
-            package(),
-        ),
-        contact_card("Norbert Dojer, ", "dojer@mimuw.edu.pl"),
-        contact_card("Paulina Knut, ", "paulina.knut@gmail.com"),
-    ], className="container")
-
-def package():
-    return [
+    pangtreebuild_package = [
         html.Span([
             "The underlying software is available at ",
-            html.A("GitHub", href=links.pangtreebuild_link, target="_blank"),
+            links.blank_link("GitHub", href=links.pangtreebuild_link),
             ". It can be incorporated into your Python application in this simple way:"
         ]),
         html.Div(dcc.Markdown(links.package_card_text), className="code_markdown"),
@@ -50,6 +38,16 @@ def package():
             className="code_markdown"
         )
     ]
+
+    return html.Div([
+        get_answer(
+            "Do I need GUI to use PangTreeBuild?", 
+            "No, PangTreeBuild is a standalone Python library.",
+            pangtreebuild_package,
+        ),
+        contact_card("Norbert Dojer", "dojer@mimuw.edu.pl"),
+        contact_card("Paulina Knut", "paulina.knut@gmail.com"),
+    ], className="container")
 
 
 """-------------------------------INDEX--------------------------------------"""
@@ -99,63 +97,60 @@ def index():
     ])
     credits_footer = html.Div([
         "PangTreeBuild and PangTreeVis icons made by ",
-        html.A("Freepik", href=links.freepik_link, target="_blank"),
+        links.blank_link("Freepik", href=links.freepik_link),
         " from ",
-        html.A("www.flaticon.com", href=links.flaticon_link, target="_blank")
+        links.blank_link("www.flaticon.com", href=links.flaticon_link)
     ])
 
-    return dbc.Container(
-        html.Div([
-            tools_logos,
-            dbc.Row(dbc.CardDeck([
-                index_info_card(
-                    header="Build graph representation of multiple sequence alignment",
-                    fa_icon="fa-bezier-curve",
-                    info=html.Ul([
-                        html.Li(["Input formats: ", links.maf_info, ", ", links.po_info]),
-                        html.Li(["Internal representation: ", links.pograph_info]),
-                        html.Li(["Cycles in graph removed with ", links.mafgraph_info]),
-                        html.Li("Complement missing parts from NCBI or fasta")
+    return html.Div([
+        tools_logos,
+        dbc.Row(dbc.CardDeck([
+            index_info_card(
+                header="Build graph representation of multiple sequence alignment",
+                fa_icon="fa-bezier-curve",
+                info=html.Ul([
+                    html.Li(["Input formats: ", links.maf_info, ", ", links.po_info]),
+                    html.Li(["Internal representation: ", links.pograph_info]),
+                    html.Li(["Cycles in graph removed with ", links.mafgraph_info]),
+                    html.Li("Complement missing parts from NCBI or fasta")
+                ])
+            ),
+            index_info_card(
+                header="Find sequences consensus",
+                fa_icon="fa-grip-lines",
+                info=[
+                    "This tool extends Partial Order Alignment (POA) algorithm introduced by ",
+                    links.blank_link("Lee et al.", href=links.pograph_info_link),
+                    ". It provides:",
+                    html.Ul([
+                        html.Li([
+                            html.Strong("Consensuses"),
+                            " - agreed representations of input subsets"
+                        ]),
+                        html.Li([
+                            html.Strong("Consensus Tree"),
+                            " - a structure similar to phylogenetic tree but it has "
+                            "a consensus assigned to every node"]),
+                        html.Li([
+                            html.Strong("Compatibility"),
+                            " - a measure of similarity between sequence and consensus"])
                     ])
-                ),
-                index_info_card(
-                    header="Find sequences consensus",
-                    fa_icon="fa-grip-lines",
-                    info=[
-                        "This tool extends Partial Order Alignment (POA) algorithm introduced by ",
-                        html.A("Lee et al.", href=links.pograph_info_link, target="_blank"),
-                        ". It provides:",
-                        html.Ul([
-                            html.Li([
-                                html.Strong("Consensuses"),
-                                " - agreed representations of input subsets"
-                            ]),
-                            html.Li([
-                                html.Strong("Consensus Tree"),
-                                " - a structure similar to phylogenetic tree but it has "
-                                "a consensus assigned to every node"]),
-                            html.Li([
-                                html.Strong("Compatibility"),
-                                " - a measure of similarity between sequence and consensus"])
-                        ])
-                    ]
-                ),
-                index_info_card(
-                    header="Visualise results",
-                    fa_icon="fa-eye",
-                    info=html.Ul([
-                        html.Li("MAF blocks graph"),
-                        html.Li("Multiple sequence alignment as "
-                                "Partial Order Graph"),
-                        html.Li("Consensus tree"),
-                        html.Li("Compatibilities relations")
-                    ])
-                )
-            ])),
-            html.Br(),
-            credits_footer
-        ])
-    )
+                ]
+            ),
+            index_info_card(
+                header="Visualise results",
+                fa_icon="fa-eye",
+                info=html.Ul([
+                    html.Li("MAF blocks graph"),
+                    html.Li("Multiple sequence alignment as Partial Order Graph"),
+                    html.Li("Consensus tree"),
+                    html.Li("Compatibilities relations")
+                ])
+            )
+        ])),
+        html.Br(),
+        credits_footer
+    ], className="container")
 
 
 """-------------------------------TOOLS--------------------------------------"""
@@ -305,9 +300,9 @@ _consensus_algorithm_form = pang_task_form(
     ],
     text=[
         "There are two available algorithms for consensus tree generation. 'Poa' by ",
-        html.A("Lee et al.", target="_blank", href=links.poa_alg_link),
+        links.blank_link("Lee et al.", href=links.poa_alg_link),
         " and 'Tree' algorithm described ",
-        html.A("here", target="_blank", href=links.tree_alg_link)
+        links.blank_link("here", href=links.tree_alg_link)
     ]
 )
 
@@ -330,7 +325,7 @@ _blosum_upload_form = pang_task_form(
     ],
     text=[
         "This parameter is optional as default BLOSUM file is ",
-        html.A(href=links.b80_link, target="_blank", children="BLOSUM80"),
+        links.blank_link("BLOSUM80", href=links.b80_link),
         ". The BLOSUM matrix must contain '?' or the custom symbol for missing nucleotides, "
         "if specified."
     ]
@@ -356,7 +351,7 @@ _tree_params_form = dbc.Collapse([
             "P is used during cutoff search. P < 1 decreases distances between small "
             "compatibilities and increases distances between the bigger ones while P > 1 "
             "works in the opposite way. This value must be > 0. ",
-            html.A("Read more...", href=links.pangtreebuild_link, target="_blank")
+            links.blank_link("Read more...", href=links.pangtreebuild_link)
         ]
     ),
     pang_task_form(
