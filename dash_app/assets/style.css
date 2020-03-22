@@ -47,6 +47,7 @@ div>.jumbotron{
 
 .poapangenome_label{
     align-self: flex-start !important;
+    font-size: 85%;
 }
 
 .hide{
@@ -277,4 +278,10 @@ details {
 .btn-secondary:hover {
     background-color: var(--page-elem);
     border-color: var(--page-elem);
+}
+
+.active_link {
+    /* background-color: #75bba7; */
+    color: #f1f8f6 !important;
+    background-color: var(--page-elem);
 }

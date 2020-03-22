@@ -388,7 +388,8 @@ _example_input = html.Div([
         html.Div([
             "This dataset orginates from ",
             links.blank_link("UCSC Ebola Portal", href="https://genome.ucsc.edu/ebolaPortal/"),
-            '. ',
+            '.',
+            html.Br(),
             html.Br(),
             links.blank_link("See example file...", href=links.ebola_data_link),
         ], className="secondary"),

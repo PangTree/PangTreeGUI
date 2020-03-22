@@ -21,45 +21,46 @@ for css in external_css:
 app.config.suppress_callback_exceptions = True
 draw_poagraph = True
 
+def get_nav_link(fa_icon, span, href, id):
+    return html.Li(html.A(
+        [
+            html.I(className=f"fas fas-nav {fa_icon}"), 
+            html.Span(span, className="nav-text")
+        ],
+        href=href, 
+        id=id), className="has-subnav high")
+
+
 app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
     html.Div([], className="area"),
     dbc.Navbar([
         html.Ul([
-            html.Li(html.A([html.I(className="fas fas-nav fa-home"),
-                            html.Span("Home", className="nav-text")],
-                           href="/#"), className="high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-seedling"),
-                            html.Span("PangTreeBuild", className="nav-text")],
-                           href="/pangtreebuild"), className="has-subnav high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-tree"),
-                            html.Span("PangTreeVis", className="nav-text")],
-                           href="/pangtreevis"), className="has-subnav high"),
-            # html.Li(html.A([html.I(className="fas fas-nav fa-archive"),
-            #                 html.Span("Package", className="nav-text")],
-            #                href="/package"), className="has-subnav high"),
-            html.Li(html.A([html.I(className="fas fas-nav fa-question-circle"),
-                            html.Span("FAQ", className="nav-text")],
-                           href="/faq"), className="has-subnav high"),
+            get_nav_link("fa-home", "Home", "/#", "index_nav"),
+            get_nav_link("fa-seedling", "PangTreeBuild", "/pangtreebuild", "pangbuild_nav"),
+            get_nav_link("fa-tree", "PangTreeVis", "/pangtreevis", "pangtreevis_nav"),
+            get_nav_link("fa-question-circle", "FAQ", "/faq", "faq_nav"),
         ])
     ], className="main-menu", sticky="left"),
     html.Div(id="page_content", style={'margin-left': '60px'})
 ])
 
 
-@app.callback(Output("page_content", 'children'),
+@app.callback([Output("page_content", 'children'),
+               Output("index_nav", 'className'),
+               Output("pangbuild_nav", 'className'),
+               Output("pangtreevis_nav", 'className'),
+               Output("faq_nav", 'className')],
               [Input("url", 'pathname')])
 def display_page(pathname):
     if pathname == '/faq':
-        return pages.faq()
-    # elif pathname == '/package':
-    #     return pages.package()
+        return pages.faq(), "", "", "", "active_link"
     elif pathname == '/pangtreebuild':
-        return pages.pangtreebuild()
+        return pages.pangtreebuild(), "", "active_link", "", ""
     elif pathname == '/pangtreevis':
-        return pages.pangtreevis()
+        return pages.pangtreevis(), "", "", "active_link", ""
     else:
-        return pages.index()
+        return pages.index(), "active_link", "", "", ""
 
 
 from .callbacks import consensustable

@@ -29,7 +29,9 @@ def get_error_info(message):
     return [html.I(className="fas fa-exclamation-circle incorrect"),
             html.P(message, style={"display": "inline", "margin-left": "10px"})]
 
-@app.callback([Output("metadata_upload", 'filename'), 
+
+@app.callback([Output("data_type", 'value'),
+               Output("metadata_upload", 'filename'), 
                Output("metadata_upload", 'contents'),
                Output("multialignment_upload", 'filename'), 
                Output("multialignment_upload", 'contents'),
@@ -47,7 +49,24 @@ def get_toy_example(n_clicks):
         multialignment_content = tools.encode_content(f.read())
     with open(fasta_file) as f:
         fasta_content = tools.encode_content(f.read())
-    return "metadata.csv", metadata_content, "f.maf", multialignment_content, "File", "sequence.fasta", fasta_content
+    return "Nucleotides", "metadata.csv", metadata_content, "f.maf", multialignment_content, "File", "sequence.fasta", fasta_content
+
+
+# @app.callback([Output("data_type", 'value'),
+#                Output("metadata_upload", 'filename'), 
+#                Output("metadata_upload", 'contents'),
+#                Output("multialignment_upload", 'filename'), 
+#                Output("multialignment_upload", 'contents')],
+#               [Input("use-ebola-button", 'n_clicks')])
+# def get_ebola_example(n_clicks):
+#     metadata_file = "example_data/pangtreebuild/ebola/metadata.csv"
+#     multialignment_file = "example_data/pangtreebuild/ebola/multialignment.maf"
+#     with open(metadata_file) as f:
+#         metadata_content = tools.encode_content(f.read())
+#     with open(multialignment_file) as f:
+#         multialignment_content = tools.encode_content(f.read())
+#     return "Nucleotides", "metadata.csv", metadata_content, "multialignment.maf", multialignment_content
+
 
 # Metadata Validation
 
