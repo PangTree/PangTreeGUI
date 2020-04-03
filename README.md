@@ -3,7 +3,7 @@
 ## About
 PangtreeVis is a web-browser tool. It enables direct calling [PangtreeBuild](https://github.com/PangTree/PangTreeBuild) but also loading the JSON file which is the result of calling PangtreeBuild.
 
-### Installation (linux)
+## Installation (linux)
 
 1) First you need to clone this repository:
 ```bash
