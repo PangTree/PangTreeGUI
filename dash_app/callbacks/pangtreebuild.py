@@ -269,6 +269,15 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
         return not is_open
     return is_open
 
+@app.callback(
+    Output("ebola_subset_example_collapse", "is_open"),
+    [Input("collapse-ebola-subset-example-button", "n_clicks")],
+    [State("ebola_subset_example_collapse", "is_open")],
+)
+def toggle_ebola_subset_example_collapse(ebola_subset_example_btn_clicks, is_open):
+    if ebola_subset_example_btn_clicks:
+        return not is_open
+    return is_open
 
 # RUN PROCESSING
 @app.callback(
@@ -347,7 +356,7 @@ def run_pangenome(run_processing_btn_click,
         tools.save_to_file(fasta_decoded_content, fasta_path, save_mode)
         fasta_provider = FromFile(fasta_path)
     else:
-        fasta_provider = ConstSymbolProvider(missing_symbol)
+        fasta_provider = ConstBaseProvider(missing_symbol)
 
     if not blosum_contents:
         blosum_path = pangtreebuild.get_default_blosum_path()

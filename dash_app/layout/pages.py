@@ -522,7 +522,7 @@ _poapangenome_tab_content = html.Div([
                     id="ebola_collapse",
                     children=dbc.CardBody([
                         html.P([
-                            "This dataset orginates from ",
+                            "This dataset originates from ",
                             html.A("UCSC Ebola Portal",
                                    href="https://genome.ucsc.edu/ebolaPortal/",
                                    target="_blank")
@@ -530,9 +530,31 @@ _poapangenome_tab_content = html.Div([
                         html.P([
                             html.A(
                                 href="https://github.com/meoke/pangtree/blob/"
-                                     "master/example_data/Ebola/multialignment.maf",
+                                     "master/example_data/Ebola",
                                 target="_blank",
-                                children="See example file...")
+                                children="See the Ebola dataset...")
+                        ], className='card-text'),
+                    ]))
+            ]),
+            dbc.Card([
+                dbc.CardHeader(
+                    dbc.Button(
+                        "Ebola subset example",
+                        id="collapse-ebola-subset-example-button",
+                        className="mb-3 btn-block my-auto opac-button")),
+                dbc.Collapse(
+                    id="ebola_subset_example_collapse",
+                    children=dbc.CardBody([
+                        html.P([
+                            "This is a subset of Ebola multialignment. The size of this file is large enough to show interesting results and can be efficiently visualized."
+                            "Use '?' for missing nucleotides.",
+                        ], className='card-text'),
+                        html.P([
+                            html.A(
+                                href="https://github.com/meoke/pangtree/blob/"
+                                     "master/example_data/Ebola_subset",
+                                target="_blank",
+                                children="See the Ebola subset dataset...")
                         ], className='card-text'),
                     ]))
             ]),
@@ -553,7 +575,7 @@ _poapangenome_tab_content = html.Div([
                                 href="https://github.com/meoke/pangtree/blob/"
                                      "master/example_data/Simulated/toy_example",
                                 target="_blank",
-                                children="See example files...")
+                                children="See the Toy example dataset...")
                         ], className='card-text'),
                     ]))
             ])
