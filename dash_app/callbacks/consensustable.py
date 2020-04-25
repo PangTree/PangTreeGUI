@@ -1,10 +1,10 @@
 from dash.dependencies import Input, Output, State
 
 from dash_app.components import consensustable, consensustree
-from ..components import tools
-from ..layout.layout_ids import *
+from dash_app.components import tools
+from dash_app.layout.layout_ids import *
 
-from ..server import app
+from dash_app.server import app
 
 
 @app.callback(
@@ -44,8 +44,7 @@ def to_consensustable_content(jsonified_partial_consensustable):
     if not jsonified_partial_consensustable:
         return []
     partial_consensustable_data = tools.unjsonify_df(jsonified_partial_consensustable)
-    data_rows = partial_consensustable_data.to_dict("rows")
-    return data_rows
+    return partial_consensustable_data.to_dict("rows")
 
 @app.callback(
     Output(id_consensuses_table, 'columns'),

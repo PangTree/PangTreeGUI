@@ -4,11 +4,12 @@ from ..components import tools
 from flask import Flask, session
 from ..layout.colors import colors
 import colorsys
+from pathlib import Path
 from typing import List, Dict, Tuple, Set, Optional, Any, Union
 
 import math
 import pandas as pd
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON, Sequence
+from pangtreebuild.serialization.json import PangenomeJSON, Sequence
 import plotly.graph_objs as go
 
 CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
@@ -148,7 +149,8 @@ def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
             ),
             name="Pangenome Cut Width"
         )
-
+    if jsonpangenome.nodes is None:
+        return None
     columns_cut_width = get_columns_cut_width(jsonpangenome)
     pangenome_trace = get_cut_width_trace(columns_cut_width)
 
@@ -295,8 +297,8 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
                         weight=1,
                         cl='s_edge_aligned')]
 
-        # if jsonpangenome.consensuses:
-        #     for consensus in jsonpangenome.consensuses:
+        # if jsonpangenome.affinitytree:
+        #     for consensus in jsonpangenome.affinitytree:
         #         for i in range(len(consensus.nodes_ids)-1):
         #             c_edge = get_cytoscape_edge(
         #                                          source=consensus.nodes_ids[i],
@@ -306,7 +308,6 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
         #             all_edges[consensus.nodes_ids[i]].append(c_edge)
 
         return sequences_nodes, all_edges
-
     nodes = [None] * len(jsonpangenome.nodes)  # id ~ (x, y, aligned_to)
     nodes_to_sequences = dict()  # id ~ [sequences_ids]
     cols_occupancy: Dict[int, Dict[int, int]] = dict()
@@ -369,17 +370,15 @@ def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangeno
     d = {"sn": sequences_nodes,
          "e": edges,
          "cw": columns}
-    # session[user_session_elements_id] = d
     with open(user_session_elements_id, 'wb') as o:
         pickle.dump(d, o)
 
 
 def get_poagraph_elements_faster(elements_cache_info, relayout_data):
-    def recalc(x):
-        return x //  15
+    if not Path(elements_cache_info).exists():
+        return
     with open(elements_cache_info, 'rb') as i:
         poagraph_elements = pickle.load(i)
-    # poagraph_elements = session[elements_cache_info]
     max_column_id = len(poagraph_elements["cw"])+1
     try:
         min_x = int(relayout_data['xaxis.range[0]'])
@@ -399,4 +398,3 @@ def get_poagraph_elements_faster(elements_cache_info, relayout_data):
         nodes = []
         edges = []
     return nodes + edges
-#

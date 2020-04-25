@@ -6,8 +6,8 @@ from ..layout.colors import colors
 import plotly.graph_objs as go
 import pandas as pd
 
-from pangtreebuild.consensus.ConsensusTree import ConsensusNodeID
-from pangtreebuild.output.PangenomeJSON import PangenomeJSON, ConsensusNode
+from pangtreebuild.affinity_tree.tree import AffinityNodeID
+from pangtreebuild.serialization.json import PangenomeJSON, AffinityNode
 import networkx as nx
 from networkx.readwrite import json_graph
 
@@ -20,9 +20,9 @@ def get_consensustree_dict(jsonpangenome: PangenomeJSON) -> Dict:
 
 def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
     tree_graph = nx.DiGraph()
-    for consensus in sorted(jsonpangenome.consensuses, key=lambda c: c.consensus_node_id):
+    for consensus in sorted(jsonpangenome.affinitytree, key=lambda c: c.affinity_node_id):
         node_is_leaf = True if not consensus.children else False
-        tree_graph.add_node(consensus.consensus_node_id,
+        tree_graph.add_node(consensus.affinity_node_id,
                             name=consensus.name,
                             comp=consensus.comp_to_all_sequences,
                             sequences_ids=consensus.sequences_int_ids,
@@ -33,7 +33,7 @@ def get_consensustree(jsonpangenome: PangenomeJSON) -> nx.DiGraph:
                             mincomp=consensus.mincomp,
                             is_leaf=node_is_leaf)
         if consensus.parent is not None:
-            tree_graph.add_edge(consensus.parent, consensus.consensus_node_id, weight=len(consensus.sequences_int_ids))
+            tree_graph.add_edge(consensus.parent, consensus.affinity_node_id, weight=len(consensus.sequences_int_ids))
 
     return tree_graph
 
@@ -46,7 +46,7 @@ def dict_to_tree(tree_data: Dict) -> nx.DiGraph:
     return json_graph.tree_graph(tree_data)
 
 
-def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[ConsensusNodeID, int]:
+def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[AffinityNodeID, int]:
     node_id_to_y = {}
     leafs_ids = []
     for node_id in tree.nodes:
@@ -90,7 +90,8 @@ def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[ConsensusNodeID, int]:
 
 def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_value: str, full_consensustable: pd.DataFrame) -> go.Figure:
     node_id_to_y = get_node_id_to_y_pos(tree)
-    labels_on_hover = [f'min_comp: {tree.nodes[node_id]["mincomp"]}' for node_id in range(len(node_id_to_y))]
+    minCompsLabels = [format(tree.nodes[node_id]["mincomp"], '.4f') for node_id in range(len(node_id_to_y))]
+    labels_on_hover = [f'{minCompLabel}' for minCompLabel in minCompsLabels]
     labels = [f"{node_id}" for node_id in range(len(node_id_to_y))]
     positions = [(tree.nodes[node_id]["mincomp"], node_id_to_y[node_id]) for node_id in range(len(node_id_to_y))]
 
@@ -106,10 +107,8 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
                   annotations=tree_nodes_annotations,
                   font=dict(size=12),
                   showlegend=False,
-                  xaxis=go.layout.XAxis(dict(range=[0, 1.2], showline=False, zeroline=False, showgrid=False,
-                                             showticklabels=False,)),
-                  yaxis=go.layout.YAxis(dict(range=[0, 100], showline=False, zeroline=False, showgrid=False,
-                                             showticklabels=False,)),
+                  xaxis=dict(range=[0, 1.2], showline=False, zeroline=False, showgrid=False, showticklabels=False),
+                  yaxis=dict(range=[0, 100], showline=False, zeroline=False, showgrid=False, showticklabels=False),
                   margin=dict(l=20, r=10, b=0, t=0),
                   hovermode='closest',
                   plot_bgcolor=colors['transparent'],
@@ -135,6 +134,7 @@ def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: 
                       y=[y for [_, y] in positions],
                       mode='markers',
                       name='',
+                      textposition='top left',
                       marker=dict(symbol='circle',
                                   size=20,
                                   color='rgba(255, 255, 255, 1)',
@@ -143,7 +143,7 @@ def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: 
                                   ),
                       text=labels_on_hover,
                       hoverinfo='text',
-                      opacity=0.8)
+                      opacity=1)
 
 
 def get_tree_lines_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph) -> go.Scatter:
@@ -172,6 +172,7 @@ def get_tree_nodes_annotations(positions: List[Tuple[float, float]], labels: Lis
 def get_leaf_label(sequences_ids: List[int], leaf_info_value: str, full_consensustable: pd.DataFrame) -> str:
     return ", ".join([str(l) for l in set(full_consensustable[leaf_info_value].loc[full_consensustable["ID"].isin(sequences_ids)])])
 
+
 def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph, leaf_info_value: str,
                           full_consensustable: pd.DataFrame) -> go.Scatter:
     x = []
@@ -180,7 +181,7 @@ def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph
     for i in range(len(tree.nodes)):
         if not tree.nodes[i]['is_leaf']:
             continue
-        x.append(positions[i][0] + 0.01)
+        x.append(positions[i][0] + 0.02)
         y.append(positions[i][1])
         text.append(get_leaf_label(sequences_ids=tree.nodes[i]['sequences_ids'],
                                    leaf_info_value=leaf_info_value,
@@ -194,9 +195,9 @@ def get_leaves_text_graph(positions: List[Tuple[float, float]], tree: nx.DiGraph
         textposition='middle right',
         hoverinfo='none',
         marker=dict(symbol='line-ew-open',
-                    size=10,
+                    size=3,
                     color='black',
-                    line=dict(color='rgb(50,50,50)', width=0.7),
+                    line=dict(color='rgb(50,50,50)', width=0),
                     )
     )
 
@@ -205,7 +206,7 @@ def get_leaf_info_dropdown_options(metadata: List[str]) -> List[Dict[str, str]]:
     return [ {'label': m, 'value': m} for m in metadata]
 
 
-def get_offspring_ids(tree: nx.DiGraph, current_node_id: ConsensusNodeID) -> List[ConsensusNodeID]:
+def get_offspring_ids(tree: nx.DiGraph, current_node_id: AffinityNodeID) -> List[AffinityNodeID]:
     nodes_to_visit = deque(tree.nodes[current_node_id]['children_consensuses'])
     offspring_ids = []
     while nodes_to_visit:

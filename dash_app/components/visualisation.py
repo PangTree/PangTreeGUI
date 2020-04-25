@@ -1,6 +1,6 @@
 import dash_html_components as html
 from dash.exceptions import PreventUpdate
-from pangtreebuild.output.PangenomeJSON import TaskParameters, PangenomeJSON
+from pangtreebuild.serialization.json import TaskParameters, PangenomeJSON
 from ..components import tools
 import os
 from pathlib import Path
@@ -10,10 +10,6 @@ def get_task_params(task_parameters: TaskParameters):
     return [html.H3("Task Parameters", style={"padding-bottom": '10px'}),
         html.P(f"Running time: {task_parameters.running_time}"),
             html.P(f"Input: {task_parameters.multialignment_file_path}")]
-
-
-def get_input_info(jsonpangenome):
-    return [html.H3("Input Info"), html.P("Coś o inpucie")]
 
 
 def read_pangenome_upload(upload_content) -> PangenomeJSON:
