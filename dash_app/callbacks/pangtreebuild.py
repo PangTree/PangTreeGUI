@@ -285,8 +285,8 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
      State("fasta_upload", "contents"),
      State("fasta_upload", "filename"),
      State("missing_symbol_input", "value"),
-     State("blosum_upload", "contents"),
-     State("blosum_upload", "filename"),
+    #  State("blosum_upload", "contents"),
+    #  State("blosum_upload", "filename"),
      State("consensus_algorithm_choice", "value"),
      State("output_configuration", "value"),
      State("metadata_upload", "contents"),
@@ -305,8 +305,8 @@ def run_pangenome(run_processing_btn_click,
                   fasta_content: str,
                   fasta_filename: str,
                   missing_symbol: str,
-                  blosum_contents: str,
-                  blosum_filename: str,
+                #   blosum_contents: str,
+                #   blosum_filename: str,
                   consensus_choice: str,
                   output_config: List[str],
                   metadata_content: str,
@@ -354,14 +354,14 @@ def run_pangenome(run_processing_btn_click,
     # else:
     #     fasta_provider = ConstSymbolProvider(missing_symbol)  # brak importu
 
-    if not blosum_contents:
+    # if not blosum_contents:
         blosum_path = pangtreebuild.get_default_blosum_path()
         blosum_contents = tools.read_file_to_stream(blosum_path)
-    else:
-        blosum_path = tools.get_child_path(current_processing_output_dir_name, blosum_filename)
-        blosum_contents = tools.decode_content(blosum_contents)
-        tools.save_to_file(blosum_contents, blosum_path)
-        blosum_contents = StringIO(blosum_contents)
+    # else:
+    #     blosum_path = tools.get_child_path(current_processing_output_dir_name, blosum_filename)
+    #     blosum_contents = tools.decode_content(blosum_contents)
+    #     tools.save_to_file(blosum_contents, blosum_path)
+    #     blosum_contents = StringIO(blosum_contents)
     blosum = Blosum(blosum_contents, blosum_path)
 
     metadata = MetadataCSV(StringIO(tools.decode_content(metadata_content)),
