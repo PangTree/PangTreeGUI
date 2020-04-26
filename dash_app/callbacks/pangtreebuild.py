@@ -5,6 +5,7 @@ from io import StringIO
 from pathlib import Path
 from typing import Dict, List
 
+import dash
 import dash_html_components as html
 import flask
 from dash.dependencies import Input, Output, State
@@ -38,35 +39,35 @@ def get_error_info(message):
                Output("fasta_provider_choice", "value"),
                Output("fasta_upload", 'filename'),
                Output("fasta_upload", 'contents')],
-              [Input("use-toy-button", 'n_clicks')])
-def get_toy_example(n_clicks):
-    metadata_file = "example_data/pangtreebuild/toy_example/metadata.csv"
-    multialignment_file = "example_data/pangtreebuild/toy_example/f.maf"
-    fasta_file = "example_data/pangtreebuild/toy_example/sequence.fasta"
-    with open(metadata_file) as f:
+              [Input("use-toy-button", 'n_clicks'),
+               Input("use-ebola-button", 'n_clicks')])
+def get_example(toy_n_clicks, ebola_n_clicks):
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    if "toy" in changed_id:
+        example_folder = "toy_example"
+        metadata_file = "metadata.csv"
+        multialignment_file = "f.maf"
+        fasta_file = "sequence.fasta"
+    elif "ebola" in changed_id:
+        example_folder = "ebola"
+        metadata_file = "metadata.csv"
+        multialignment_file = "multialignment.maf"
+        fasta_file = None
+    
+    with open(f"example_data/pangtreebuild/{example_folder}/{metadata_file}") as f:
         metadata_content = tools.encode_content(f.read())
-    with open(multialignment_file) as f:
+    with open(f"example_data/pangtreebuild/{example_folder}/{multialignment_file}") as f:
         multialignment_content = tools.encode_content(f.read())
-    with open(fasta_file) as f:
-        fasta_content = tools.encode_content(f.read())
-    return "Nucleotides", "metadata.csv", metadata_content, "f.maf", multialignment_content, "File", "sequence.fasta", fasta_content
-
-
-# @app.callback([Output("data_type", 'value'),
-#                Output("metadata_upload", 'filename'), 
-#                Output("metadata_upload", 'contents'),
-#                Output("multialignment_upload", 'filename'), 
-#                Output("multialignment_upload", 'contents')],
-#               [Input("use-ebola-button", 'n_clicks')])
-# def get_ebola_example(n_clicks):
-#     metadata_file = "example_data/pangtreebuild/ebola/metadata.csv"
-#     multialignment_file = "example_data/pangtreebuild/ebola/multialignment.maf"
-#     with open(metadata_file) as f:
-#         metadata_content = tools.encode_content(f.read())
-#     with open(multialignment_file) as f:
-#         multialignment_content = tools.encode_content(f.read())
-#     return "Nucleotides", "metadata.csv", metadata_content, "multialignment.maf", multialignment_content
-
+    if fasta_file:
+        fasta_provider_choice = "File"
+        with open(f"example_data/pangtreebuild/{example_folder}/{fasta_file}") as f:
+            fasta_content = tools.encode_content(f.read())
+    else:
+        fasta_provider_choice = "NCBI"
+        fasta_content = None
+        
+    return "Nucleotides", metadata_file, metadata_content, multialignment_file, multialignment_content, fasta_provider_choice, fasta_file, fasta_content
+    
 
 # Metadata Validation
 
