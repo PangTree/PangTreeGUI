@@ -179,42 +179,42 @@ def show_fasta_validation_result(upload_state_data):
 
 # Blosum Validation
 
-@app.callback(Output("blosum_upload_state", 'data'),
-              [Input("blosum_upload", 'contents'),
-               Input("missing_symbol_input", 'value'),
-               Input("fasta_provider_choice", "value")],
-              [State("blosum_upload", 'filename')])
-def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, file_name):
-    if file_content is None or file_name is None:
-        return None
-    if fasta_provider_choice == "Symbol" and missing_symbol != "":
-        symbol = missing_symbol
-    else:
-        symbol = None
-    if file_content is None:
-        blosum_file_content = tools.read_file_to_stream(pangtreebuild.get_default_blosum_path())
-        file_source_info = "default BLOSUM file"
-    else:
-        blosum_file_content = StringIO(tools.decode_content(file_content))
-        file_source_info = f"provided BLOSUM file: {file_name}"
+# @app.callback(Output("blosum_upload_state", 'data'),
+#               [Input("blosum_upload", 'contents'),
+#                Input("missing_symbol_input", 'value'),
+#                Input("fasta_provider_choice", "value")],
+#               [State("blosum_upload", 'filename')])
+# def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, file_name):
+#     if file_content is None or file_name is None:
+#         return None
+#     if fasta_provider_choice == "Symbol" and missing_symbol != "":
+#         symbol = missing_symbol
+#     else:
+#         symbol = None
+#     if file_content is None:
+#         blosum_file_content = tools.read_file_to_stream(pangtreebuild.get_default_blosum_path())
+#         file_source_info = "default BLOSUM file"
+#     else:
+#         blosum_file_content = StringIO(tools.decode_content(file_content))
+#         file_source_info = f"provided BLOSUM file: {file_name}"
 
-    error_message = pangtreebuild.blosum_file_is_valid(blosum_file_content, symbol)
-    if len(error_message) == 0:
-        symbol_info = f"It contains symbol for missing nucleotides/" \
-                      f"proteins: {symbol}." if symbol else ""
-        validation_message = f"The {file_source_info} is correct. " + symbol_info
-        return {"is_correct": True,
-                "filename": file_name,
-                "symbol": symbol,
-                "validation_message": validation_message}
-    else:
-        validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/" \
-                             f"proteins: {symbol}. " \
-                             f"Reason: {error_message}"
-        return {"is_correct": False,
-                "filename": file_name,
-                "symbol": symbol,
-                "validation_message": validation_message}
+#     error_message = pangtreebuild.blosum_file_is_valid(blosum_file_content, symbol)
+#     if len(error_message) == 0:
+#         symbol_info = f"It contains symbol for missing nucleotides/" \
+#                       f"proteins: {symbol}." if symbol else ""
+#         validation_message = f"The {file_source_info} is correct. " + symbol_info
+#         return {"is_correct": True,
+#                 "filename": file_name,
+#                 "symbol": symbol,
+#                 "validation_message": validation_message}
+#     else:
+#         validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/" \
+#                              f"proteins: {symbol}. " \
+#                              f"Reason: {error_message}"
+#         return {"is_correct": False,
+#                 "filename": file_name,
+#                 "symbol": symbol,
+#                 "validation_message": validation_message}
 
 
 @app.callback(Output("blosum_upload_state_info", 'children'),
