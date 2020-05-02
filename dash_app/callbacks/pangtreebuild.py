@@ -382,7 +382,8 @@ def run_pangenome(run_processing_btn_click,
         stop=Stop(stop_value) if stop_value else None,
         p=P(p_value) if p_value else None,
         fasta_path=fasta_filename if fasta_filename else None,
-        include_nodes=True if "nodes" in output_config else False)
+        include_nodes=True # if "nodes" in output_config else False
+        )
     pangenome_json_str = to_json(pangenomejson)
 
     current_processing_output_zip = tools.dir_to_zip(current_processing_output_dir_name)

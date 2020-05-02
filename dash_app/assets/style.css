@@ -285,3 +285,7 @@ details {
     color: #f1f8f6 !important;
     background-color: var(--page-elem);
 }
+
+#consensus_tree_slider {
+    width: 85%;
+}
