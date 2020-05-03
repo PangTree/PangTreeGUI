@@ -587,57 +587,54 @@ _consensus_table = html.Div([
         style={'overflow-x': 'scroll'})
     ], className="vis_row")
 
-_affinity_tree_row = dbc.Row(
-    children=[
-        html.Details([
-            html.Summary('Affinity Tree'),
-            dbc.Col([
-                html.P(
-                    "This is affinity tree generated using this software. It is similar to "
-                    "a phylogenetic tree but every node has a consensus sequence assigned."
-                ),
-                dcc.Graph(
-                    id="consensus_tree_graph",
-                    style={'height': '600px', 'width': 'auto'},
-                    config={'displayModeBar': True},
-                ),
-                dcc.Slider(
-                    id="consensus_tree_slider",
-                    min=0,
-                    max=1,
-                    marks={i / 10: str(i / 10) for i in range(11)},
-                    step=0.01,
-                    value=0.5,
-                    dots=True
-                )],
-                id="consensus_tree_col"
-            ),
-            dbc.Col(children=[
-                html.H5("Metadata in affinity tree leaves:"),
-                dcc.Dropdown(
-                    id="leaf_info_dropdown",
-                    style={'margin-bottom': '20px'},
-                    options=[],
-                    value='SEQID'
-                ),
-                html.H5([
-                    "Affinity tree node details:",
-                    html.P(id="consensus_node_details_header")
-                ]),
-                html.Img(
-                    id="consensus_node_details_distribution",
-                    style={'max-width': '100%', 'margin-bottom': '2%'}
-                ),
-                dcc.Loading(dash_table.DataTable(
-                    id="consensus_node_details_table",
-                    style_table={'maxHeight': '800', 'overflowY': 'scroll'},
-                    style_cell={'textAlign': 'left'},
-                    sort_action='native'
-                ), type="circle")], width=3),
+_affinity_tree_row = html.Div([
+    html.Details([
+        html.Summary('Affinity Tree'),
+        html.P(
+            "This is affinity tree generated using this software. It is similar to "
+            "a phylogenetic tree but every node has a consensus sequence assigned."
+        , style={"text-align": "left"}),
+        html.Div([
+            html.H5("Metadata in affinity tree leaves:"),
+            dcc.Dropdown(
+                id="leaf_info_dropdown",
+                style={'margin-bottom': '20px'},
+                options=[],
+                value='SEQID'
+            )], 
+            style={'width': '20%'}),
+        dcc.Graph(
+            id="consensus_tree_graph",
+            style={'height': '600px', 'width': 'auto'},
+            config={'displayModeBar': True},
+        ),
+        dcc.Slider(
+            id="consensus_tree_slider",
+            min=0,
+            max=1,
+            marks={i / 10: str(i / 10) for i in range(11)},
+            step=0.01,
+            value=0.5,
+            dots=True
+        ),
 
-            _consensus_table],
-            className="vis_row"
-        )
+        # html.H5([
+        #     "Affinity tree node details:",
+        #     html.P(id="consensus_node_details_header")
+        # ]),
+        # html.Img(
+        #     id="consensus_node_details_distribution",
+        #     style={'max-width': '100%', 'margin-bottom': '2%'}
+        # ),
+        # dcc.Loading(dash_table.DataTable(
+        #     id="consensus_node_details_table",
+        #     style_table={'maxHeight': '800', 'overflowY': 'scroll'},
+        #     style_cell={'textAlign': 'left'},
+        #     sort_action='native'
+        # ), type="circle"),
+        
+        _consensus_table
+        ], className="vis_row")
     ])
 
 loading_style = "circle"
