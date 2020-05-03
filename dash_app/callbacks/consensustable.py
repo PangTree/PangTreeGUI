@@ -45,7 +45,8 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
     [State("full_consensustree_hidden", 'children')])
 def update_consensus_table(jsonified_partial_consensustable, jsonified_consensus_tree):
     if not jsonified_partial_consensustable:
-        return [], [{}], []
+        # return [], [{}], []
+        return [{"ID": 0}, {"ID": 1}], [{"name": i, "id": i} for i in ["ID"]], []
     partial_consensustable_data = pd.read_json(jsonified_partial_consensustable)
     consensustable_columns = [{"name": i, "id": i} for i in partial_consensustable_data.columns]
     consensustable_content = partial_consensustable_data.to_dict("rows")

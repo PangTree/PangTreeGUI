@@ -581,11 +581,14 @@ _consensus_table = html.Div([
             dash_table.DataTable(
                 id="consensuses_table",
                 sort_action="native",
-                sort_mode="multi"),
+                sort_mode="multi",
+                data=[{"ID": 0}, {"ID": 1}],
+                columns=[{"name": i, "id": i} for i in ["ID"]]
+            ),
             type="circle"),
         id="consensus_table_container",
         style={'overflow-x': 'scroll'})
-    ], className="vis_row")
+    ])
 
 _affinity_tree_row = html.Div([
     html.Details([
@@ -632,7 +635,7 @@ _affinity_tree_row = html.Div([
         #     style_cell={'textAlign': 'left'},
         #     sort_action='native'
         # ), type="circle"),
-        
+        html.Br(),
         _consensus_table
         ], className="vis_row")
     ])
