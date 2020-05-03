@@ -574,19 +574,18 @@ _poagraph_row = dbc.Row(
         ])
     ], className="vis_row")
 
-_consensus_table = html.Div(
-    children=[
-        dbc.Col(html.H4("Consensuses on current cut level"), width=12),
-        dbc.Col(
-            html.Div(
-                id="consensus_table_container",
-                children=dcc.Loading(
-                    dash_table.DataTable(
-                        id="consensuses_table",
-                        sort_action="native",
-                        sort_mode="multi"),
-                    type="circle")), width=12,
-            style={'overflow-x': 'scroll'})], className="vis_row")
+_consensus_table = html.Div([
+    html.H4("Consensuses on current cut level"),
+    html.Div(
+        dcc.Loading(
+            dash_table.DataTable(
+                id="consensuses_table",
+                sort_action="native",
+                sort_mode="multi"),
+            type="circle"),
+        id="consensus_table_container",
+        style={'overflow-x': 'scroll'})
+    ], className="vis_row")
 
 _affinity_tree_row = dbc.Row(
     children=[

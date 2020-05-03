@@ -1,18 +1,17 @@
 import base64
 import io
 from collections import deque
-from typing import List, Dict
+from typing import Dict, List
 
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
 import seaborn as sns
+from dash_app.components import consensustree
+from dash_app.layout.colors import colors
 from matplotlib.colors import ColorConverter
 from pangtreebuild.affinity_tree.tree import AffinityNodeID
 from pangtreebuild.serialization.json import PangenomeJSON
-
-from dash_app.components import consensustree
-from dash_app.layout.colors import colors
 
 
 def get_full_table_data(jsonpangenome: PangenomeJSON) -> pd.DataFrame:
@@ -103,7 +102,7 @@ def get_cell_styling_dict(consensus_colname, mincomp):
     return {
         'if': {'column_id': f'{consensus_colname}',
                'filter': f'{consensus_colname} >= "{mincomp}"'},
-        'backgroundColor': "brown"
+        'backgroundColor': "silver"
     }
 
 
@@ -118,4 +117,3 @@ def get_node_distribution_fig(node_id: AffinityNodeID, full_consensustable: pd.D
     encoded_plot = base64.b64encode(buf.read())
     buf.close()
     return f"data:image/jpg;base64,{encoded_plot.decode('utf-8')}"
-

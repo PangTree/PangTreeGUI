@@ -2,10 +2,9 @@ import json
 
 import pandas as pd
 from dash.dependencies import Input, Output, State
-from pangtreebuild.serialization.json import str_to_PangenomeJSON
-
 from dash_app.components import consensustable, consensustree
 from dash_app.server import app
+from pangtreebuild.serialization.json import str_to_PangenomeJSON
 
 
 @app.callback(
