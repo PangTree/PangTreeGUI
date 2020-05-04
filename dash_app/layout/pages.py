@@ -385,25 +385,24 @@ _example_input = html.Div([
     html.H5("Example Input Data"),
     html.Div([
         html.H6("Ebola"),
+        dbc.Button("Use Ebola data", id="use-ebola-button"),
         html.Div([
             "This dataset orginates from ",
             links.blank_link("UCSC Ebola Portal", href="https://genome.ucsc.edu/ebolaPortal/"),
             '.',
             html.Br(),
-            html.Br(),
             links.blank_link("See example file...", href=links.ebola_data_link),
-        ], className="secondary"),
-        dbc.Button("Use Ebola data", id="use-ebola-button"),
+        ], className="secondary"),   
     ], className="center_flex_form example"),
     html.Div([
         html.H6("Toy example"),
+        dbc.Button("Use Toy data", id="use-toy-button",),
         html.Div([
             "This is a toy example of small multialignment in MAF format, CSV metadata and "
             "FASTA for missing nucleotides.",
             html.Br(),
             links.blank_link("See example files...", href=links.toy_data_link)
         ], className="secondary"),
-        dbc.Button("Use Toy data", id="use-toy-button",),
     ], className="center_flex_form example")
 ], className="pang_form")
 
