@@ -167,6 +167,12 @@ i{
     padding: 15px;
 }
 
+.footer{
+    position: fixed;
+    bottom: 0;
+    margin-bottom: 10px;
+}
+
 #id_consensus_table_container{
     /*overflow-x: scroll;*/
     width: auto;

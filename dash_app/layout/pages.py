@@ -45,8 +45,14 @@ def faq():
             "No, PangTreeBuild is a standalone Python library.",
             pangtreebuild_package,
         ),
-        contact_card("Norbert Dojer", "dojer@mimuw.edu.pl"),
-        contact_card("Paulina Knut", "paulina.knut@gmail.com"),
+        html.Div([
+            "If you have any questions, please contact us at dojer@mimuw.edu.pl or "
+            "paulina.knut@gmail.com.",
+            # contact_card("Norbert Dojer", "dojer@mimuw.edu.pl"),
+            # contact_card("Paulina Knut", "paulina.knut@gmail.com"),
+        ],
+        className='footer'),
+        
     ], className="container")
 
 
@@ -100,7 +106,8 @@ def index():
         links.blank_link("Freepik", href=links.freepik_link),
         " from ",
         links.blank_link("www.flaticon.com", href=links.flaticon_link)
-    ])
+    ], 
+    className="footer")
 
     return html.Div([
         tools_logos,
