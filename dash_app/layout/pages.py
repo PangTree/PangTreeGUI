@@ -445,35 +445,23 @@ _poapangenome_tab_content = html.Div([
         ], id='poapangenome_form'),
     ], className="poapangenome_content"),
     dbc.Collapse(
-        id="poapangenome_result",
-        children=dbc.Row(children=[
-            dbc.Col([
-                dbc.Row([
-                    html.I(id="result_icon"),
-                    html.H3("Task completed!", className="next_to_icon")]),
-                dbc.Col(html.Div(id="poapangenome_result_description"),
-                        className="col-md-11")
-            ], className="col-md-6 offset-md-1"),
-            dbc.Col([
+        html.Div([
+            dbc.Row([
+                html.I(id="result_icon"),
+                html.H3("Task completed!", className="next_to_icon"),
                 html.A(
                     dbc.Button(
                         "Download result files",
-                        block=True,
+                        # block=True,
                         className="result_btn",
                         color="info"
                     ),
                     id="download_processing_result"
-                ),
-                dbc.Button(
-                    "Go to visualisation",
-                    id="go_to_vis_tab",
-                    n_clicks_timestamp=0,
-                    block=True,
-                    className="result_btn",
-                    color="success",
-                    style={"visibility": "hidden"})
-            ], className="col-md-3 offset-md-1")]
-        ))
+                )
+            ]),
+            html.Div(id="poapangenome_result_description"),
+        ]), 
+        id="poapangenome_result")
 ])
 
 """--------------------------- PANGTREEVIS ----------------------------------"""
