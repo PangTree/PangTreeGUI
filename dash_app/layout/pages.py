@@ -313,31 +313,6 @@ _consensus_algorithm_form = pang_task_form(
     ]
 )
 
-# _blosum_upload_form = pang_task_form(
-#     label_id="blosum_upload",
-#     label="BLOSUM",
-#     extra_label_id="blosum_upload_state_info",
-#     form=[
-#         dcc.Upload(
-#             id="blosum_upload",
-#             multiple=False,
-#             children=[
-#                 dbc.Row([
-#                     dbc.Col(html.I(className="fas fa-table fa-2x"), className="col-md-2"),
-#                     html.P("Drag & drop or select file...", className="col-md-10")
-#                 ])
-#             ],
-#             className="file_upload"),
-#         dcc.Store(id="blosum_upload_state")
-#     ],
-#     text=[
-#         "This parameter is optional as default BLOSUM file is ",
-#         links.blank_link("BLOSUM80", href=links.b80_link),
-#         ". The BLOSUM matrix must contain '?' or the custom symbol for missing nucleotides, "
-#         "if specified."
-#     ]
-# )
-
 _poa_hbmin_form = dbc.Collapse(
     pang_task_form(
         label_id="hbmin_input",
@@ -428,7 +403,6 @@ _poapangenome_form = dbc.Form([
     _metadata_upload_form,
     _multialignment_upload_form,
     _missing_data_form,
-    # _blosum_upload_form,
     _consensus_algorithm_form,
     _poa_hbmin_form,
     _tree_params_form,

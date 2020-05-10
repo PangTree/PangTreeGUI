@@ -40,14 +40,20 @@ def get_error_info(message):
                Output("fasta_upload", 'filename'),
                Output("fasta_upload", 'contents')],
               [Input("use-toy-button", 'n_clicks'),
+               Input("use-ebola_subset-button", 'n_clicks'),
                Input("use-ebola-button", 'n_clicks')])
-def get_example(toy_n_clicks, ebola_n_clicks):
+def get_example(toy_n_clicks, ebola_subset_n_clicks, ebola_n_clicks):
     changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
     if "toy" in changed_id:
         example_folder = "toy_example"
         metadata_file = "metadata.csv"
         multialignment_file = "f.maf"
         fasta_file = "sequence.fasta"
+    elif "ebola_subset" in changed_id:
+        example_folder = "ebola_subset"
+        metadata_file = "metadata.csv"
+        multialignment_file = "multialignment.maf"
+        fasta_file = None
     elif "ebola" in changed_id:
         example_folder = "ebola"
         metadata_file = "metadata.csv"
@@ -177,45 +183,6 @@ def show_fasta_validation_result(upload_state_data):
         else:
             return get_error_info(upload_state_data["error"])
 
-# Blosum Validation
-
-# @app.callback(Output("blosum_upload_state", 'data'),
-#               [Input("blosum_upload", 'contents'),
-#                Input("missing_symbol_input", 'value'),
-#                Input("fasta_provider_choice", "value")],
-#               [State("blosum_upload", 'filename')])
-# def validate_blosum_file(file_content, missing_symbol, fasta_provider_choice, file_name):
-#     if file_content is None or file_name is None:
-#         return None
-#     if fasta_provider_choice == "Symbol" and missing_symbol != "":
-#         symbol = missing_symbol
-#     else:
-#         symbol = None
-#     if file_content is None:
-#         blosum_file_content = tools.read_file_to_stream(pangtreebuild.get_default_blosum_path())
-#         file_source_info = "default BLOSUM file"
-#     else:
-#         blosum_file_content = StringIO(tools.decode_content(file_content))
-#         file_source_info = f"provided BLOSUM file: {file_name}"
-
-#     error_message = pangtreebuild.blosum_file_is_valid(blosum_file_content, symbol)
-#     if len(error_message) == 0:
-#         symbol_info = f"It contains symbol for missing nucleotides/" \
-#                       f"proteins: {symbol}." if symbol else ""
-#         validation_message = f"The {file_source_info} is correct. " + symbol_info
-#         return {"is_correct": True,
-#                 "filename": file_name,
-#                 "symbol": symbol,
-#                 "validation_message": validation_message}
-#     else:
-#         validation_message = f"Error in {file_source_info} or symbol for missing nucleotides/" \
-#                              f"proteins: {symbol}. " \
-#                              f"Reason: {error_message}"
-#         return {"is_correct": False,
-#                 "filename": file_name,
-#                 "symbol": symbol,
-#                 "validation_message": validation_message}
-
 
 @app.callback(Output("blosum_upload_state_info", 'children'),
               [Input("blosum_upload_state", 'data')])
@@ -305,8 +272,6 @@ def run_pangenome(run_processing_btn_click,
                   fasta_content: str,
                   fasta_filename: str,
                   missing_symbol: str,
-                #   blosum_contents: str,
-                #   blosum_filename: str,
                   consensus_choice: str,
                   output_config: List[str],
                   metadata_content: str,
@@ -351,17 +316,8 @@ def run_pangenome(run_processing_btn_click,
             fasta_decoded_content = tools.decode_content(fasta_content)
         tools.save_to_file(fasta_decoded_content, fasta_path, save_mode)
         fasta_provider = FromFile(fasta_path)
-    # else:
-    #     fasta_provider = ConstSymbolProvider(missing_symbol)  # brak importu
-
-    # if not blosum_contents:
-        blosum_path = pangtreebuild.get_default_blosum_path()
-        blosum_contents = tools.read_file_to_stream(blosum_path)
-    # else:
-    #     blosum_path = tools.get_child_path(current_processing_output_dir_name, blosum_filename)
-    #     blosum_contents = tools.decode_content(blosum_contents)
-    #     tools.save_to_file(blosum_contents, blosum_path)
-    #     blosum_contents = StringIO(blosum_contents)
+    blosum_path = pangtreebuild.get_default_blosum_path()
+    blosum_contents = tools.read_file_to_stream(blosum_path)
     blosum = Blosum(blosum_contents, blosum_path)
 
     metadata = MetadataCSV(StringIO(tools.decode_content(metadata_content)),
