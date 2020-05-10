@@ -17,10 +17,11 @@ $ git clone https://github.com/PangTree/PangTreeGUI.git
 $  virtualenv -p python3.6 your_venv_name
 ```
 
-3) Run virtualenv:
+3) Activate your virtualenv:
 ```bash
 $ source your_venv_name/bin/activate
 ```
+The name of the current virtual environment appears to the left of the prompt. To exit your virtualenv just type `deactivate`.
 
 4) Change directory:
 ```
@@ -39,13 +40,12 @@ $ pip install pangtreebuild
 
 ## Usage
 
-To use PangTreeGUI you need to activate your virtualenv and be in the PangTreeGUI folder.
+To use PangTreeGUI you need to activate your virtualenv (`$ source your_venv_name/bin/activate`) and be in the PangTreeGUI folder.
 
 ```
 $ python run.py
 ```
-
-Open in your web browser (tested in Chrome and Firefox): 127.0.0.1/8052
+A link to the application should appear in the terminal. Open the application by clicking on it or typing `127.0.0.1/8052` in the web browser (tested in Chrome and Firefox).
 
 ## Founding
 This software is developed with support of [OPUS 11 scientific project of National Science Centre:  Incorporating genomic variation information
