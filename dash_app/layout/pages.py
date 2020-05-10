@@ -402,6 +402,15 @@ _example_input = html.Div([
         ], className="secondary"),   
     ], className="center_flex_form example"),
     html.Div([
+        html.H6("Ebola subset"),
+        dbc.Button("Use Ebola subset data", id="use-ebola_subset-button"),
+        html.Div([
+            "This multialignment contains a subset - only one block - of the original multialignment.", 
+            html.Br(),
+            links.blank_link("Read more...", href=links.ebola_subset_link),
+        ], className="secondary"),   
+    ], className="center_flex_form example"),
+    html.Div([
         html.H6("Toy example"),
         dbc.Button("Use Toy data", id="use-toy-button",),
         html.Div([

@@ -30,6 +30,7 @@ tree_alg_link = "https://github.com/PangTree/PangTreeBuild#idea-and-algorithm-de
 b80_link = "https://github.com/PangTree/PangTreeGUI/blob/master/dash_app/dependencies/blosum80.mat"
 
 ebola_data_link = "https://github.com/PangTree/PangTreeBuild/tree/master/example_data/Ebola"
+ebola_subset_link = "https://github.com/PangTree/PangTreeBuild/tree/master/example_data/Ebola_subset"
 toy_data_link = "https://github.com/PangTree/PangTreeBuild/tree/master/example_data/Simulated/toy_example"
 """-------------------------------INDEX--------------------------------------"""
 
