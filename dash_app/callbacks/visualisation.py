@@ -24,7 +24,7 @@ def load_visualisation(pangenome_content: str) -> str:
     Output("pangviz_result_collapse", 'is_open'),
     [Input("pangenome_upload", 'contents')])
 def show_visualisation(pangenome_content: str) -> str:
-    if not pangenome_content:
+    if not pangenome_content or not pangenome_content.startswith("data:application/json;base64"):
         return False
     return True
 
