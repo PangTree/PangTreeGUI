@@ -241,7 +241,8 @@ def toggle_ebola_example_collapse(toy_example_btn_clicks, is_open):
 
 
 @app.callback(
-    Output("session_state", 'data'),
+    [Output("session_state", 'data'),
+     Output('confirm_run', 'displayed')],
     [Input("pang_button", 'n_clicks')],
     [State("session_state", 'data'),
      State("session_dir", 'data'),
@@ -346,7 +347,7 @@ def run_pangenome(run_processing_btn_click,
     current_processing_short_name = "/".join(str(current_processing_output_zip).split("/")[-2:])
     return {"last_output_zip": current_processing_short_name,
             "jsonpangenome": pangenome_json_str,
-            "error": ""}
+            "error": ""}, True
 
 
 @app.callback(Output("download_processing_result", "href"),

@@ -410,6 +410,10 @@ _poapangenome_form = dbc.Form([
 ])
 
 _poapangenome_tab_content = html.Div([
+    dcc.ConfirmDialog(
+        id='confirm_run',
+        message='The results are ready, scroll down.',
+    ),
     dcc.Store(id="session_state"),
     dcc.Store(id="session_dir"),
     dbc.Row([
