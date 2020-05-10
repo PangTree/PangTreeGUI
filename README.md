@@ -40,7 +40,7 @@ $ python run.py
 
 open in your web browser (tested in Chrome and Firefox): 127.0.0.1/8052
 
-## Authors
+## Founding
 This software is developed with support of [OPUS 11 scientific project of National Science Centre:  Incorporating genomic variation information
 into DNA sequencing data analysis](https://www.mimuw.edu.pl/~dojer/rmg/)
 
