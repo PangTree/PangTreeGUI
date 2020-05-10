@@ -371,7 +371,7 @@ _example_input = html.Div([
         html.Div([
             "This dataset orginates from ",
             links.blank_link("UCSC Ebola Portal", href="https://genome.ucsc.edu/ebolaPortal/"),
-            '.',
+            '. Generating results takes several minutes. Be patient :)',
             html.Br(),
             links.blank_link("See example file...", href=links.ebola_data_link),
         ], className="secondary"),   
@@ -545,6 +545,7 @@ _poagraph_row = dbc.Row(
                         style={'height': '500px', 'background-color': 'white'},
                         minZoom=0.9,
                         maxZoom=3,
+                        userZoomingEnabled=False,
                     ), type="circle"),
                 )
             ])
@@ -586,7 +587,10 @@ _affinity_tree_row = html.Div([
         dcc.Graph(
             id="consensus_tree_graph",
             style={'height': '600px', 'width': 'auto'},
-            config={'displayModeBar': True},
+            config={
+                'displayModeBar': False,
+                'scrollZoom': False,
+            },
         ),
         dcc.Slider(
             id="consensus_tree_slider",
