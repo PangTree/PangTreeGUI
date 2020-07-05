@@ -3,11 +3,11 @@ import setuptools
 
 setuptools.setup(
     name='pangtreevis',
-    version='0.1dev',
-    author="Paulina Dziadkiewicz",
-    author_email="pedziadkiewicz@gmail.com",
+    version='1.0',
+    author="Paulina Dziadkiewicz, Paulina Knut",
+    author_email="paulina.knut@gmail.com",
     description="Multiple sequence alignment analysis with Affinity Tree generation",
-    url="https://github.com/meoke/pangtreevis",
+    url="https://github.com/PangTree/PangTreeGUI",
     packages=setuptools.find_packages(exclude=("tests",)),
     classifiers=[
         "Programming Language :: Python :: 3",
