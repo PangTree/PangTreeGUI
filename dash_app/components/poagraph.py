@@ -7,11 +7,162 @@ from typing import List, Dict, Tuple, Any, Union
 import plotly.graph_objs as go
 from pangtreebuild.serialization.json import PangenomeJSON
 
-# from ..components import tools
 from dash_app.layout.colors import colors
 
-CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
-CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
+
+class Node:
+    def __init__(self, idx, base, x, y):
+        self.id = idx
+        self.base = base
+        self.x = x
+        self.y = y
+        
+    def __repr__(self):
+        return f"{self.base} ID: {self.id} <{self.x},{self.y}>"
+
+
+class GraphAlignment:
+    def __init__(self, data):
+        self.column_dict = self.c_dict(data["nodes"])
+        self.sequences = {sequence["sequence_str_id"]: self.get_nodes(data["nodes"], sequence["nodes_ids"][0]) for sequence in data["sequences"]}
+        self.gaps = self.find_gaps()
+    
+    def get_nodes(self, nodes_data, nodes_ids):
+        nodes = list()
+        i = 0
+        for node in nodes_data:
+            if node["id"] in nodes_ids:
+                column = self.column_dict[node["column_id"]]
+                while i < node["column_id"]:
+                    nodes.append(
+                        Node(
+                            idx = None, 
+                            base = None,
+                            x = None,
+                            y = None
+                        )
+                    )
+                    i += 1
+                nodes.append(
+                    Node(
+                        idx = node["id"], 
+                        base = node["base"],
+                        x = node["column_id"],
+                        y = (column.index(node["id"])+1)/(len(column)+1)
+                    )
+                )
+                i += 1
+        return nodes
+                
+    def c_dict(self, nodes_data):
+        column_dict = dict()
+        for node in nodes_data:
+            if node["column_id"] not in column_dict:
+                column_dict[node["column_id"]] = []
+            column_dict[node["column_id"]].append(node["id"])
+        return column_dict
+    
+    def find_gaps(self):
+        gaps = [0]*len(self.column_dict)
+        for sequence in self.sequences:
+            i = 0
+            for node in self.sequences[sequence]:
+                if not node.x:
+                    gaps[i] += 1
+                i += 1
+        return [gap/len(self.column_dict) for gap in gaps]
+           
+
+def get_gap_graph(graph_alignemnt):
+    fig = go.Figure(
+        data = [
+            go.Bar(
+                x=list(range(len(graph_alignemnt.gaps))), 
+                y=graph_alignemnt.gaps,
+                marker_color="#484848",
+            )
+        ],
+        layout = dict(
+            height=300,
+            paper_bgcolor='rgba(0,0,0,0)',
+            dragmode="zoom",
+            hovermode=False,
+            legend=dict(traceorder="reversed"),
+            template="plotly_white",
+            title=dict(
+                text="Gap"
+            ),
+            margin=dict(
+                t=100,
+                b=100
+            ),
+            xaxis=dict(
+                range= [0, len(graph_alignemnt.gaps)],
+                fixedrange= True,
+                showgrid= False,
+                zeroline= False,
+                visible= False,
+            ),
+            yaxis=dict(
+                range= [0, 1],
+                fixedrange= True,
+                visible= True,
+            )
+        )
+    )
+
+    fig.add_shape(
+        x0=0, 
+        x1=49, 
+        y0=-100, 
+        y1=100,
+        fillcolor="#75bba7",
+        line_color="#75bba7",
+        opacity=0.2,
+    )
+
+    return fig
+
+def get_poagraph_fragment(graph_alignment, sequence_min=0, sequence_max=50):
+    fig = go.Figure()
+
+    for seq in graph_alignment.sequences:
+        fig.add_trace(go.Scatter(
+            x=[node.x for node in graph_alignment.sequences[seq][sequence_min:sequence_max] if node.x],
+            y=[node.y for node in graph_alignment.sequences[seq][sequence_min:sequence_max] if node.y],
+            name=seq,
+            mode="lines+markers+text",
+            text=[node.base for node in graph_alignment.sequences[seq][sequence_min:sequence_max] if node.base],
+            yaxis="y",
+            hoverinfo="name+x+text",
+            line={"width": 2},
+            marker={"size": 30, "color": "#d3d3d3"},
+            showlegend=False
+        ))
+
+    fig.update_layout(
+        # width=1200,
+        height=500,
+        dragmode="zoom",
+        hovermode=False,
+        legend=dict(traceorder="reversed"),
+        template="plotly_white",
+        margin=dict(
+            t=50,
+            b=50
+        ),
+        xaxis=dict(
+            showgrid= False,
+            zeroline= False,
+            visible= False,
+            range= [sequence_min-0.4, sequence_max-1+0.4],
+        ),
+        yaxis=dict(
+            visible= False,
+        )
+    )
+
+    return fig
 
 
 def HSVToRGB(h, s, v):
@@ -22,92 +173,6 @@ def HSVToRGB(h, s, v):
 def get_distinct_colors(n):
     huePartition = 1.0 / (n + 1)
     return [HSVToRGB(huePartition * value, 1.0, 1.0) for value in range(0, n)]
-
-
-def get_poagraph_stylesheet():
-    return [
-        {
-            'selector': 'node',
-            'style': {'background-color': 'white'}
-        },
-        {
-            'selector': '.s_node',
-            'style': {
-                'background-color': colors['background'],
-                # 'border-color': 'green',
-                # 'border-width': '0.5px',
-                'content': 'data(label)',
-                'height': '10px',
-                'width': '10px',
-                'text-halign': 'center',
-                'text-valign': 'center',
-                'font-size': '5px',
-                # 'shape': 'circle',
-            }
-        },
-        {
-            'selector': '.c_node',
-            'style': {
-                'height': '7px',
-                'width': '7px',
-                'opacity': 0.5
-            }
-        },
-        {
-            'selector': 'edge',
-            'style': {}
-        },
-        {
-            'selector': '.s_edge',
-            'style': {
-                'width': 'data(weight)',
-                'target-arrow-shape': 'triangle',
-                'arrow-scale': 0.5,
-                'curve-style': 'bezier'
-            }
-        },
-        {
-            'selector': '.c_edge',
-            'style': {
-                'opacity': 0.5,
-                'curve-style': 'haystack',
-                'haystack-radius': 0.3,
-                'width': 'data(weight)',
-                # 'label': 'data(label)'
-            }
-        },
-        {
-            'selector': '.c2',
-            'style': {
-                'line-color': 'red',
-            }
-        },
-        {
-            'selector': '.c1',
-            'style': {
-                'line-color': 'green',
-            }
-        },
-        {
-            'selector': '.c_short',
-            'style': {
-                'curve-style': 'haystack',
-            }
-        },
-        {
-            'selector': '.s_short',
-            'style': {
-                'curve-style': 'haystack',
-            }
-        },
-        {
-            'selector': '.s_edge_aligned',
-            'style': {
-                'line-style': 'dashed',
-                'width': '10'
-            }
-        },
-    ]
 
 
 def _get_pangenome_graph_x_range_faster(max_column_id: int) -> Tuple:

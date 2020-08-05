@@ -306,3 +306,8 @@ details {
 #consensus_tree_slider {
     width: 85%;
 }
+
+#full_pangenome_graph {
+    height: 300px;
+    width: 100%;
+}

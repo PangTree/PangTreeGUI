@@ -510,20 +510,25 @@ _input_data_row = dbc.Row(
 
 _pangenome_row = html.Div(
     children=[
-        html.H4("Pangenome - Cut Width statistic\n"),
-        html.P("Representation of full poagraph as Cut Width statistics."),
-        html.P("Cut Width - edges count between two consecutive columns."),
+        html.H4("Poagraph\n"),
+        # html.P("Representation of full poagraph as gap statistics."),
+        html.P("Drag the green rectangle to see details of the highlighted pangenome region."),
         html.Div(
             id="full_pangenome_container",
-            style={'visibility': 'hidden', 'width': '100%'},
+            # style={'width': '100%'},
             children=[
                 dcc.Loading(
                     dcc.Graph(
                         id="full_pangenome_graph",
-                        style={'height': '250px', 'width': '100%'},
                         figure={},
-                        config={'displayModeBar': False},
-                    ), type="circle")]
+                        config={
+                            'displayModeBar': False,
+                            'edits': {'shapePosition': True}
+                        },
+                    ), 
+                    type="circle"
+                )
+            ]
         )
     ]
 )
@@ -534,23 +539,24 @@ _poagraph_row = dbc.Row(
             html.Summary('Pangenome'),
             _pangenome_row,
             html.Div([
-                html.H4("Pangenome - a closer view on graph details\n"),
-                html.P("This is a visualisation of pangenome internal "
-                       "representation as a PoaGraph"),
+                # html.H4("Pangenome - a closer view on graph details\n"),
+                # html.P("This is a visualisation of pangenome internal "
+                #        "representation as a PoaGraph"),
                 html.Div(id="poagraph_node_info"),
                 html.Div(
                     id="poagraph_container",
                     style={'width': '100%', 'text-align': 'center'},
-                    children=dcc.Loading(cyto.Cytoscape(
-                        id="poagraph",
-                        layout={'name': 'preset'},
-                        stylesheet=poagraph_component.get_poagraph_stylesheet(),
-                        elements=[],
-                        style={'height': '500px', 'background-color': 'white'},
-                        minZoom=0.9,
-                        maxZoom=3,
-                        userZoomingEnabled=False,
-                    ), type="circle"),
+                    children=dcc.Loading(
+                        dcc.Graph(
+                            id="poagraph",
+                            figure={},
+                            config={
+                                'displayModeBar': False,
+                                'staticPlot': True
+                            },
+                            style={"width": "100%"}
+                        ), 
+                    type="circle"),
                 )
             ])
         ])
