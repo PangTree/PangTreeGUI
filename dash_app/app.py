@@ -18,7 +18,6 @@ external_css = [
 for css in external_css:
     app.css.append_css({"external_url": css})
 
-app.config.suppress_callback_exceptions = True
 draw_poagraph = True
 
 def get_nav_link(fa_icon, span, href, id):

@@ -7,4 +7,4 @@ SESSION_TYPE = 'filesystem'
 server.config.from_object(__name__)
 server.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app = Dash(__name__, server=server)
-
+app.config.suppress_callback_exceptions = True

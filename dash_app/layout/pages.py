@@ -508,6 +508,7 @@ _input_data_row = dbc.Row(
             ))
     ])
 
+
 _pangenome_row = html.Div(
     children=[
         html.H4("Poagraph\n"),
