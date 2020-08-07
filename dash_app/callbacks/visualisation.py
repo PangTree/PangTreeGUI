@@ -15,6 +15,10 @@ from dash_app.server import app
 def load_visualisation(pangenome_content):
     if not pangenome_content:
         raise PreventUpdate()
+
+    json_data = tools.read_upload(pangenome_content)
+    poagraph.alignment_main_object.update_data(json_data)
+
     if pangenome_content.startswith("data:application/json;base64"):
         return tools.decode_content(pangenome_content)
     return pangenome_content

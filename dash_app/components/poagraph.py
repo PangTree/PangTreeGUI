@@ -23,11 +23,12 @@ class GraphAlignment:
         self.gaps = None
         app.callback(
             Output("poagraph", "figure"),
-            [Input("full_pangenome_graph", "relayoutData")],
+            [Input("full_pangenome_graph", "relayoutData"),
+             Input("full_pangenome_graph", "figure")],
         )(self.get_poagraph_fragment)
         app.callback(
             Output("full_pangenome_graph", "figure"),
-            [Input("pangviz_result_collapse", 'is_open')]
+            [Input("pangenome_hidden", 'children')]
         )(self.get_gap_graph)
 
     def update_data(self, data):
@@ -82,7 +83,7 @@ class GraphAlignment:
            
 
     def get_gap_graph(self, is_ready):
-        if not is_ready:
+        if not is_ready or not self.gaps:
             raise PreventUpdate()
 
         fig = go.Figure(
@@ -135,8 +136,8 @@ class GraphAlignment:
         return fig
 
     def get_poagraph_traces(self, range_start, range_end):
-        trace_list = list()
-        for i in range(range_start, range_end-1):
+        trace_dict = dict()
+        for i in range(range_start, range_end-2):
             for sequence in self.sequences:
                 x0 = self.sequences[sequence][i].x
                 y0 = self.sequences[sequence][i].y 
@@ -144,24 +145,28 @@ class GraphAlignment:
                 x1 = self.sequences[sequence][i+1].x
                 y1 = self.sequences[sequence][i+1].y
                 base1 = self.sequences[sequence][i+1].base
-                if x0 and x1 and [x0, y0, base0, x1, y1, base1] not in trace_list:
-                    trace_list.append([x0, y0, base0, x1, y1, base1])
-        return trace_list
+                if x0 and x1 and f"{x0},{y0},{base0},{x1},{y1},{base1}" not in trace_dict.keys():
+                    trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"] = 1
+                elif x0 and x1:
+                    trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"] = trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"]+1
+        return trace_dict
 
-    def get_poagraph_fragment(self, relayout_data):
+    def get_poagraph_fragment(self, relayout_data, poagraph):
         if not self.sequences:
             raise PreventUpdate()
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
-            range_start = int(relayout_data["shapes[0].x0"])
-            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+50)
+            range_start = max(int(relayout_data["shapes[0].x0"]), 0)
+            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+50, len(self.column_dict))
         else:
             range_start = 0
-            range_end = 49
+            range_end = min(50, len(self.column_dict))
 
         print(f"{range_start}, {range_end}")
         fig = go.Figure()
-
-        for x0, y0, base0, x1, y1, base1 in self.get_poagraph_traces(range_start, range_end):
+        trace_dict = self.get_poagraph_traces(range_start, range_end)
+        max_value = max(trace_dict.values())
+        for key, value in trace_dict.items():
+            x0, y0, base0, x1, y1, base1 = key.split(",")
             fig.add_trace(go.Scatter(
                 x=[x0, x1],
                 y=[y0, y1],
@@ -170,7 +175,7 @@ class GraphAlignment:
                 text=[base0, base1],
                 yaxis="y",
                 hoverinfo="name+x+text",
-                line={"width": 2},
+                line={"width": value*10./max_value},
                 marker={"size": 30, "color": "#d3d3d3"},
                 showlegend=False
             ))

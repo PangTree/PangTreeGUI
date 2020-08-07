@@ -15,8 +15,6 @@ from dash_app.server import app
 def get_full_pangenome_graph(pangenome_upload_contents, cache_info, full_graph):
     if full_graph or not pangenome_upload_contents:
         raise PreventUpdate()
-    json_data = tools.read_upload(pangenome_upload_contents)
-    poagraph.alignment_main_object.update_data(json_data)
     
     hashed_contents = visualisation.get_hash(pangenome_upload_contents)
     new_cache_info = visualisation.get_elem_cache_info(int(hashed_contents))
