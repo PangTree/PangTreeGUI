@@ -18,8 +18,6 @@ def get_full_pangenome_graph(pangenome_upload_contents, cache_info, full_graph):
     json_data = tools.read_upload(pangenome_upload_contents)
     poagraph.alignment_main_object.update_data(json_data)
     
-    if cache_info:
-        poagraph.remove_elements_data_faster(cache_info)
     hashed_contents = visualisation.get_hash(pangenome_upload_contents)
     new_cache_info = visualisation.get_elem_cache_info(int(hashed_contents))
     return hashed_contents, str(new_cache_info)

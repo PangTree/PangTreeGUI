@@ -8,7 +8,7 @@ from dash_app.server import app
 
 app.title = 'PangtreeVis'
 app.css.config.serve_locally = False
-app.scripts.config.serve_locally = False
+app.scripts.config.serve_locally = True
 
 
 external_css = [

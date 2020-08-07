@@ -12,7 +12,7 @@ from dash_app.server import app
 @app.callback(
     Output("pangenome_hidden", 'children'),
     [Input("pangenome_upload", 'contents')])
-def load_visualisation(pangenome_content: str) -> str:
+def load_visualisation(pangenome_content):
     if not pangenome_content:
         raise PreventUpdate()
     if pangenome_content.startswith("data:application/json;base64"):
@@ -23,7 +23,7 @@ def load_visualisation(pangenome_content: str) -> str:
 @app.callback(
     Output("pangviz_result_collapse", 'is_open'),
     [Input("pangenome_upload", 'contents')])
-def show_visualisation(pangenome_content: str) -> str:
+def show_visualisation(pangenome_content):
     if pangenome_content and pangenome_content.startswith("data:application/json;base64"):
         return True
     return False
