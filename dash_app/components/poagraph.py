@@ -34,6 +34,10 @@ class GraphAlignment:
             Output("poagraph", "figure"),
             [Input("full_pangenome_graph", "relayoutData")],
         )(self.get_poagraph_fragment)
+        app.callback(
+            Output("full_pangenome_graph", "figure"),
+            [Input("pangviz_result_collapse", 'is_open')]
+        )(self.get_gap_graph)
 
     def update_data(self, data):
         self.column_dict = self.c_dict(data["nodes"])
@@ -86,7 +90,10 @@ class GraphAlignment:
         return [gap/len(self.column_dict) for gap in gaps]
            
 
-    def get_gap_graph(self):
+    def get_gap_graph(self, is_ready):
+        if not is_ready:
+            raise PreventUpdate()
+
         fig = go.Figure(
             data = [
                 go.Bar(
