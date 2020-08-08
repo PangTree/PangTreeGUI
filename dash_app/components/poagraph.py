@@ -48,12 +48,20 @@ class GraphAlignment:
                 if n in self.consensus_sequence:
                     column.remove(n)
                     column.insert(0, n)
+            node_y = 0
+            if column.index(node["id"]) == 1:
+                node_y = -1
+            elif column.index(node["id"]) == 2:
+                node_y = 1
+            elif column.index(node["id"]) >= 3:
+                node_y = -2
+            
             nodes_list.append(
                 Node(
                     idx = node["id"], 
                     base = node["base"],
                     x = node["column_id"],
-                    y = column.index(node["id"])*((-1)**column.index(node["id"]))
+                    y = node_y
                 )
             )
         return nodes_list
@@ -160,10 +168,10 @@ class GraphAlignment:
 
     def get_poagraph_traces(self, range_start, range_end):
         trace_dict = dict()
-        for i in range(range_start, range_end-2):
-            for sequence in self.sequences:
-                node0 = self.nodes[self.sequences[sequence][i]]
-                node1 = self.nodes[self.sequences[sequence][i+1]]
+        for sequence in self.sequences.values():
+            for i in range(range_start, min(range_end, len(sequence))-2):           
+                node0 = self.nodes[sequence[i]]
+                node1 = self.nodes[sequence[i+1]]
                 x0 = node0.x
                 y0 = node0.y 
                 base0 = node0.base
@@ -191,6 +199,7 @@ class GraphAlignment:
         fig = go.Figure()
         trace_dict = self.get_poagraph_traces(range_start, range_end)
         max_value = max(trace_dict.values())
+        colors = {"A": "#f1c5c5", "C": "#fdcb9e", "G": "#bbd196", "T": "#8bcdcd"}
         for key, value in trace_dict.items():
             x0, y0, base0, x1, y1, base1 = key.split(",")
             fig.add_trace(go.Scatter(
@@ -201,8 +210,16 @@ class GraphAlignment:
                 text=[base0, base1],
                 yaxis="y",
                 hoverinfo="name+x+text",
-                line={"width": value*6./max_value+1},
-                marker={"size": 30, "color": "#d3d3d3"},
+                line={"width": value*6./max_value+2},
+                marker={
+                    "size": 30, 
+                    "color": 
+                    "#d3d3d3", 
+                    "line": 
+                    {
+                        "width": 3, 
+                        "color": [colors[base0], colors[base1]]
+                    }},
                 showlegend=False
             ))
 
