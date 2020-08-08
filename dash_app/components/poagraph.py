@@ -19,6 +19,8 @@ class Node:
 class GraphAlignment:
     def __init__(self, data):
         self.column_dict = None
+        self.consensus_sequence = None
+        self.nodes = None
         self.sequences = None
         self.gaps = None
         app.callback(
@@ -33,35 +35,55 @@ class GraphAlignment:
 
     def update_data(self, data):
         self.column_dict = self.c_dict(data["nodes"])
-        self.sequences = {sequence["sequence_str_id"]: self.get_nodes(data["nodes"], sequence["nodes_ids"][0]) for sequence in data["sequences"]}
+        self.consensus_sequence = data["affinitytree"][0]["nodes_ids"]
+        self.nodes = self.get_nodes(data["nodes"])
+        self.sequences = {sequence["sequence_str_id"]: sequence["nodes_ids"][0] for sequence in data["sequences"]}
         self.gaps = self.find_gaps()
             
-    def get_nodes(self, nodes_data, nodes_ids):
-        nodes = list()
-        i = 0
+    def get_nodes(self, nodes_data):
+        nodes_list = list()
         for node in nodes_data:
-            if node["id"] in nodes_ids:
-                column = self.column_dict[node["column_id"]]
-                while i < node["column_id"]:
-                    nodes.append(
-                        Node(
-                            idx = None, 
-                            base = None,
-                            x = None,
-                            y = None
-                        )
-                    )
-                    i += 1
-                nodes.append(
-                    Node(
-                        idx = node["id"], 
-                        base = node["base"],
-                        x = node["column_id"],
-                        y = (column.index(node["id"])+1)/(len(column)+1)
-                    )
+            column = self.column_dict[node["column_id"]]
+            for n in column:
+                if n in self.consensus_sequence:
+                    column.remove(n)
+                    column.insert(0, n)
+            nodes_list.append(
+                Node(
+                    idx = node["id"], 
+                    base = node["base"],
+                    x = node["column_id"],
+                    y = column.index(node["id"])*((-1)**column.index(node["id"]))
                 )
-                i += 1
-        return nodes
+            )
+        return nodes_list
+
+    # def get_nodes_old(self, nodes_data, nodes_ids):
+    #     nodes = list()
+    #     i = 0
+    #     for node in nodes_data:
+    #         if node["id"] in nodes_ids:
+    #             column = self.column_dict[node["column_id"]]
+    #             while i < node["column_id"]:
+    #                 nodes.append(
+    #                     Node(
+    #                         idx = None, 
+    #                         base = None,
+    #                         x = None,
+    #                         y = None
+    #                     )
+    #                 )
+    #                 i += 1
+    #             nodes.append(
+    #                 Node(
+    #                     idx = node["id"], 
+    #                     base = node["base"],
+    #                     x = node["column_id"],
+    #                     y = (column.index(node["id"])+1)/(len(column)+1)
+    #                 )
+    #             )
+    #             i += 1
+    #     return nodes
                 
     def c_dict(self, nodes_data):
         column_dict = dict()
@@ -74,14 +96,15 @@ class GraphAlignment:
     def find_gaps(self):
         gaps = [0]*len(self.column_dict)
         for sequence in self.sequences:
-            i = 0
-            for node in self.sequences[sequence]:
-                if not node.x:
-                    gaps[i] += 1
-                i += 1
+            i=0
+            if len(self.sequences[sequence]) < len(gaps):
+                for node_id in self.sequences[sequence]:
+                    while self.nodes[node_id].x > i:
+                        gaps[i] += 1
+                        i += 1
+                    i += 1
         return [gap/len(self.column_dict) for gap in gaps]
            
-
     def get_gap_graph(self, is_ready):
         if not is_ready or not self.gaps:
             raise PreventUpdate()
@@ -139,12 +162,14 @@ class GraphAlignment:
         trace_dict = dict()
         for i in range(range_start, range_end-2):
             for sequence in self.sequences:
-                x0 = self.sequences[sequence][i].x
-                y0 = self.sequences[sequence][i].y 
-                base0 = self.sequences[sequence][i].base
-                x1 = self.sequences[sequence][i+1].x
-                y1 = self.sequences[sequence][i+1].y
-                base1 = self.sequences[sequence][i+1].base
+                node0 = self.nodes[self.sequences[sequence][i]]
+                node1 = self.nodes[self.sequences[sequence][i+1]]
+                x0 = node0.x
+                y0 = node0.y 
+                base0 = node0.base
+                x1 = node1.x
+                y1 = node1.y
+                base1 = node1.base
                 if x0 and x1 and f"{x0},{y0},{base0},{x1},{y1},{base1}" not in trace_dict.keys():
                     trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"] = 1
                 elif x0 and x1:
@@ -154,6 +179,7 @@ class GraphAlignment:
     def get_poagraph_fragment(self, relayout_data, poagraph):
         if not self.sequences:
             raise PreventUpdate()
+
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
             range_end = min(int(relayout_data["shapes[0].x1"]), range_start+50, len(self.column_dict))
@@ -175,7 +201,7 @@ class GraphAlignment:
                 text=[base0, base1],
                 yaxis="y",
                 hoverinfo="name+x+text",
-                line={"width": value*10./max_value},
+                line={"width": value*6./max_value+1},
                 marker={"size": 30, "color": "#d3d3d3"},
                 showlegend=False
             ))
@@ -196,7 +222,7 @@ class GraphAlignment:
                 showgrid= False,
                 zeroline= False,
                 visible= False,
-                range= [range_start-0.4, range_end-1+0.4],
+                range= [range_start-0.4, range_end-2+0.4],
             ),
             yaxis=dict(
                 visible= False,
