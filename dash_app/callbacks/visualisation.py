@@ -10,18 +10,21 @@ from dash_app.server import app
 
 
 @app.callback(
-    Output("pangenome_hidden", 'children'),
+    [Output("pangenome_hidden", 'children'),
+     Output("poagraph_dropdown", "options")],
     [Input("pangenome_upload", 'contents')])
 def load_visualisation(pangenome_content):
     if not pangenome_content:
         raise PreventUpdate()
 
     json_data = tools.read_upload(pangenome_content)
-    poagraph.alignment_main_object.update_data(json_data)
+    alignment_object = poagraph.alignment_main_object
+    alignment_object.update_data(json_data)
+    options = [{'label': s, 'value': s} for s in alignment_object.sequences.keys()]
 
     if pangenome_content.startswith("data:application/json;base64"):
-        return tools.decode_content(pangenome_content)
-    return pangenome_content
+        return tools.decode_content(pangenome_content), options
+    return pangenome_content, options
 
 
 @app.callback(

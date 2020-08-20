@@ -558,7 +558,15 @@ _poagraph_row = dbc.Row(
                             style={"width": "100%"}
                         ), 
                     type="circle"),
-                )
+                ),
+                dcc.Dropdown(
+                    id="poagraph_dropdown",
+                    options=[
+                        {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                    ],
+                    value='',
+                    multi=False,
+                ) 
             ])
         ])
     ], className="vis_row")

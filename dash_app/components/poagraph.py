@@ -26,7 +26,8 @@ class GraphAlignment:
         app.callback(
             Output("poagraph", "figure"),
             [Input("full_pangenome_graph", "relayoutData"),
-             Input("full_pangenome_graph", "figure")],
+             Input("full_pangenome_graph", "figure"),
+             Input("poagraph_dropdown", "value")],
         )(self.get_poagraph_fragment)
         app.callback(
             Output("full_pangenome_graph", "figure"),
@@ -166,25 +167,27 @@ class GraphAlignment:
 
         return fig
 
-    def get_poagraph_traces(self, range_start, range_end):
+    def get_node_coordinates(self, node):
+        return node.x, node.y, node.base
+
+    def get_poagraph_traces(self, range_start, range_end, sequences=[]):
         trace_dict = dict()
-        for sequence in self.sequences.values():
-            for i in range(range_start, min(range_end, len(sequence))-2):           
-                node0 = self.nodes[sequence[i]]
-                node1 = self.nodes[sequence[i+1]]
-                x0 = node0.x
-                y0 = node0.y 
-                base0 = node0.base
-                x1 = node1.x
-                y1 = node1.y
-                base1 = node1.base
-                if x0 and x1 and f"{x0},{y0},{base0},{x1},{y1},{base1}" not in trace_dict.keys():
-                    trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"] = 1
+        if sequences:
+            filtered_sequences = [self.sequences[seq] for seq in sequences]
+        else:
+            filtered_sequences = self.sequences.values()
+        for sequence in filtered_sequences:
+            for i in range(range_start, min(range_end, len(sequence))-2):  
+                x0, y0, base0 = self.get_node_coordinates(self.nodes[sequence[i]])
+                x1, y1, base1 = self.get_node_coordinates(self.nodes[sequence[i+1]])
+                trace_key = f"{x0},{y0},{base0},{x1},{y1},{base1}"
+                if x0 and x1 and trace_key not in trace_dict.keys():
+                    trace_dict[trace_key] = 1
                 elif x0 and x1:
-                    trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"] = trace_dict[f"{x0},{y0},{base0},{x1},{y1},{base1}"]+1
+                    trace_dict[trace_key] = trace_dict[trace_key]+1
         return trace_dict
 
-    def get_poagraph_fragment(self, relayout_data, poagraph):
+    def get_poagraph_fragment(self, relayout_data, poagraph, highlighted_sequence):
         if not self.sequences:
             raise PreventUpdate()
 
@@ -213,8 +216,7 @@ class GraphAlignment:
                 line={"width": value*6./max_value+2},
                 marker={
                     "size": 30, 
-                    "color": 
-                    "#d3d3d3", 
+                    "color": "#d3d3d3", 
                     "line": 
                     {
                         "width": 3, 
@@ -222,6 +224,28 @@ class GraphAlignment:
                     }},
                 showlegend=False
             ))
+
+        if highlighted_sequence:
+            highlighted_trace = self.get_poagraph_traces(range_start, range_end, [highlighted_sequence])
+            for key, value in highlighted_trace.items():
+                x0, y0, base0, x1, y1, base1 = key.split(",")
+                fig.add_trace(go.Scatter(
+                    x=[x0, x1],
+                    y=[y0, y1],
+                    # name=seq,
+                    mode="lines+markers+text",
+                    text=[base0, base1],
+                    line={"width": 2},
+                    marker={
+                        "size": 30, 
+                        "color": "#D6D6FF", 
+                        "line": 
+                        {
+                            "width": 3, 
+                            "color": [colors[base0], colors[base1]]
+                        }},
+                    showlegend=False
+                ))
 
         fig.update_layout(
             # width=1200,

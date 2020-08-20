@@ -23,7 +23,6 @@ canvas{
     color: #272635;
 }
 
-
 div>.jumbotron{
     margin-top: 10px;
 }
@@ -133,6 +132,10 @@ i{
     margin-right: auto;
     width: 90%;
     padding: 20px;
+}
+
+#poagraph_dropdown{
+    margin: 0px 80px 50px 80px;
 }
 
 .navbar{
