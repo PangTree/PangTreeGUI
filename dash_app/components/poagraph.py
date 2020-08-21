@@ -213,14 +213,14 @@ class GraphAlignment:
                 text=[base0, base1],
                 yaxis="y",
                 hoverinfo="name+x+text",
-                line={"width": value*6./max_value+2},
+                line={"width": value*6./max_value+2, "color": "#d3d3d3"},
                 marker={
                     "size": 30, 
-                    "color": "#d3d3d3", 
+                    "color": [colors[base0], colors[base1]], 
                     "line": 
                     {
-                        "width": 3, 
-                        "color": [colors[base0], colors[base1]]
+                        # "width": 3, 
+                        # "color": [colors[base0], colors[base1]]
                     }},
                 showlegend=False
             ))
@@ -233,16 +233,16 @@ class GraphAlignment:
                     x=[x0, x1],
                     y=[y0, y1],
                     # name=seq,
-                    mode="lines+markers+text",
+                    mode="markers+text",
                     text=[base0, base1],
-                    line={"width": 2},
+                    # line={"width": 2},
                     marker={
                         "size": 30, 
-                        "color": "#D6D6FF", 
+                        "color": [colors[base0], colors[base1]], 
                         "line": 
                         {
                             "width": 3, 
-                            "color": [colors[base0], colors[base1]]
+                            "color": "black"
                         }},
                     showlegend=False
                 ))
