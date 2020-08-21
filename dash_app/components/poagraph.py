@@ -1,7 +1,10 @@
+import json
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import pandas as pd
 import plotly.graph_objs as go
 
+from dash_app.components import consensustable, consensustree, tools
 from dash_app.server import app
 
 
@@ -27,7 +30,10 @@ class GraphAlignment:
             Output("poagraph", "figure"),
             [Input("full_pangenome_graph", "relayoutData"),
              Input("full_pangenome_graph", "figure"),
-             Input("poagraph_dropdown", "value")],
+             Input("poagraph_dropdown", "value"),
+             Input("consensus_tree_graph", 'clickData')],
+            [State("full_consensustable_hidden", 'children'),
+             State("full_consensustree_hidden", 'children')]
         )(self.get_poagraph_fragment)
         app.callback(
             Output("full_pangenome_graph", "figure"),
@@ -187,7 +193,7 @@ class GraphAlignment:
                     trace_dict[trace_key] = trace_dict[trace_key]+1
         return trace_dict
 
-    def get_poagraph_fragment(self, relayout_data, poagraph, highlighted_sequence):
+    def get_poagraph_fragment(self, relayout_data, poagraph, highlighted_sequence, click_data, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
 
@@ -198,9 +204,17 @@ class GraphAlignment:
             range_start = 0
             range_end = min(50, len(self.column_dict))
 
-        print(f"{range_start}, {range_end}")
+        if click_data:
+            node_id = click_data['points'][0]['pointIndex']
+            full_consensustable = pd.read_json(consensustable_data)
+            consensustree_data = json.loads(consensustree_data)
+            tree = consensustree.dict_to_tree(consensustree_data)
+            node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
+            trace_dict = self.get_poagraph_traces(range_start, range_end, node_details_df["SEQID"].tolist())
+        else:
+            trace_dict = self.get_poagraph_traces(range_start, range_end)
+
         fig = go.Figure()
-        trace_dict = self.get_poagraph_traces(range_start, range_end)
         max_value = max(trace_dict.values())
         colors = {"A": "#f1c5c5", "C": "#fdcb9e", "G": "#bbd196", "T": "#8bcdcd"}
         for key, value in trace_dict.items():
@@ -208,7 +222,6 @@ class GraphAlignment:
             fig.add_trace(go.Scatter(
                 x=[x0, x1],
                 y=[y0, y1],
-                # name=seq,
                 mode="lines+markers+text",
                 text=[base0, base1],
                 yaxis="y",
@@ -216,12 +229,8 @@ class GraphAlignment:
                 line={"width": value*6./max_value+2, "color": "#d3d3d3"},
                 marker={
                     "size": 30, 
-                    "color": [colors[base0], colors[base1]], 
-                    "line": 
-                    {
-                        # "width": 3, 
-                        # "color": [colors[base0], colors[base1]]
-                    }},
+                    "color": [colors[base0], colors[base1]],
+                },
                 showlegend=False
             ))
 
@@ -232,7 +241,6 @@ class GraphAlignment:
                 fig.add_trace(go.Scatter(
                     x=[x0, x1],
                     y=[y0, y1],
-                    # name=seq,
                     mode="markers+text",
                     text=[base0, base1],
                     # line={"width": 2},
