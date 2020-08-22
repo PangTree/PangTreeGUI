@@ -11,7 +11,8 @@ from dash_app.server import app
 
 @app.callback(
     [Output("pangenome_hidden", 'children'),
-     Output("poagraph_dropdown", "options")],
+     Output("poagraph_dropdown", "options"),
+     Output("pangviz_load_row", "style")],
     [Input("pangenome_upload", 'contents')])
 def load_visualisation(pangenome_content):
     if not pangenome_content:
@@ -23,8 +24,8 @@ def load_visualisation(pangenome_content):
     options = [{'label': s, 'value': s} for s in alignment_object.sequences.keys()]
 
     if pangenome_content.startswith("data:application/json;base64"):
-        return tools.decode_content(pangenome_content), options
-    return pangenome_content, options
+        return tools.decode_content(pangenome_content), options, {"visibility": "hidden"}
+    return pangenome_content, options, {"visibility": "hidden"}
 
 
 @app.callback(

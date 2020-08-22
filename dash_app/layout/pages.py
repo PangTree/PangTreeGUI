@@ -555,10 +555,11 @@ _poagraph_row = dbc.Row(
                                 'displayModeBar': False,
                                 'staticPlot': True
                             },
-                            style={"width": "100%"}
+                            style={"width": "100%", "min-height": "300px"}
                         ), 
                     type="circle"),
                 ),
+                html.P("Highlight the sequence:"),
                 dcc.Dropdown(
                     id="poagraph_dropdown",
                     options=[

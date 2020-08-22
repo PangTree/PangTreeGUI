@@ -72,33 +72,6 @@ class GraphAlignment:
                 )
             )
         return nodes_list
-
-    # def get_nodes_old(self, nodes_data, nodes_ids):
-    #     nodes = list()
-    #     i = 0
-    #     for node in nodes_data:
-    #         if node["id"] in nodes_ids:
-    #             column = self.column_dict[node["column_id"]]
-    #             while i < node["column_id"]:
-    #                 nodes.append(
-    #                     Node(
-    #                         idx = None, 
-    #                         base = None,
-    #                         x = None,
-    #                         y = None
-    #                     )
-    #                 )
-    #                 i += 1
-    #             nodes.append(
-    #                 Node(
-    #                     idx = node["id"], 
-    #                     base = node["base"],
-    #                     x = node["column_id"],
-    #                     y = (column.index(node["id"])+1)/(len(column)+1)
-    #                 )
-    #             )
-    #             i += 1
-    #     return nodes
                 
     def c_dict(self, nodes_data):
         column_dict = dict()
@@ -243,7 +216,6 @@ class GraphAlignment:
                     y=[y0, y1],
                     mode="markers+text",
                     text=[base0, base1],
-                    # line={"width": 2},
                     marker={
                         "size": 30, 
                         "color": [colors[base0], colors[base1]], 
@@ -256,7 +228,6 @@ class GraphAlignment:
                 ))
 
         fig.update_layout(
-            # width=1200,
             height=500,
             dragmode="zoom",
             hovermode=False,

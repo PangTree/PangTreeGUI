@@ -138,6 +138,10 @@ i{
     margin: 0px 80px 50px 80px;
 }
 
+#poagraph .svg-container{
+    min-height: 500px;
+}
+
 .navbar{
     background-color: #272635 !important;
 }
