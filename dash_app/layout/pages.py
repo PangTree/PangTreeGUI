@@ -604,13 +604,16 @@ _affinity_tree_row = html.Div([
                 value='SEQID'
             )], 
             style={'width': '20%'}),
-        dcc.Graph(
-            id="consensus_tree_graph",
-            style={'height': '600px', 'width': 'auto'},
-            config={
-                'displayModeBar': False,
-                'scrollZoom': False,
-            },
+        dcc.Loading(
+            dcc.Graph(
+                id="consensus_tree_graph",
+                style={'height': '600px', 'width': 'auto'},
+                config={
+                    'displayModeBar': False,
+                    'scrollZoom': False,
+                },
+            ),
+            type="circle"
         ),
         dcc.Slider(
             id="consensus_tree_slider",
@@ -654,7 +657,9 @@ _pangviz_tab_content = dbc.Container([
             html.Div(id="partial_consensustable_hidden"),
             html.Div(id="current_consensustree_hidden"),
             html.Div(id="full_consensustable_hidden"),
-            html.Div(id="consensus_node_details_table_hidden")]),
+            # html.Div(id="consensus_node_details_table_hidden")
+        ]
+    ),
     _load_pangenome_row,
     dbc.Collapse(
         id="pangviz_result_collapse",

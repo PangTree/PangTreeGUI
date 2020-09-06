@@ -142,6 +142,10 @@ i{
     min-height: 500px;
 }
 
+#consensuses_table{
+    overflow: scroll
+}
+
 .navbar{
     background-color: #272635 !important;
 }
