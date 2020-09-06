@@ -65,6 +65,8 @@ def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[AffinityNodeID, int]:
     leaf_distance = (max_y - min_y) / (leafs_count + 1)
     for i, leaf_id in enumerate(leafs_ids):
         node_id_to_y[leaf_id] = leaf_distance * (i + 1)
+    leafs_count = len(leafs_ids2)
+    leaf_distance = (max_y - min_y) / (leafs_count + 1)
     for i, leaf_id in enumerate(leafs_ids2):
         node_id_to_y[leaf_id] = leaf_distance * (i + 1)
     nodes_to_process = [0]
