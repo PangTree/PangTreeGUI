@@ -547,17 +547,14 @@ _poagraph_row = dbc.Row(
                 html.Div(
                     id="poagraph_container",
                     style={'width': '100%', 'text-align': 'center'},
-                    children=dcc.Loading(
-                        dcc.Graph(
-                            id="poagraph",
-                            figure={},
-                            config={
-                                'displayModeBar': False,
-                                'staticPlot': True
-                            },
-                            style={"width": "100%", "min-height": "300px"}
-                        ), 
-                    type="circle"),
+                    children=dcc.Graph(
+                        id="poagraph",
+                        figure={},
+                        config={
+                            'displayModeBar': False,
+                            'staticPlot': True
+                        }
+                    )
                 ),
                 html.P("Highlight the sequence:"),
                 dcc.Dropdown(

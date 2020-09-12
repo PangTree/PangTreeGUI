@@ -26,6 +26,7 @@ class GraphAlignment:
         self.nodes = None
         self.sequences = None
         self.gaps = None
+        self.diagram = None
         app.callback(
             Output("poagraph", "figure"),
             [Input("full_pangenome_graph", "relayoutData"),
@@ -34,7 +35,7 @@ class GraphAlignment:
              Input("consensus_tree_graph", 'clickData')],
             [State("full_consensustable_hidden", 'children'),
              State("full_consensustree_hidden", 'children')]
-        )(self.get_poagraph_fragment)
+        )(self.get_sankey_diagram)
         app.callback(
             Output("full_pangenome_graph", "figure"),
             [Input("pangenome_hidden", 'children')]
@@ -46,6 +47,7 @@ class GraphAlignment:
         self.nodes = self.get_nodes(data["nodes"])
         self.sequences = {sequence["sequence_str_id"]: sequence["nodes_ids"][0] for sequence in data["sequences"]}
         self.gaps = self.find_gaps()
+        self.diagram = self.construct_diagram()
             
     def get_nodes(self, nodes_data):
         nodes_list = list()
@@ -146,109 +148,116 @@ class GraphAlignment:
 
         return fig
 
-    def get_node_coordinates(self, node):
-        return node.x, node.y, node.base
+    def construct_diagram(self):
+        diagram_nodes = dict()
+        for sequence in self.sequences.values():
+            
+            for i, node_id in enumerate(sequence[:-2]):
+                source = self.nodes[node_id].id
+                target = self.nodes[sequence[i+1]].id
 
-    def get_poagraph_traces(self, range_start, range_end, sequences=[]):
-        trace_dict = dict()
-        if sequences:
-            filtered_sequences = [self.sequences[seq] for seq in sequences]
-        else:
-            filtered_sequences = self.sequences.values()
-        for sequence in filtered_sequences:
-            for i in range(range_start, min(range_end, len(sequence))-2):  
-                x0, y0, base0 = self.get_node_coordinates(self.nodes[sequence[i]])
-                x1, y1, base1 = self.get_node_coordinates(self.nodes[sequence[i+1]])
-                trace_key = f"{x0},{y0},{base0},{x1},{y1},{base1}"
-                if x0 and x1 and trace_key not in trace_dict.keys():
-                    trace_dict[trace_key] = 1
-                elif x0 and x1:
-                    trace_dict[trace_key] = trace_dict[trace_key]+1
-        return trace_dict
-
-    def get_poagraph_fragment(self, relayout_data, poagraph, highlighted_sequence, click_data, consensustable_data, consensustree_data):
+                # SOURCE
+                if node_id in diagram_nodes:
+                    if target in diagram_nodes[node_id]["targets"]:
+                        diagram_nodes[node_id]["targets"][target] += 1
+                    else:
+                        diagram_nodes[node_id]["targets"][target] = 1
+                else:
+                    diagram_nodes[node_id] = dict(
+                        sources = {},
+                        targets = {target: 1},
+                    )
+                # TARGET
+                if target in diagram_nodes:
+                    if node_id in diagram_nodes[target]["sources"]:
+                        diagram_nodes[target]["sources"][node_id] += 1
+                    else:
+                        diagram_nodes[target]["sources"][node_id] = 1
+                else:
+                    diagram_nodes[target] = dict(
+                        sources = {node_id: 1},
+                        targets = {},
+                    )
+        return diagram_nodes
+    
+    def get_sankey_diagram(self, relayout_data, poagraph, highlighted_sequence, click_data, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
-
+        
+        range_start = 0
+        range_end = min(50, len(self.column_dict))
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
             range_end = min(int(relayout_data["shapes[0].x1"]), range_start+50, len(self.column_dict))
-        else:
-            range_start = 0
-            range_end = min(50, len(self.column_dict))
+        print(relayout_data)
+        
+        max_range=range_end
+        zoom=0
 
-        if click_data:
-            node_id = click_data['points'][0]['pointIndex']
-            full_consensustable = pd.read_json(consensustable_data)
-            consensustree_data = json.loads(consensustree_data)
-            tree = consensustree.dict_to_tree(consensustree_data)
-            node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
-            trace_dict = self.get_poagraph_traces(range_start, range_end, node_details_df["SEQID"].tolist())
-        else:
-            trace_dict = self.get_poagraph_traces(range_start, range_end)
-
-        fig = go.Figure()
-        max_value = max(trace_dict.values())
-        colors = {"A": "#f1c5c5", "C": "#fdcb9e", "G": "#bbd196", "T": "#8bcdcd"}
-        for key, value in trace_dict.items():
-            x0, y0, base0, x1, y1, base1 = key.split(",")
-            fig.add_trace(go.Scatter(
-                x=[x0, x1],
-                y=[y0, y1],
-                mode="lines+markers+text",
-                text=[base0, base1],
-                yaxis="y",
-                hoverinfo="name+x+text",
-                line={"width": value*6./max_value+2, "color": "#d3d3d3"},
-                marker={
-                    "size": 30, 
-                    "color": [colors[base0], colors[base1]],
-                },
-                showlegend=False
-            ))
-
-        if highlighted_sequence:
-            highlighted_trace = self.get_poagraph_traces(range_start, range_end, [highlighted_sequence])
-            for key, value in highlighted_trace.items():
-                x0, y0, base0, x1, y1, base1 = key.split(",")
-                fig.add_trace(go.Scatter(
-                    x=[x0, x1],
-                    y=[y0, y1],
-                    mode="markers+text",
-                    text=[base0, base1],
-                    marker={
-                        "size": 30, 
-                        "color": [colors[base0], colors[base1]], 
-                        "line": 
-                        {
-                            "width": 3, 
-                            "color": "black"
-                        }},
-                    showlegend=False
-                ))
-
-        fig.update_layout(
-            height=500,
-            dragmode="zoom",
-            hovermode=False,
-            legend=dict(traceorder="reversed"),
-            template="plotly_white",
-            paper_bgcolor='rgba(0,0,0,0)',
-            margin=dict(
-                t=30,
-                b=50
+        label = []
+        source = []
+        target = []
+        value = []
+        colors=dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
+        
+        
+        if zoom == 0:
+            for node_id in sorted(self.diagram.keys())[:max_range]:
+                label.append(self.nodes[node_id].base)
+                for t in self.diagram[node_id]["targets"]:
+                    if int(t) < max_range:
+                        source.append(int(node_id))
+                        target.append(int(t))
+                        value.append(self.diagram[node_id]["targets"][t])
+        
+                    
+        elif zoom == 1:
+            for node_id in sorted(self.diagram.keys())[:max_range]:
+                node = self.diagram[node_id]
+                label.append(self.nodes[node_id].base)            
+                    
+                if len(node["sources"]) == 1 and sum(node["sources"].values()) == len(self.sequences):
+                    source_id = list(node["sources"].keys())[0]
+                    node_source = self.diagram[source_id]
+                    while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
+                        source_id = list(node_source["sources"].keys())[0]
+                        node_source = self.diagram[source_id]
+                    label[source_id] += self.nodes[node_id].base
+                    if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
+                        for t in node["targets"]:
+                            if int(t) < max_range:
+                                source.append(source_id)
+                                target.append(t)
+                                value.append(self.diagram[node_id]["targets"][t])
+                
+                elif len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
+                    for t in self.diagram[node_id]["targets"]:
+                        if int(t) < max_range:
+                            source.append(node_id)
+                            target.append(t)
+                            value.append(self.diagram[node_id]["targets"][t])            
+        
+        colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
+        fig = go.Figure(
+            data=go.Sankey(
+                arrangement = "snap",
+                node = dict(
+                    label=label,
+                    pad=10,
+                    color=[colors[l] if l in colors else "gray" for l in label]
+                ),
+                link = {
+                    "source": source,
+                    "target": target,
+                    "value": value
+                }
             ),
-            xaxis=dict(
-                showgrid= False,
-                zeroline= False,
-                visible= False,
-                range= [range_start-0.4, range_end-2+0.4],
-            ),
-            yaxis=dict(
-                visible= False,
+            layout=dict(
+                # height=300,
+        #         width=1600
             )
         )
-
+        
         return fig
 
 alignment_main_object = GraphAlignment(data={})
