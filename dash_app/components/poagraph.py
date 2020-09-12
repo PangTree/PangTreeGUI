@@ -184,14 +184,18 @@ class GraphAlignment:
         if not self.sequences:
             raise PreventUpdate()
         
+        # RANGE START / END
         range_start = 0
-        range_end = min(50, len(self.column_dict))
+        range_end = min(40, len(self.column_dict))
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
-            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+50, len(self.column_dict))
-        print(relayout_data)
+            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+40, len(self.column_dict))
+        range_start = min(self.column_dict[range_start])
+        range_end = max(self.column_dict[range_end])
+
+        # FILTER SEQUENCES (AFFINITY TREE)
         
-        max_range=range_end
+
         zoom=0
 
         label = []
@@ -202,40 +206,41 @@ class GraphAlignment:
         
         
         if zoom == 0:
-            for node_id in sorted(self.diagram.keys())[:max_range]:
+            for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
                 label.append(self.nodes[node_id].base)
                 for t in self.diagram[node_id]["targets"]:
-                    if int(t) < max_range:
-                        source.append(int(node_id))
-                        target.append(int(t))
+                    if int(t) <= range_end:
+                        source.append(int(node_id)-range_start)
+                        target.append(int(t)-range_start)
                         value.append(self.diagram[node_id]["targets"][t])
+        print(label[-5:])
         
                     
-        elif zoom == 1:
-            for node_id in sorted(self.diagram.keys())[:max_range]:
-                node = self.diagram[node_id]
-                label.append(self.nodes[node_id].base)            
+        # elif zoom == 1:
+        #     for node_id in sorted(self.diagram.keys())[range_start:range_end]:
+        #         node = self.diagram[node_id]
+        #         label.append(self.nodes[node_id].base)            
                     
-                if len(node["sources"]) == 1 and sum(node["sources"].values()) == len(self.sequences):
-                    source_id = list(node["sources"].keys())[0]
-                    node_source = self.diagram[source_id]
-                    while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
-                        source_id = list(node_source["sources"].keys())[0]
-                        node_source = self.diagram[source_id]
-                    label[source_id] += self.nodes[node_id].base
-                    if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
-                        for t in node["targets"]:
-                            if int(t) < max_range:
-                                source.append(source_id)
-                                target.append(t)
-                                value.append(self.diagram[node_id]["targets"][t])
+        #         if len(node["sources"]) == 1 and sum(node["sources"].values()) == len(self.sequences):
+        #             source_id = list(node["sources"].keys())[0]
+        #             node_source = self.diagram[source_id]
+        #             while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
+        #                 source_id = list(node_source["sources"].keys())[0]
+        #                 node_source = self.diagram[source_id]
+        #             label[source_id] += self.nodes[node_id].base
+        #             if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
+        #                 for t in node["targets"]:
+        #                     if int(t) < range_end:
+        #                         source.append(source_id)
+        #                         target.append(t)
+        #                         value.append(self.diagram[node_id]["targets"][t])
                 
-                elif len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
-                    for t in self.diagram[node_id]["targets"]:
-                        if int(t) < max_range:
-                            source.append(node_id)
-                            target.append(t)
-                            value.append(self.diagram[node_id]["targets"][t])            
+        #         elif len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
+        #             for t in self.diagram[node_id]["targets"]:
+        #                 if int(t) < range_end:
+        #                     source.append(node_id)
+        #                     target.append(t)
+        #                     value.append(self.diagram[node_id]["targets"][t])            
         
         colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         fig = go.Figure(
