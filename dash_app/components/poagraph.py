@@ -186,10 +186,10 @@ class GraphAlignment:
         
         # RANGE START / END
         range_start = 0
-        range_end = min(40, len(self.column_dict))
+        range_end = min(40, len(self.column_dict)-1)
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
-            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+40, len(self.column_dict))
+            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+40, len(self.column_dict)-1)
         range_start = min(self.column_dict[range_start])
         range_end = max(self.column_dict[range_end])
 
