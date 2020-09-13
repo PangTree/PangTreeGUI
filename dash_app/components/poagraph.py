@@ -93,7 +93,7 @@ class GraphAlignment:
                         gaps[i] += 1
                         i += 1
                     i += 1
-        return [gap/len(self.column_dict) for gap in gaps]
+        return [gap/len(self.sequences) for gap in gaps]
            
     def get_gap_graph(self, is_ready):
         if not is_ready or not self.gaps:
