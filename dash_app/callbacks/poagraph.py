@@ -1,9 +1,7 @@
-import dash
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
-from dash_app.app import draw_poagraph
-from dash_app.components import poagraph, visualisation, tools
+from dash_app.components import visualisation
 from dash_app.server import app
 
 
