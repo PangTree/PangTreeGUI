@@ -523,9 +523,12 @@ _poagraph_row = dbc.Row(
                     id="poagraph-slider",
                     min=20, 
                     max=80, 
-                    value=40,
+                    value=35,
                     size=800,
-                    marks={'50': 'Bonding vertices'},
+                    marks={
+                        '40': 'Bonding vertices', 
+                        '55': 'Removal of weak connections'
+                    },
                     handleLabel={"showCurrentValue": True, "label": " "}
                 ),
                 html.Div(
