@@ -1,13 +1,11 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-import dash_cytoscape as cyto
+import dash_daq as daq
 import dash_html_components as html
 import dash_table
 from pangtreebuild.serialization.json import PangenomeJSON
 
 from dash_app.layout import links
-from dash_app.components import mafgraph as mafgraph_component
-from dash_app.components import poagraph as poagraph_component
 
 """--------------------------------FAQ---------------------------------------"""
 
@@ -485,29 +483,6 @@ _task_parameters_row = dbc.Row(
     ])
 )
 
-_input_data_row = dbc.Row(
-    style={'display': 'none'},
-    children=[
-        dbc.Col(
-            html.Div(
-                id="input_dagmaf_vis",
-                children=[
-                    html.H3("MAF graph"),
-                    dcc.Loading(
-                        cyto.Cytoscape(
-                            id="mafgraph_graph",
-                            elements=[],
-                            layout={'name': 'cose'},
-                            autoRefreshLayout=True,
-                            style={'width': 'auto', 'height': '350px'},
-                            zoom=1,
-                            stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
-                            boxSelectionEnabled=False,
-                            autounselectify=True),
-                        type="circle")]
-            ))
-    ])
-
 
 _pangenome_row = html.Div(
     children=[
@@ -662,7 +637,6 @@ _pangviz_tab_content = dbc.Container([
         id="pangviz_result_collapse",
         children=[
             _task_parameters_row,
-            _input_data_row,
             _poagraph_row,
             _affinity_tree_row,
         ])
