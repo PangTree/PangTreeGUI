@@ -145,6 +145,17 @@ i{
     min-height: 300px;
 }
 
+#poagraph_container{
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+}
+
+#poagraph-slider{
+    width: 800px;
+    margin: 50px auto;
+}
+
 #poagraph .svg-container{
     min-height: 400px;
 }

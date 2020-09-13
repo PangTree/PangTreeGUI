@@ -31,7 +31,7 @@ class GraphAlignment:
             Output("poagraph", "figure"),
             [Input("full_pangenome_graph", "relayoutData"),
              Input("full_pangenome_graph", "figure"),
-             Input("poagraph_dropdown", "value"),
+             Input("poagraph-slider", "value"),
              Input("consensus_tree_graph", 'clickData')],
             [State("full_consensustable_hidden", 'children'),
              State("full_consensustree_hidden", 'children')]
@@ -180,16 +180,16 @@ class GraphAlignment:
                     )
         return diagram_nodes
     
-    def get_sankey_diagram(self, relayout_data, poagraph, highlighted_sequence, click_data, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, relayout_data, poagraph, max_columns, click_data, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
         # RANGE START / END
         range_start = 0
-        range_end = min(40, len(self.column_dict)-1)
+        range_end = min(50, max_columns, len(self.column_dict)-1)
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
-            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+40, len(self.column_dict)-1)
+            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+range_end, len(self.column_dict)-1)
         range_start = min(self.column_dict[range_start])
         range_end = max(self.column_dict[range_end])
 
@@ -204,8 +204,6 @@ class GraphAlignment:
         # else:
         #     diagram = self.diagram
             
-        zoom=1
-
         label = []
         source = []
         target = []
@@ -213,7 +211,7 @@ class GraphAlignment:
         colors=dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         
         
-        if zoom == 0:
+        if max_columns < 50:
             for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
                 label.append(self.nodes[node_id].base)
                 for t in self.diagram[node_id]["targets"]:
@@ -223,7 +221,8 @@ class GraphAlignment:
                         value.append(self.diagram[node_id]["targets"][t])
         
         # CONCAT NODES            
-        elif zoom == 1:
+        # elif max_columns < 90:
+        else:
             for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
                 node = self.diagram[node_id]
                 label.append(self.nodes[node_id].base)            

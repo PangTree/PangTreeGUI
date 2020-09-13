@@ -486,8 +486,7 @@ _task_parameters_row = dbc.Row(
 
 _pangenome_row = html.Div(
     children=[
-        html.H4("Poagraph\n"),
-        # html.P("Representation of full poagraph as gap statistics."),
+        html.H4("Representation of full poagraph as gap statistics."),
         html.P("Drag the green rectangle to see details of the highlighted pangenome region."),
         html.Div(
             id="full_pangenome_container",
@@ -519,27 +518,35 @@ _poagraph_row = dbc.Row(
                 # html.P("This is a visualisation of pangenome internal "
                 #        "representation as a PoaGraph"),
                 html.Div(id="poagraph_node_info"),
+                html.P("Graph simplifications that increase the maximum visible region (number of columns in multialignment)"),
+                daq.Slider(
+                    id="poagraph-slider",
+                    min=20, 
+                    max=80, 
+                    value=40,
+                    size=800,
+                    marks={'50': 'Bonding vertices'},
+                    handleLabel={"showCurrentValue": True, "label": " "}
+                ),
                 html.Div(
                     id="poagraph_container",
-                    style={'width': '100%', 'text-align': 'center'},
                     children=dcc.Graph(
                         id="poagraph",
                         figure={},
                         config={
                             'displayModeBar': False,
-                            'staticPlot': True
                         }
                     )
                 ),
-                html.P("Highlight the sequence:"),
-                dcc.Dropdown(
-                    id="poagraph_dropdown",
-                    options=[
-                        {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
-                    ],
-                    value='',
-                    multi=False,
-                ) 
+                # html.P("Highlight the sequence:"),
+                # dcc.Dropdown(
+                #     id="poagraph_dropdown",
+                #     options=[
+                #         {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                #     ],
+                #     value='',
+                #     multi=False,
+                # ) 
             ])
         ])
     ], className="vis_row")
