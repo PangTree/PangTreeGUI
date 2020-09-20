@@ -1,3 +1,4 @@
+import copy
 import json
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -220,33 +221,6 @@ class GraphAlignment:
                         target.append(t-range_start)
                         value.append(self.diagram[node_id]["targets"][t])
         
-        # CONCAT NODES            
-        # elif max_columns < 50:
-        #     for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
-        #         node = self.diagram[node_id]
-        #         label.append(self.nodes[node_id].base)       
-                    
-        #         if len(node["sources"]) == 1 and sum(node["sources"].values()) == len(self.sequences):
-        #             source_id = list(node["sources"].keys())[0]
-        #             node_source = self.diagram[source_id]
-        #             while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
-        #                 source_id = list(node_source["sources"].keys())[0]
-        #                 node_source = self.diagram[source_id]
-        #             label[source_id-range_start] += self.nodes[node_id].base
-        #             if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
-        #                 for t in node["targets"]:
-        #                     if t <= range_end:
-        #                         source.append(source_id-range_start)
-        #                         target.append(t-range_start)
-        #                         value.append(self.diagram[node_id]["targets"][t])
-                
-        #         elif len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
-        #             for t in self.diagram[node_id]["targets"]:
-        #                 if t <= range_end:
-        #                     source.append(node_id-range_start)
-        #                     target.append(t-range_start)
-        #                     value.append(self.diagram[node_id]["targets"][t])
-
         # CONCAT NODES    
         elif max_columns < 55:
             for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
@@ -275,30 +249,38 @@ class GraphAlignment:
                             value.append(self.diagram[node_id]["targets"][t])
 
         else:
-            for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
-                node = self.diagram[node_id]
-                label.append(self.nodes[node_id].base)     
+            threshold = 5
+
+            diagram_filtered = copy.deepcopy(self.diagram)
+            for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
+                node = diagram_filtered[node_id]
+                diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
+                diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
+
+            for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
+                node = diagram_filtered[node_id]
+                label.append(self.nodes[node_id].base)       
                     
-                if len(node["sources"]) == 1 and list(node["sources"].keys())[0] >= range_start and len(self.diagram[list(node["sources"].keys())[0]]["targets"]) == 1:
+                if len(node["sources"]) == 1 and list(node["sources"].keys())[0] >= range_start and len(diagram_filtered[list(node["sources"].keys())[0]]["targets"]) == 1:
                     source_id = list(node["sources"].keys())[0]
-                    node_source = self.diagram[source_id]
+                    node_source = diagram_filtered[source_id]
                     while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
                         source_id = list(node_source["sources"].keys())[0]
-                        node_source = self.diagram[source_id]
+                        node_source = diagram_filtered[source_id]
                     label[source_id-range_start] += self.nodes[node_id].base
                     if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
                         for t in node["targets"]:
-                            if t <= range_end and self.diagram[node_id]["targets"][t]>5:
+                            if t <= range_end:
                                 source.append(source_id-range_start)
                                 target.append(t-range_start)
-                                value.append(self.diagram[node_id]["targets"][t])
+                                value.append(diagram_filtered[node_id]["targets"][t])
                 
-                elif len(node["targets"]) != 1 or len(self.diagram[list(node["targets"].keys())[0]]["sources"]) != 1:
-                    for t in self.diagram[node_id]["targets"]:
-                        if t <= range_end and self.diagram[node_id]["targets"][t]>5:
+                elif len(node["targets"]) != 1 or len(diagram_filtered[list(node["targets"].keys())[0]]["sources"]) != 1:
+                    for t in diagram_filtered[node_id]["targets"]:
+                        if t <= range_end:
                             source.append(node_id-range_start)
                             target.append(t-range_start)
-                            value.append(self.diagram[node_id]["targets"][t])
+                            value.append(diagram_filtered[node_id]["targets"][t])
 
         
         colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
