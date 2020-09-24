@@ -165,6 +165,7 @@ class GraphAlignment:
                         diagram_nodes[node_id]["targets"][target] = 1
                 else:
                     diagram_nodes[node_id] = dict(
+                        base = self.nodes[node_id].base,
                         sources = {},
                         targets = {target: 1},
                     )
@@ -176,11 +177,30 @@ class GraphAlignment:
                         diagram_nodes[target]["sources"][node_id] = 1
                 else:
                     diagram_nodes[target] = dict(
+                        base = self.nodes[target].base,
                         sources = {node_id: 1},
                         targets = {},
                     )
         return diagram_nodes
     
+    def _bound_vertices(self, diagram, range_start, range_end):
+        diagram_reorganization = dict()
+        for node_id in sorted(diagram.keys())[range_start:range_end+1]:
+            node = diagram[node_id]
+            if len(node["sources"]) == 1:
+                source_id = list(node["sources"].keys())[0]
+                source_value = node["sources"][source_id]
+                while source_id in diagram_reorganization:
+                    source_id = diagram_reorganization[source_id]
+                diagram[node_id]["sources"] = {source_id: source_value}
+                if source_id >= range_start and len(diagram[source_id]["targets"]) == 1:
+                    diagram_reorganization[node_id] = source_id
+                    diagram[source_id]["base"] += diagram[node_id]["base"]
+                    diagram[source_id]["targets"] = diagram[node_id]["targets"]
+                    diagram[node_id]["sources"] = {}
+                    diagram[node_id]["targets"] = {}
+        return diagram
+
     def get_sankey_diagram(self, relayout_data, poagraph, max_columns, click_data, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
@@ -213,40 +233,19 @@ class GraphAlignment:
         
         
         if max_columns < 40:
-            for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
-                label.append(self.nodes[node_id].base)
-                for t in self.diagram[node_id]["targets"]:
-                    if t <= range_end:
-                        source.append(node_id-range_start)
-                        target.append(t-range_start)
-                        value.append(self.diagram[node_id]["targets"][t])
+            diagram_filtered = self.diagram
+            # for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
+            #     label.append(self.nodes[node_id].base)
+            #     for t in self.diagram[node_id]["targets"]:
+            #         if t <= range_end:
+            #             source.append(node_id-range_start)
+            #             target.append(t-range_start)
+            #             value.append(self.diagram[node_id]["targets"][t])
         
         # CONCAT NODES    
         elif max_columns < 55:
-            for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
-                node = self.diagram[node_id]
-                label.append(self.nodes[node_id].base)       
-                    
-                if len(node["sources"]) == 1 and list(node["sources"].keys())[0] >= range_start and len(self.diagram[list(node["sources"].keys())[0]]["targets"]) == 1:
-                    source_id = list(node["sources"].keys())[0]
-                    node_source = self.diagram[source_id]
-                    while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
-                        source_id = list(node_source["sources"].keys())[0]
-                        node_source = self.diagram[source_id]
-                    label[source_id-range_start] += self.nodes[node_id].base
-                    if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
-                        for t in node["targets"]:
-                            if t <= range_end:
-                                source.append(source_id-range_start)
-                                target.append(t-range_start)
-                                value.append(self.diagram[node_id]["targets"][t])
-                
-                elif len(node["targets"]) != 1 or len(self.diagram[list(node["targets"].keys())[0]]["sources"]) != 1:
-                    for t in self.diagram[node_id]["targets"]:
-                        if t <= range_end:
-                            source.append(node_id-range_start)
-                            target.append(t-range_start)
-                            value.append(self.diagram[node_id]["targets"][t])
+            diagram_filtered = copy.deepcopy(self.diagram)
+            diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
 
         else:
             threshold = 5
@@ -257,30 +256,15 @@ class GraphAlignment:
                 diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
                 diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
 
-            for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
-                node = diagram_filtered[node_id]
-                label.append(self.nodes[node_id].base)       
-                    
-                if len(node["sources"]) == 1 and list(node["sources"].keys())[0] >= range_start and len(diagram_filtered[list(node["sources"].keys())[0]]["targets"]) == 1:
-                    source_id = list(node["sources"].keys())[0]
-                    node_source = diagram_filtered[source_id]
-                    while len(node_source["sources"]) == 1 and sum(node_source["sources"].values()) == len(self.sequences):
-                        source_id = list(node_source["sources"].keys())[0]
-                        node_source = diagram_filtered[source_id]
-                    label[source_id-range_start] += self.nodes[node_id].base
-                    if len(node["targets"]) != 1 or sum(node["targets"].values()) != len(self.sequences):
-                        for t in node["targets"]:
-                            if t <= range_end:
-                                source.append(source_id-range_start)
-                                target.append(t-range_start)
-                                value.append(diagram_filtered[node_id]["targets"][t])
-                
-                elif len(node["targets"]) != 1 or len(diagram_filtered[list(node["targets"].keys())[0]]["sources"]) != 1:
-                    for t in diagram_filtered[node_id]["targets"]:
-                        if t <= range_end:
-                            source.append(node_id-range_start)
-                            target.append(t-range_start)
-                            value.append(diagram_filtered[node_id]["targets"][t])
+            diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
+
+        for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
+            label.append(diagram_filtered[node_id]["base"])
+            for t in diagram_filtered[node_id]["targets"]:
+                if t <= range_end:
+                    source.append(node_id-range_start)
+                    target.append(t-range_start)
+                    value.append(diagram_filtered[node_id]["targets"][t])
 
         
         colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
