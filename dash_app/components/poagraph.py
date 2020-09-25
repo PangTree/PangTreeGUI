@@ -33,7 +33,9 @@ class GraphAlignment:
             [Input("full_pangenome_graph", "relayoutData"),
              Input("full_pangenome_graph", "figure"),
              Input("poagraph-slider", "value"),
-             Input("consensus_tree_graph", 'clickData')],
+             Input("consensus_tree_graph", 'clickData'),
+             Input("poagraph_checklist", 'value'),
+             Input("poagraph_threshold", 'value')],
             [State("full_consensustable_hidden", 'children'),
              State("full_consensustree_hidden", 'children')]
         )(self.get_sankey_diagram)
@@ -201,7 +203,7 @@ class GraphAlignment:
                     diagram[node_id]["targets"] = {}
         return diagram
 
-    def get_sankey_diagram(self, relayout_data, poagraph, max_columns, click_data, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, relayout_data, poagraph, max_columns, click_data, checklist, threshold, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
@@ -231,31 +233,16 @@ class GraphAlignment:
         value = []
         colors=dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         
-        
-        if max_columns < 40:
-            diagram_filtered = self.diagram
-            # for node_id in sorted(self.diagram.keys())[range_start:range_end+1]:
-            #     label.append(self.nodes[node_id].base)
-            #     for t in self.diagram[node_id]["targets"]:
-            #         if t <= range_end:
-            #             source.append(node_id-range_start)
-            #             target.append(t-range_start)
-            #             value.append(self.diagram[node_id]["targets"][t])
-        
-        # CONCAT NODES    
-        elif max_columns < 55:
-            diagram_filtered = copy.deepcopy(self.diagram)
-            diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
+        diagram_filtered = copy.deepcopy(self.diagram)
 
-        else:
-            threshold = 5
-
+        if 2 in checklist and threshold > 0:
             diagram_filtered = copy.deepcopy(self.diagram)
             for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
                 node = diagram_filtered[node_id]
                 diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
                 diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
 
+        if 1 in checklist:
             diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
 
         for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:

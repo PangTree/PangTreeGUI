@@ -549,7 +549,26 @@ _poagraph_row = dbc.Row(
                 #     ],
                 #     value='',
                 #     multi=False,
-                # ) 
+                # )
+                dbc.Row(
+                    [
+                        dcc.Checklist(
+                            id="poagraph_checklist",
+                            options=[
+                                {'label': 'Bonding vertices', 'value': 1},
+                                {'label': 'Removal of weak connections', 'value': 2},
+                            ],
+                            value=[],
+                            labelStyle={'display': 'block'}
+                        ),
+                        daq.NumericInput(
+                            id='poagraph_threshold',
+                            min=0,
+                            max=10,
+                            value=5
+                        )  
+                    ]
+                ) 
             ])
         ])
     ], className="vis_row")
