@@ -236,11 +236,16 @@ class GraphAlignment:
         diagram_filtered = copy.deepcopy(self.diagram)
 
         if 2 in checklist and threshold > 0:
-            diagram_filtered = copy.deepcopy(self.diagram)
+            weak_nodes = list()
             for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
                 node = diagram_filtered[node_id]
-                diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
-                diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
+                if node["sources"] and (all([x in weak_nodes for x in node["sources"].keys()]) or all([x<=threshold for x in node["sources"].values()])):
+                    weak_nodes.append(node_id)
+                    diagram_filtered[node_id]["sources"] = {}
+                    diagram_filtered[node_id]["targets"] = {}
+                else:
+                    diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
+                    diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
 
         if 1 in checklist:
             diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
