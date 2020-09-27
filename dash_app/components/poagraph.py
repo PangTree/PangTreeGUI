@@ -209,7 +209,7 @@ class GraphAlignment:
         
         # RANGE START / END
         range_start = 0
-        range_end = min(50, max_columns, len(self.column_dict)-1)
+        range_end = min(80, max_columns, len(self.column_dict)-1)
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
             range_end = min(int(relayout_data["shapes[0].x1"]), range_start+range_end, len(self.column_dict)-1)
@@ -246,6 +246,17 @@ class GraphAlignment:
                 else:
                     diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
                     diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
+            
+            for node_id in sorted(diagram_filtered.keys())[range_end-1:range_start:-1]:
+                node = diagram_filtered[node_id]
+                if all([x in weak_nodes for x in node["targets"].keys()]):
+                    weak_nodes.append(node_id)
+                    diagram_filtered[node_id]["sources"] = {}
+                    diagram_filtered[node_id]["targets"] = {}
+                else:
+                    diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if key not in weak_nodes}
+                    diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if key not in weak_nodes}
+
 
         if 1 in checklist:
             diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
