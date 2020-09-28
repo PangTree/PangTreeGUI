@@ -151,10 +151,10 @@ class GraphAlignment:
 
         return fig
 
-    def construct_diagram(self):
+    def construct_diagram(self, sequences=None):
         diagram_nodes = dict()
-        for sequence in self.sequences.values():
-            
+        sequences_values = [self.sequences[seq] for seq in sequences] if sequences else self.sequences.values()
+        for sequence in sequences_values:
             for i, node_id in enumerate(sequence[:-2]):
                 source = self.nodes[node_id].id
                 target = self.nodes[sequence[i+1]].id
@@ -215,17 +215,6 @@ class GraphAlignment:
             range_end = min(int(relayout_data["shapes[0].x1"]), range_start+range_end, len(self.column_dict)-1)
         range_start = min(self.column_dict[range_start])
         range_end = max(self.column_dict[range_end])
-
-        # FILTER SEQUENCES (AFFINITY TREE)
-        # if click_data:
-        #     node_id = click_data['points'][0]['pointIndex']
-        #     full_consensustable = pd.read_json(consensustable_data)
-        #     consensustree_data = json.loads(consensustree_data)
-        #     tree = consensustree.dict_to_tree(consensustree_data)
-        #     node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
-        #     diagram = self.construct_diagram(sequences=node_details_df["SEQID"].tolist())
-        # else:
-        #     diagram = self.diagram
             
         label = []
         source = []
@@ -233,9 +222,26 @@ class GraphAlignment:
         value = []
         colors=dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         
-        diagram_filtered = copy.deepcopy(self.diagram)
+        
+        # FILTER SEQUENCES (AFFINITY TREE)
+        if click_data:
+            node_id = click_data['points'][0]['pointIndex']
+            full_consensustable = pd.read_json(consensustable_data)
+            consensustree_data = json.loads(consensustree_data)
+            tree = consensustree.dict_to_tree(consensustree_data)
+            node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
+            diagram_filtered = self.construct_diagram(sequences=node_details_df["SEQID"].tolist())
+            for i in range(len(self.column_dict)):
+                if i not in diagram_filtered:
+                    diagram_filtered[i] = dict(
+                        base = "",
+                        sources = {},
+                        targets = {},
+                    )
+        else:
+            diagram_filtered = copy.deepcopy(self.diagram)
 
-        if 2 in checklist and threshold > 0:
+        if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS
             weak_nodes = list()
             for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
                 node = diagram_filtered[node_id]
@@ -258,7 +264,7 @@ class GraphAlignment:
                     diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if key not in weak_nodes}
 
 
-        if 1 in checklist:
+        if 1 in checklist:  # CONCAT VERTICLES
             diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
 
         for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
