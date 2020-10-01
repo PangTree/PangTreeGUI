@@ -541,15 +541,6 @@ _poagraph_row = dbc.Row(
                         }
                     )
                 ),
-                # html.P("Highlight the sequence:"),
-                # dcc.Dropdown(
-                #     id="poagraph_dropdown",
-                #     options=[
-                #         {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
-                #     ],
-                #     value='',
-                #     multi=False,
-                # )
                 dbc.Row(
                     [
                         dcc.Checklist(
@@ -566,7 +557,16 @@ _poagraph_row = dbc.Row(
                             min=0,
                             max=10,
                             value=5
-                        )  
+                        ),
+                        # html.P("Highlight the sequence:"),
+                        dcc.Dropdown(
+                            id="poagraph_dropdown",
+                            options=[
+                                {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                            ],
+                            value='',
+                            multi=False,
+                        )
                     ]
                 ) 
             ])

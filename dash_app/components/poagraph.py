@@ -33,6 +33,7 @@ class GraphAlignment:
             [Input("full_pangenome_graph", "relayoutData"),
              Input("full_pangenome_graph", "figure"),
              Input("poagraph-slider", "value"),
+             Input("poagraph_dropdown", "value"),
              Input("consensus_tree_graph", 'clickData'),
              Input("poagraph_checklist", 'value'),
              Input("poagraph_threshold", 'value')],
@@ -203,7 +204,7 @@ class GraphAlignment:
                     diagram[node_id]["targets"] = {}
         return diagram
 
-    def get_sankey_diagram(self, relayout_data, poagraph, max_columns, click_data, checklist, threshold, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, relayout_data, poagraph, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
@@ -220,6 +221,7 @@ class GraphAlignment:
         source = []
         target = []
         value = []
+        link_color = []
         colors=dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         
         
@@ -230,7 +232,9 @@ class GraphAlignment:
             consensustree_data = json.loads(consensustree_data)
             tree = consensustree.dict_to_tree(consensustree_data)
             node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
-            diagram_filtered = self.construct_diagram(sequences=node_details_df["SEQID"].tolist())
+            filtered_sequences = node_details_df["SEQID"].tolist()
+            diagram_filtered = self.construct_diagram(sequences=filtered_sequences)
+            
             for i in range(len(self.column_dict)):
                 if i not in diagram_filtered:
                     diagram_filtered[i] = dict(
@@ -239,6 +243,7 @@ class GraphAlignment:
                         targets = {},
                     )
         else:
+            filtered_sequences = list(self.sequences.keys())
             diagram_filtered = copy.deepcopy(self.diagram)
 
         if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS
@@ -274,7 +279,16 @@ class GraphAlignment:
                     source.append(node_id-range_start)
                     target.append(t-range_start)
                     value.append(diagram_filtered[node_id]["targets"][t])
-
+                    
+                    # HIGHLIGHT SEQUENCE
+                    if highlight_seq and highlight_seq in filtered_sequences and node_id-range_start in self.sequences[highlight_seq]:
+                        s_id = self.sequences[highlight_seq].index(node_id-range_start)
+                        if self.sequences[highlight_seq][s_id+1] == t-range_start:
+                            link_color.append("#342424")
+                        else:
+                            link_color.append("#D3D3D3")
+                    else:
+                        link_color.append("#D3D3D3")
         
         colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         fig = go.Figure(
@@ -285,15 +299,16 @@ class GraphAlignment:
                     pad=10,
                     color=[colors[l] if l in colors else "gray" for l in label]
                 ),
-                link = {
-                    "source": source,
-                    "target": target,
-                    "value": value
-                }
+                link = dict(
+                    source=source,
+                    target=target,
+                    value=value,
+                    color=link_color
+                )
             ),
             layout=dict(
                 # height=300,
-        #         width=1600
+                # width=1600
             )
         )
         
