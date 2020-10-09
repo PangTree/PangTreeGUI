@@ -514,11 +514,20 @@ _poagraph_row = dbc.Row(
             html.Summary('Pangenome'),
             _pangenome_row,
             html.Div([
-                # html.H4("Pangenome - a closer view on graph details\n"),
-                # html.P("This is a visualisation of pangenome internal "
-                #        "representation as a PoaGraph"),
+                html.H4("Pangenome\n"),
+                html.P("This is a visualisation of pangenome internal representation as a PoaGraph"),
                 html.Div(id="poagraph_node_info"),
-                html.P("Graph simplifications that increase the maximum visible region (number of columns in multialignment)"),
+                html.Div(
+                    id="poagraph_container",
+                    children=dcc.Graph(
+                        id="poagraph",
+                        figure={},
+                        config={
+                            'displayModeBar': False,
+                        }
+                    )
+                ),
+                html.P("Graph slider: increase the maximum visible region (number of columns in multialignment)"),
                 daq.Slider(
                     id="poagraph-slider",
                     min=20, 
@@ -531,41 +540,47 @@ _poagraph_row = dbc.Row(
                     },
                     handleLabel={"showCurrentValue": True, "label": " "}
                 ),
-                html.Div(
-                    id="poagraph_container",
-                    children=dcc.Graph(
-                        id="poagraph",
-                        figure={},
-                        config={
-                            'displayModeBar': False,
-                        }
-                    )
-                ),
                 dbc.Row(
                     [
-                        dcc.Checklist(
-                            id="poagraph_checklist",
-                            options=[
-                                {'label': 'Bonding vertices', 'value': 1},
-                                {'label': 'Removal of weak connections', 'value': 2},
+                        dbc.Col(
+                            [
+                                html.P("Graph simplifications:"),
+                                dcc.Checklist(
+                                    id="poagraph_checklist",
+                                    options=[
+                                        {'label': 'Bonding vertices', 'value': 1},
+                                        {'label': 'Removal of weak connections', 'value': 2},
+                                    ],
+                                    value=[],
+                                    labelStyle={'display': 'block'}
+                                ),
+                                daq.NumericInput(
+                                    id='poagraph_threshold',
+                                    min=0,
+                                    max=10,
+                                    value=5
+                                ),
                             ],
-                            value=[],
-                            labelStyle={'display': 'block'}
+                            style={
+                                "text-align": "left",
+                                "max-width": "30%"
+                            }
                         ),
-                        daq.NumericInput(
-                            id='poagraph_threshold',
-                            min=0,
-                            max=10,
-                            value=5
-                        ),
-                        # html.P("Highlight the sequence:"),
-                        dcc.Dropdown(
-                            id="poagraph_dropdown",
-                            options=[
-                                {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                        dbc.Col(
+                            [
+                                html.Span("Selected vertex of the Affinity Tree: "),
+                                html.Span("0", id="selected_vertex"),
+                                html.P("Highlight the sequence:"),
+                                dcc.Dropdown(
+                                    id="poagraph_dropdown",
+                                    options=[
+                                        {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                                    ],
+                                    value='',
+                                    multi=False,
+                                )
                             ],
-                            value='',
-                            multi=False,
+                            style={"text-align": "left"}
                         )
                     ]
                 ) 

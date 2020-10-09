@@ -29,7 +29,8 @@ class GraphAlignment:
         self.gaps = None
         self.diagram = None
         app.callback(
-            Output("poagraph", "figure"),
+            [Output("poagraph", "figure"), 
+             Output("selected_vertex", "children")],
             [Input("full_pangenome_graph", "relayoutData"),
              Input("full_pangenome_graph", "figure"),
              Input("poagraph-slider", "value"),
@@ -227,11 +228,11 @@ class GraphAlignment:
         
         # FILTER SEQUENCES (AFFINITY TREE)
         if click_data:
-            node_id = click_data['points'][0]['pointIndex']
+            tree_node_id = click_data['points'][0]['pointIndex']
             full_consensustable = pd.read_json(consensustable_data)
             consensustree_data = json.loads(consensustree_data)
             tree = consensustree.dict_to_tree(consensustree_data)
-            node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
+            node_details_df = consensustable.get_consensus_details_df(tree_node_id, full_consensustable, tree)
             filtered_sequences = node_details_df["SEQID"].tolist()
             diagram_filtered = self.construct_diagram(sequences=filtered_sequences)
             
@@ -243,6 +244,7 @@ class GraphAlignment:
                         targets = {},
                     )
         else:
+            tree_node_id = None
             filtered_sequences = list(self.sequences.keys())
             diagram_filtered = copy.deepcopy(self.diagram)
 
@@ -312,6 +314,6 @@ class GraphAlignment:
             )
         )
         
-        return fig
+        return fig, str(tree_node_id)
 
 alignment_main_object = GraphAlignment(data={})
