@@ -544,6 +544,20 @@ _poagraph_row = dbc.Row(
                     [
                         dbc.Col(
                             [
+                                daq.BooleanSwitch(
+                                    on=False,
+                                    id='zoom-out-switch',
+                                    label="Extreame zoom-out",
+                                    labelPosition="top"
+                                )  
+                            ],
+                            style={
+                                # "text-align": "left",
+                                "max-width": "15%"
+                            }
+                        ),
+                        dbc.Col(
+                            [
                                 html.P("Graph simplifications:"),
                                 dcc.Checklist(
                                     id="poagraph_checklist",

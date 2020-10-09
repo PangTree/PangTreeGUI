@@ -33,6 +33,7 @@ class GraphAlignment:
              Output("selected_vertex", "children")],
             [Input("full_pangenome_graph", "relayoutData"),
              Input("full_pangenome_graph", "figure"),
+             Input("zoom-out-switch", "on"),
              Input("poagraph-slider", "value"),
              Input("poagraph_dropdown", "value"),
              Input("consensus_tree_graph", 'clickData'),
@@ -205,7 +206,7 @@ class GraphAlignment:
                     diagram[node_id]["targets"] = {}
         return diagram
 
-    def get_sankey_diagram(self, relayout_data, poagraph, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, relayout_data, poagraph, zoom_out, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
@@ -247,8 +248,14 @@ class GraphAlignment:
             tree_node_id = None
             filtered_sequences = list(self.sequences.keys())
             diagram_filtered = copy.deepcopy(self.diagram)
+        
+        if zoom_out:  # EXTREAME ZOOM-OUT
+            checklist = [1, 2]
+            threshold = len(self.sequences)*0.2
+            range_start = 0
+            range_end = len(self.column_dict)-1
 
-        if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS
+        if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS                
             weak_nodes = list()
             for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
                 node = diagram_filtered[node_id]
@@ -297,7 +304,7 @@ class GraphAlignment:
             data=go.Sankey(
                 arrangement = "snap",
                 node = dict(
-                    label=label,
+                    label=[l if len(l)<5 else f"{l[0]}...{l[-1]}({len(l)})" for l in label],
                     pad=10,
                     color=[colors[l] if l in colors else "gray" for l in label]
                 ),
