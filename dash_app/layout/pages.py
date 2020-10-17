@@ -486,6 +486,7 @@ _task_parameters_row = dbc.Row(
 
 _pangenome_row = html.Div(
     children=[
+        dcc.Store(id="gap-shape_x", data=[0, 40]),
         html.H4("Representation of full poagraph as gap statistics."),
         html.P("Drag the green rectangle to see details of the highlighted pangenome region."),
         html.Div(
@@ -576,10 +577,7 @@ _poagraph_row = dbc.Row(
                                     value=5
                                 ),
                             ],
-                            style={
-                                "text-align": "left",
-                                "max-width": "30%"
-                            }
+                            id="poagraph-simplifications"
                         ),
                         dbc.Col(
                             [

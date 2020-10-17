@@ -134,6 +134,11 @@ i{
     padding: 20px;
 }
 
+#poagraph-simplifications{
+    text-align: left;
+    max-width: 30%;
+}
+
 /* #poagraph_dropdown{
     margin: 0px 80px 50px 80px;
 } */
@@ -339,4 +344,5 @@ details {
 #full_pangenome_graph {
     height: 300px;
     width: 100%;
+    margin-top: -40px;
 }

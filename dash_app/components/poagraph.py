@@ -1,5 +1,6 @@
 import copy
 import json
+import dash
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import pandas as pd
@@ -29,10 +30,11 @@ class GraphAlignment:
         self.gaps = None
         self.diagram = None
         app.callback(
-            [Output("poagraph", "figure"), 
+            [Output("poagraph", "figure"),
+             Output("gap-shape_x", "data"),
              Output("selected_vertex", "children")],
             [Input("full_pangenome_graph", "relayoutData"),
-             Input("full_pangenome_graph", "figure"),
+             Input("pangenome_hidden", 'children'),
              Input("zoom-out-switch", "on"),
              Input("poagraph-slider", "value"),
              Input("poagraph_dropdown", "value"),
@@ -40,12 +42,18 @@ class GraphAlignment:
              Input("poagraph_checklist", 'value'),
              Input("poagraph_threshold", 'value')],
             [State("full_consensustable_hidden", 'children'),
-             State("full_consensustree_hidden", 'children')]
+             State("full_consensustree_hidden", 'children'),
+             State("gap-shape_x", "data")]
         )(self.get_sankey_diagram)
         app.callback(
             Output("full_pangenome_graph", "figure"),
-            [Input("pangenome_hidden", 'children')]
+            [Input("pangenome_hidden", 'children'),
+             Input("gap-shape_x", "data")]
         )(self.get_gap_graph)
+        app.callback(
+            Output("poagraph-simplifications", "style"),
+            [Input("zoom-out-switch", "on")]
+        )(lambda x: {"visibility": "hidden"} if x else {})
 
     def update_data(self, data):
         self.column_dict = self.c_dict(data["nodes"])
@@ -101,7 +109,7 @@ class GraphAlignment:
                     i += 1
         return [gap/len(self.sequences) for gap in gaps]
            
-    def get_gap_graph(self, is_ready):
+    def get_gap_graph(self, is_ready, shape_x):
         if not is_ready or not self.gaps:
             raise PreventUpdate()
 
@@ -143,8 +151,8 @@ class GraphAlignment:
         )
 
         fig.add_shape(
-            x0=0, 
-            x1=40, 
+            x0=shape_x[0], 
+            x1=shape_x[1], 
             y0=-100, 
             y1=100,
             fillcolor="#75bba7",
@@ -206,16 +214,18 @@ class GraphAlignment:
                     diagram[node_id]["targets"] = {}
         return diagram, diagram_reorganization
 
-    def get_sankey_diagram(self, relayout_data, poagraph, zoom_out, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, relayout_data, hidde, zoom_out, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data, gap_shape):
         if not self.sequences:
             raise PreventUpdate()
         
         # RANGE START / END
-        range_start = 0
-        range_end = min(80, max_columns, len(self.column_dict)-1)
+        range_start = max(0, gap_shape[0])
+        range_end = min(range_start+max_columns, len(self.column_dict)-1)
         if relayout_data and "shapes[0].x0" in relayout_data.keys():
             range_start = max(int(relayout_data["shapes[0].x0"]), 0)
             range_end = min(int(relayout_data["shapes[0].x1"]), range_start+range_end, len(self.column_dict)-1)
+
+        gap_shape = dash.no_update if gap_shape==[range_start, range_end] else [range_start, range_end]
         range_start = min(self.column_dict[range_start])
         range_end = max(self.column_dict[range_end])
             
@@ -328,6 +338,6 @@ class GraphAlignment:
             )
         )
         
-        return fig, str(tree_node_id)
+        return fig, gap_shape, str(tree_node_id) 
 
 alignment_main_object = GraphAlignment(data={})
