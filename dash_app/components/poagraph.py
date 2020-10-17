@@ -204,7 +204,7 @@ class GraphAlignment:
                     diagram[source_id]["targets"] = diagram[node_id]["targets"]
                     diagram[node_id]["sources"] = {}
                     diagram[node_id]["targets"] = {}
-        return diagram
+        return diagram, diagram_reorganization
 
     def get_sankey_diagram(self, relayout_data, poagraph, zoom_out, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
         if not self.sequences:
@@ -279,8 +279,15 @@ class GraphAlignment:
 
 
         if 1 in checklist:  # CONCAT VERTICLES
-            diagram_filtered = self._bound_vertices(diagram_filtered, range_start, range_end)
+            diagram_filtered, diagram_reorganization = self._bound_vertices(diagram_filtered, range_start, range_end)
+        else:
+            diagram_reorganization = dict()
 
+        if highlight_seq and highlight_seq in filtered_sequences:  # HIGHLIGHT SEQUENCE
+            highlight_seq_nodes = [node_id for node_id in self.sequences[highlight_seq] if node_id not in diagram_reorganization.keys()]
+        else:
+            highlight_seq_nodes = []
+        
         for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
             label.append(diagram_filtered[node_id]["base"])
             for t in diagram_filtered[node_id]["targets"]:
@@ -290,9 +297,9 @@ class GraphAlignment:
                     value.append(diagram_filtered[node_id]["targets"][t])
                     
                     # HIGHLIGHT SEQUENCE
-                    if highlight_seq and highlight_seq in filtered_sequences and node_id-range_start in self.sequences[highlight_seq]:
-                        s_id = self.sequences[highlight_seq].index(node_id-range_start)
-                        if self.sequences[highlight_seq][s_id+1] == t-range_start:
+                    if highlight_seq_nodes and node_id-range_start in highlight_seq_nodes:
+                        s_id = highlight_seq_nodes.index(node_id-range_start)
+                        if highlight_seq_nodes[s_id+1] == t-range_start:
                             link_color.append("#342424")
                         else:
                             link_color.append("#D3D3D3")

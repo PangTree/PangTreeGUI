@@ -512,7 +512,6 @@ _poagraph_row = dbc.Row(
     children=[
         html.Details([
             html.Summary('Pangenome'),
-            _pangenome_row,
             html.Div([
                 html.H4("Pangenome\n"),
                 html.P("This is a visualisation of pangenome internal representation as a PoaGraph"),
@@ -526,8 +525,10 @@ _poagraph_row = dbc.Row(
                             'displayModeBar': False,
                         }
                     )
-                ),
-                html.P("Graph slider: increase the maximum visible region (number of columns in multialignment)"),
+                )
+            ]),
+            html.Div([
+                html.P("Graph slider: increase the maximum visible region (number of analyzed columns)"),
                 daq.Slider(
                     id="poagraph-slider",
                     min=20, 
@@ -535,7 +536,7 @@ _poagraph_row = dbc.Row(
                     value=35,
                     size=800,
                     marks={
-                        '40': 'Bonding vertices', 
+                        '40': 'Merge vertices', 
                         '55': 'Removal of weak connections'
                     },
                     handleLabel={"showCurrentValue": True, "label": " "}
@@ -547,7 +548,7 @@ _poagraph_row = dbc.Row(
                                 daq.BooleanSwitch(
                                     on=False,
                                     id='zoom-out-switch',
-                                    label="Extreame zoom-out",
+                                    label="Show full pangenome (Extreme zoom-out)",
                                     labelPosition="top"
                                 )  
                             ],
@@ -598,7 +599,8 @@ _poagraph_row = dbc.Row(
                         )
                     ]
                 ) 
-            ])
+            ]),
+            _pangenome_row,
         ])
     ], className="vis_row")
 
