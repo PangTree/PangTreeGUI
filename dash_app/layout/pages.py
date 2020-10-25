@@ -571,12 +571,17 @@ _poagraph_row = dbc.Row(
                                     value=[],
                                     labelStyle={'display': 'block'}
                                 ),
-                                daq.NumericInput(
-                                    id='poagraph_threshold',
-                                    min=0,
-                                    max=10,
-                                    value=5
-                                ),
+                                dbc.Row(
+                                    [
+                                        html.P("Weak connections threshold: \t", className="secondary"),
+                                        daq.NumericInput(
+                                            id='poagraph_threshold',
+                                            min=0,
+                                            max=10,
+                                            value=5
+                                        ),
+                                    ]
+                                )
                             ],
                             id="poagraph-simplifications"
                         ),
