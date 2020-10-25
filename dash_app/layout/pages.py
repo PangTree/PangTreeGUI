@@ -565,6 +565,7 @@ _poagraph_row = dbc.Row(
                                     id="poagraph_checklist",
                                     options=[
                                         {'label': 'Merge vertices', 'value': 1},
+                                        {'label': 'Removal of SNP', 'value': 3},
                                         {'label': 'Removal of weak connections', 'value': 2},
                                     ],
                                     value=[],

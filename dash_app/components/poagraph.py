@@ -162,9 +162,9 @@ class GraphAlignment:
 
         return fig
 
-    def construct_diagram(self, sequences=None):
+    def construct_diagram(self, sequences_values=None):
         diagram_nodes = dict()
-        sequences_values = [self.sequences[seq] for seq in sequences] if sequences else self.sequences.values()
+        sequences_values = sequences_values if sequences_values else self.sequences.values()
         for sequence in sequences_values:
             for i, node_id in enumerate(sequence[:-2]):
                 source = self.nodes[node_id].id
@@ -214,6 +214,34 @@ class GraphAlignment:
                     diagram[node_id]["targets"] = {}
         return diagram, diagram_reorganization
 
+    def _remove_snp(self, consensus, sequence):
+        filtered_sequence = [sequence[0]]
+        for i, node_id in enumerate(sequence[1:-1]):
+            # SUBSTITUTION AND INSERTION
+            if node_id not in consensus and sequence[i] in consensus and sequence[i+2] in consensus:
+                before = consensus.index(sequence[i])
+                after = consensus.index(sequence[i+2])
+                if after-before == 1:  # INSERTION
+                    pass
+                elif after-before == 2:  # SUBSTITUTION
+                    filtered_sequence.append(consensus[before+1])
+                else:
+                    filtered_sequence.append(node_id)
+            # DELETION
+            elif node_id in consensus and sequence[i+2] in consensus:
+                before = consensus.index(sequence[i+1])
+                after = consensus.index(sequence[i+2])
+                if after-before == 2:  # DELETION
+                    filtered_sequence.append(node_id)
+                    filtered_sequence.append(consensus[before+1])
+                else:
+                    filtered_sequence.append(node_id)
+            else:
+                filtered_sequence.append(node_id)
+        filtered_sequence.append(sequence[-1])
+        return filtered_sequence
+            
+
     def get_sankey_diagram(self, relayout_data, hidde, zoom_out, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data, gap_shape):
         if not self.sequences:
             raise PreventUpdate()
@@ -245,7 +273,7 @@ class GraphAlignment:
             tree = consensustree.dict_to_tree(consensustree_data)
             node_details_df = consensustable.get_consensus_details_df(tree_node_id, full_consensustable, tree)
             filtered_sequences = node_details_df["SEQID"].tolist()
-            diagram_filtered = self.construct_diagram(sequences=filtered_sequences)
+            diagram_filtered = self.construct_diagram(sequences_values=[self.sequences[seq] for seq in filtered_sequences])
             
             for i in range(len(self.column_dict)):
                 if i not in diagram_filtered:
@@ -265,6 +293,18 @@ class GraphAlignment:
             range_start = 0
             range_end = len(self.column_dict)-1
             gap_shape = [range_start, range_end]
+
+        if 3 in checklist:
+            sequences_values = [self.sequences[seq] for seq in filtered_sequences]
+            new_sequences_values = [self._remove_snp(self.consensus_sequence, sequence) for sequence in sequences_values]
+            diagram_filtered = self.construct_diagram(sequences_values=new_sequences_values)
+            for i in range(len(self.diagram)):
+                if i not in diagram_filtered:
+                    diagram_filtered[i] = dict(
+                        base = "",
+                        sources = {},
+                        targets = {},
+                    )
 
         if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS                
             weak_nodes = list()
