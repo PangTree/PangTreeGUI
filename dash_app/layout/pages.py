@@ -564,7 +564,7 @@ _poagraph_row = dbc.Row(
                                 dcc.Checklist(
                                     id="poagraph_checklist",
                                     options=[
-                                        {'label': 'Bonding vertices', 'value': 1},
+                                        {'label': 'Merge vertices', 'value': 1},
                                         {'label': 'Removal of weak connections', 'value': 2},
                                     ],
                                     value=[],

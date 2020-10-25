@@ -264,6 +264,7 @@ class GraphAlignment:
             threshold = len(self.sequences)*0.2
             range_start = 0
             range_end = len(self.column_dict)-1
+            gap_shape = [range_start, range_end]
 
         if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS                
             weak_nodes = list()
