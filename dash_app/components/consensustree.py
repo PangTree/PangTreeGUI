@@ -4,6 +4,7 @@ from typing import Dict, List, Tuple, Set, Any
 import math
 from ..layout.colors import colors
 import plotly.graph_objs as go
+import numpy as np
 import pandas as pd
 
 from pangtreebuild.affinity_tree.tree import AffinityNodeID
@@ -146,6 +147,12 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
     labels_on_hover = [f'{minCompLabel}' for minCompLabel in minCompsLabels]
     labels = [f"{node_id}" for node_id in range(len(node_id_to_y))]
     positions = [(tree.nodes[node_id]["mincomp"], node_id_to_y[node_id]) for node_id in range(len(tree.nodes))]
+
+    x_positions = np.array([x for [x, _] in positions])
+    x_positions -= min(x_positions)-0.01
+    x_positions /= max(x_positions)
+    y_positions = np.array([y for [_, y] in positions])
+    positions = [(x, y) for x,y in zip(x_positions, y_positions)]
 
     tree_nodes_graph = get_tree_nodes_graph(positions, labels_on_hover)
     tree_nodes_annotations = get_tree_nodes_annotations(positions, labels)
