@@ -87,6 +87,16 @@ div>.jumbotron{
     padding-left: 10px;
 }
 
+.tooltip-icon{
+    margin: 0px 10px;
+    cursor: pointer;
+    color: grey;
+}
+
+.tooltip-icon:hover{
+    color: lightskyblue;
+}
+
 i{
     align-self: center;
 }
