@@ -141,7 +141,7 @@ def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[AffinityNodeID, int]:
     return node_id_to_y
 
 
-def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_value: str, full_consensustable: pd.DataFrame) -> go.Figure:
+def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_value: str, full_consensustable: pd.DataFrame, highlight_node=None) -> go.Figure:
     node_id_to_y = get_node_id_to_y_pos(tree)
     minCompsLabels = [format(tree.nodes[node_id]["mincomp"], '.4f') for node_id in range(len(tree.nodes))]
     labels_on_hover = [f'{minCompLabel}' for minCompLabel in minCompsLabels]
@@ -186,8 +186,9 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
         plot_bgcolor=colors['transparent'],
         autosize=True,
     )
-
-    return go.Figure(data=[tree_lines_graph, tree_nodes_graph, line_graph, leaves_text_graph], layout=layout)
+    fig = go.Figure(data=[tree_lines_graph, tree_nodes_graph, line_graph, leaves_text_graph], layout=layout)
+    fig.update_layout(clickmode='event+select')
+    return fig
 
 
 def get_line_graph(slider_value: float) -> go.Scatter:
@@ -209,8 +210,8 @@ def get_tree_nodes_graph(positions: List[Tuple[float, float]], labels_on_hover: 
         marker=dict(
             symbol='circle',
             size=20,
-            color='rgba(255, 255, 255, 1)',
-            line=dict(color='rgba(49, 55, 21, 1)', width=1),                          
+            color='#75bba7',
+            line=dict(color='rgba(49, 55, 21, 0.8)', width=2),                          
         ),
         text=labels_on_hover,
         hoverinfo='text',
