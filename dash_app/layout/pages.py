@@ -529,18 +529,13 @@ _poagraph_row = dbc.Row(
                 )
             ]),
             html.Div([
-                html.P("Graph slider: increase the maximum visible region (number of analyzed columns)"),
-                daq.Slider(
+                html.P("Graph slider: select the region you want to see in the graph"),
+                dcc.RangeSlider(
                     id="poagraph-slider",
-                    min=20, 
-                    max=80, 
-                    value=35,
-                    size=800,
-                    marks={
-                        '40': 'Merge vertices', 
-                        '55': 'Removal of weak connections'
-                    },
-                    handleLabel={"showCurrentValue": True, "label": " "}
+                    min=0,
+                    max=100,
+                    value=[0, 40],
+                    pushable=30,
                 ),
                 dbc.Row(
                     [
@@ -604,7 +599,7 @@ _poagraph_row = dbc.Row(
                     ]
                 ) 
             ]),
-            _pangenome_row,
+            # _pangenome_row,
         ])
     ], className="vis_row")
 

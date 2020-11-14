@@ -31,10 +31,8 @@ class GraphAlignment:
         self.diagram = None
         app.callback(
             [Output("poagraph", "figure"),
-             Output("gap-shape_x", "data"),
              Output("selected_vertex", "children")],
-            [Input("full_pangenome_graph", "relayoutData"),
-             Input("pangenome_hidden", 'children'),
+            [Input("pangenome_hidden", 'children'),
              Input("zoom-out-switch", "on"),
              Input("poagraph-slider", "value"),
              Input("poagraph_dropdown", "value"),
@@ -42,19 +40,18 @@ class GraphAlignment:
              Input("poagraph_checklist", 'value'),
              Input("poagraph_threshold", 'value')],
             [State("full_consensustable_hidden", 'children'),
-             State("full_consensustree_hidden", 'children'),
-             State("gap-shape_x", "data")]
+             State("full_consensustree_hidden", 'children')]
         )(self.get_sankey_diagram)
         app.callback(
-            Output("full_pangenome_graph", "figure"),
-            [Input("pangenome_hidden", 'children'),
-             Input("gap-shape_x", "data")]
-        )(self.get_gap_graph)
+            [Output("poagraph-slider", "max"),
+             Output("poagraph-slider", "marks")],
+            [Input("pangenome_hidden", 'children')]
+        )(self.set_slider)
         app.callback(
             Output("poagraph-simplifications", "style"),
             [Input("zoom-out-switch", "on")]
         )(lambda x: {"visibility": "hidden"} if x else {})
-
+    
     def update_data(self, data):
         self.column_dict = self.c_dict(data["nodes"])
         self.consensus_sequence = data["affinitytree"][0]["nodes_ids"]
@@ -96,6 +93,11 @@ class GraphAlignment:
                 column_dict[node["column_id"]] = []
             column_dict[node["column_id"]].append(node["id"])
         return column_dict
+
+    def set_slider(self, hidden):
+        slider_max = len(self.column_dict)-1 if self.column_dict else 100
+        slider_marks = {i: {"label": str(i)} for i in range(0, slider_max, 100)}
+        return slider_max, slider_marks
     
     def find_gaps(self):
         gaps = [0]*len(self.column_dict)
@@ -108,59 +110,6 @@ class GraphAlignment:
                         i += 1
                     i += 1
         return [gap/len(self.sequences) for gap in gaps]
-           
-    def get_gap_graph(self, is_ready, shape_x):
-        if not is_ready or not self.gaps:
-            raise PreventUpdate()
-
-        fig = go.Figure(
-            data = [
-                go.Bar(
-                    x=list(range(len(self.gaps))), 
-                    y=self.gaps,
-                    marker_color="#484848",
-                )
-            ],
-            layout = dict(
-                height=300,
-                paper_bgcolor='rgba(0,0,0,0)',
-                dragmode="zoom",
-                hovermode=False,
-                legend=dict(traceorder="reversed"),
-                template="plotly_white",
-                title=dict(
-                    text="Gap"
-                ),
-                margin=dict(
-                    t=100,
-                    b=100
-                ),
-                xaxis=dict(
-                    range= [0, len(self.gaps)],
-                    fixedrange= True,
-                    showgrid= False,
-                    zeroline= False,
-                    visible= False,
-                ),
-                yaxis=dict(
-                    range= [0, 1],
-                    fixedrange= True,
-                    visible= True,
-                )
-            )
-        )
-
-        fig.add_shape(
-            x0=shape_x[0], 
-            x1=shape_x[1], 
-            y0=-100, 
-            y1=100,
-            fillcolor="#75bba7",
-            line_color="#75bba7",
-            opacity=0.2,
-        )
-
-        return fig
 
     def construct_diagram(self, sequences_values=None):
         diagram_nodes = dict()
@@ -242,20 +191,13 @@ class GraphAlignment:
         return filtered_sequence
             
 
-    def get_sankey_diagram(self, relayout_data, hidde, zoom_out, max_columns, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data, gap_shape):
+    def get_sankey_diagram(self, hidde, zoom_out, slider_values, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
         # RANGE START / END
-        range_start = max(0, gap_shape[0])
-        range_end = min(range_start+max_columns, len(self.column_dict)-1)
-        if relayout_data and "shapes[0].x0" in relayout_data.keys():
-            range_start = max(int(relayout_data["shapes[0].x0"]), 0)
-            range_end = min(int(relayout_data["shapes[0].x1"]), range_start+range_end, len(self.column_dict)-1)
-
-        gap_shape = dash.no_update if gap_shape==[range_start, range_end] else [range_start, range_end]
-        range_start = min(self.column_dict[range_start])
-        range_end = max(self.column_dict[range_end])
+        range_start = min(self.column_dict[slider_values[0]])
+        range_end = max(self.column_dict[slider_values[1]])
             
         label = []
         source = []
@@ -292,7 +234,6 @@ class GraphAlignment:
             threshold = len(self.sequences)*0.2
             range_start = 0
             range_end = len(self.column_dict)-1
-            gap_shape = [range_start, range_end]
 
         if 3 in checklist:
             sequences_values = [self.sequences[seq] for seq in filtered_sequences]
@@ -379,6 +320,6 @@ class GraphAlignment:
             )
         )
         
-        return fig, gap_shape, str(tree_node_id) 
+        return fig, str(tree_node_id) 
 
 alignment_main_object = GraphAlignment(data={})

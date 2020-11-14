@@ -17,14 +17,4 @@ def get_full_pangenome_graph(pangenome_upload_contents, cache_info, full_graph):
     hashed_contents = visualisation.get_hash(pangenome_upload_contents)
     new_cache_info = visualisation.get_elem_cache_info(int(hashed_contents))
     return hashed_contents, str(new_cache_info)
-
-@app.callback(Output("poagraph_checklist", "value"),
-              [Input("poagraph-slider", "value")],
-              [State("poagraph_checklist", "value")])
-def check_checklist(slider, checklist):
-    if slider > 40 and 1 not in checklist:
-        checklist.append(1)
-    if slider > 55 and 2 not in checklist:
-        checklist.append(2)
-    return checklist
  
