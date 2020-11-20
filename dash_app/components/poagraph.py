@@ -261,7 +261,7 @@ class GraphAlignment:
             
             for node_id in sorted(diagram_filtered.keys())[range_end-1:range_start:-1]:
                 node = diagram_filtered[node_id]
-                if all([x in weak_nodes for x in node["targets"].keys()]):
+                if node["targets"] and all([x in weak_nodes for x in node["targets"].keys()]):
                     weak_nodes.append(node_id)
                     diagram_filtered[node_id]["sources"] = {}
                     diagram_filtered[node_id]["targets"] = {}
@@ -287,16 +287,18 @@ class GraphAlignment:
                     source.append(node_id-range_start)
                     target.append(t-range_start)
                     value.append(diagram_filtered[node_id]["targets"][t])
+                    link_color.append("#D3D3D3")
                     
                     # HIGHLIGHT SEQUENCE
-                    if highlight_seq_nodes and node_id-range_start in highlight_seq_nodes:
-                        s_id = highlight_seq_nodes.index(node_id-range_start)
-                        if highlight_seq_nodes[s_id+1] == t-range_start:
+                    if highlight_seq_nodes and node_id in highlight_seq_nodes:
+                        s_id = highlight_seq_nodes.index(node_id)
+                        if highlight_seq_nodes[s_id+1] == t:
+                            value[-1] -= 1
+                            source.append(node_id-range_start)
+                            target.append(t-range_start)
+                            value.append(1)
                             link_color.append("#342424")
-                        else:
-                            link_color.append("#D3D3D3")
-                    else:
-                        link_color.append("#D3D3D3")
+
         
         colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
         fig = go.Figure(
