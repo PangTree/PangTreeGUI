@@ -32,7 +32,8 @@ def update_current_tree_state(jsonified_full_consensustree):
 
 
 @app.callback(
-    Output("consensus_tree_graph", 'figure'),
+    [Output("consensus_tree_graph", 'figure'),
+     Output("consensus_tree_slider", 'marks')],
     [Input("current_consensustree_hidden", 'children'),
      Input("consensus_tree_slider", 'value'),
      Input("leaf_info_dropdown", 'value'),
@@ -40,7 +41,7 @@ def update_current_tree_state(jsonified_full_consensustree):
 def to_consensustree_graph(jsonified_current_consensustree, slider_value, leaf_info,
                            jsonified_full_consensustable):
     if not jsonified_current_consensustree or not jsonified_full_consensustable:
-        return {}
+        return {}, {}
     current_consensustree_data = json.loads(jsonified_current_consensustree)
     current_consensustree_tree = consensustree.dict_to_tree(current_consensustree_data)
     full_consensustable_data = pd.read_json(jsonified_full_consensustable)

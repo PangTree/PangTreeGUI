@@ -149,6 +149,8 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
     positions = [(tree.nodes[node_id]["mincomp"], node_id_to_y[node_id]) for node_id in range(len(tree.nodes))]
 
     x_positions = np.array([x for [x, _] in positions])
+    min_slider = round(min(x_positions), 2)
+    marks = {i / 10: str(round(min_slider + ((1 - min_slider) * i / 10), 2)) for i in range(11)}
     x_positions -= min(x_positions)-0.01
     x_positions /= max(x_positions)
     y_positions = np.array([y for [_, y] in positions])
@@ -188,7 +190,7 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
     )
     fig = go.Figure(data=[tree_lines_graph, tree_nodes_graph, line_graph, leaves_text_graph], layout=layout)
     fig.update_layout(clickmode='event+select')
-    return fig
+    return fig, marks
 
 
 def get_line_graph(slider_value: float) -> go.Scatter:
