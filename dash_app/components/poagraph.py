@@ -197,7 +197,7 @@ class GraphAlignment:
         
         # RANGE START / END
         range_start = min(self.column_dict[slider_values[0]])
-        range_end = max(self.column_dict[slider_values[1]])
+        range_end = max(self.column_dict[slider_values[1]]) if slider_values[1] in self.column_dict else len(self.diagram)
             
         label = []
         source = []

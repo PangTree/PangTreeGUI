@@ -13,9 +13,8 @@ from dash_app.server import app
     [Output("pangenome_hidden", 'children'),
     #  Output("poagraph_dropdown", "options"),
      Output("pangviz_load_row", "style")],
-    [Input("pangenome_upload", 'contents'),
-     Input("consensus_tree_graph", 'clickData')])
-def load_visualisation(pangenome_content, click_data):
+    [Input("pangenome_upload", 'contents')])
+def load_visualisation(pangenome_content):
     if not pangenome_content:
         raise PreventUpdate()
 
