@@ -11,14 +11,13 @@ from dash_app.server import app
 
 
 class Node:
-    def __init__(self, idx, base, x, y):
+    def __init__(self, idx: int, base: str, column: int):
         self.id = idx
         self.base = base
-        self.x = x
-        self.y = y
+        self.column = column
         
     def __repr__(self):
-        return f"{self.base} ID: {self.id} <{self.x},{self.y}>"
+        return f"{self.base} ID: {self.id}, COLUMN: {self.column}"
 
 
 class GraphAlignment:
@@ -27,7 +26,6 @@ class GraphAlignment:
         self.consensus_sequence = None
         self.nodes = None
         self.sequences = None
-        self.gaps = None
         self.diagram = None
         app.callback(
             [Output("poagraph", "figure"),
@@ -57,7 +55,6 @@ class GraphAlignment:
         self.consensus_sequence = data["affinitytree"][0]["nodes_ids"]
         self.nodes = self.get_nodes(data["nodes"])
         self.sequences = {sequence["sequence_str_id"]: sequence["nodes_ids"][0] for sequence in data["sequences"]}
-        self.gaps = self.find_gaps()
         self.diagram = self.construct_diagram()
             
     def get_nodes(self, nodes_data):
@@ -68,20 +65,12 @@ class GraphAlignment:
                 if n in self.consensus_sequence:
                     column.remove(n)
                     column.insert(0, n)
-            node_y = 0
-            if column.index(node["id"]) == 1:
-                node_y = -1
-            elif column.index(node["id"]) == 2:
-                node_y = 1
-            elif column.index(node["id"]) >= 3:
-                node_y = -2
             
             nodes_list.append(
                 Node(
                     idx = node["id"], 
                     base = node["base"],
-                    x = node["column_id"],
-                    y = node_y
+                    column = node["column_id"],
                 )
             )
         return nodes_list
@@ -105,7 +94,7 @@ class GraphAlignment:
             i=0
             if len(self.sequences[sequence]) < len(gaps):
                 for node_id in self.sequences[sequence]:
-                    while self.nodes[node_id].x > i:
+                    while self.nodes[node_id].column > i:
                         gaps[i] += 1
                         i += 1
                     i += 1
