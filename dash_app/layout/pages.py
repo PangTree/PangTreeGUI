@@ -412,7 +412,11 @@ _poapangenome_tab_content = html.Div([
         id='confirm_run',
         message='The results are ready, scroll down.',
     ),
-    dcc.Store(id="session_state"),
+    dcc.Loading(
+        dcc.Store(id="session_state"), 
+        type="circle",
+        fullscreen=True
+    ),
     dcc.Store(id="session_dir"),
     dbc.Row([
         html.Div([
@@ -431,7 +435,7 @@ _poapangenome_tab_content = html.Div([
                     dcc.Loading(
                         id="l2",
                         children=html.Div(id="running_indicator"),
-                        type="default")
+                        type="circle")
                 )
             ])
         ], id='poapangenome_form'),
