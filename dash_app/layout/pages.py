@@ -519,12 +519,15 @@ _poagraph_row = dbc.Row(
                 html.Div(id="poagraph_node_info"),
                 html.Div(
                     id="poagraph_container",
-                    children=dcc.Graph(
-                        id="poagraph",
-                        figure={},
-                        config={
-                            'displayModeBar': False,
-                        }
+                    children=dcc.Loading(
+                        dcc.Graph(
+                            id="poagraph",
+                            figure={},
+                            config={
+                                'displayModeBar': False,
+                            }
+                        ),
+                        type="circle"
                     )
                 )
             ]),
@@ -659,7 +662,7 @@ _affinity_tree_row = html.Div([
             id="consensus_tree_slider",
             min=0,
             max=1,
-            # marks={i / 10: str(i / 10) for i in range(11)},
+            marks={i / 10: str(i / 10) for i in range(11)},
             step=0.01,
             value=0.5,
             dots=True
