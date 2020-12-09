@@ -7,8 +7,6 @@ PangTreeGUI is a web-browser tool. It enables direct calling [PangtreeBuild](htt
 
 1) First you need to clone this repository:
 ```bash
-$ git clone git@gitlab.com:PangTree/PangTreeGUI.git
-# or
 $ git clone https://github.com/PangTree/PangTreeGUI.git
 ```
 
