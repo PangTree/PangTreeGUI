@@ -1,32 +1,40 @@
 import pandas as pd
-from typing import List
-
+import json
+import dash
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
-from dash_app.components import tools, poagraph
+from dash_app.components import consensustable, consensustree, tools, poagraph
 from dash_app.layout.pages import get_task_description_layout
 from dash_app.server import app
 
 
 @app.callback(
-    Output("pangenome_hidden", 'children'),
+    [Output("pangenome_hidden", 'children'),
+    #  Output("poagraph_dropdown", "options"),
+     Output("pangviz_load_row", "style")],
     [Input("pangenome_upload", 'contents')])
-def load_visualisation(pangenome_content: str) -> str:
+def load_visualisation(pangenome_content):
     if not pangenome_content:
         raise PreventUpdate()
+
+    json_data = tools.read_upload(pangenome_content)
+    alignment_object = poagraph.alignment_main_object
+    alignment_object.update_data(json_data)
+    options = [{'label': s, 'value': s} for s in alignment_object.sequences.keys()]
+
     if pangenome_content.startswith("data:application/json;base64"):
-        return tools.decode_content(pangenome_content)
-    return pangenome_content
+        return tools.decode_content(pangenome_content), {"visibility": "hidden"}
+    return pangenome_content, {"visibility": "hidden"}
 
 
 @app.callback(
     Output("pangviz_result_collapse", 'is_open'),
     [Input("pangenome_upload", 'contents')])
-def show_visualisation(pangenome_content: str) -> str:
-    if not pangenome_content or not pangenome_content.startswith("data:application/json;base64"):
-        return False
-    return True
+def show_visualisation(pangenome_content):
+    if pangenome_content and pangenome_content.startswith("data:application/json;base64"):
+        return True
+    return False
 
 
 @app.callback(Output("task_parameters_vis", 'children'),
@@ -37,43 +45,24 @@ def show_task_parameters(jsonified_pangenome):
     jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
     return get_task_description_layout(jsonpangenome)
 
-
 @app.callback(
-    Output("poagraph", 'stylesheet'),
-    [Input("pangenome_hidden", 'children'),
-     Input("partial_consensustable_hidden", 'children')],
-    [State("poagraph_container", 'children')]
+    Output("poagraph_dropdown", "options"),
+    [Input("consensus_tree_graph", 'clickData')],
+    [State("full_consensustable_hidden", 'children'),
+     State("full_consensustree_hidden", 'children')]
 )
-def update_poagraph_stylesheet(jsonified_pangenome: str, jsonified_partial_consensustable,
-                               stylesheet: List) -> List:
-    if not jsonified_pangenome or not jsonified_partial_consensustable:
-        return []
-    jsonpangenome = tools.unjsonify_jsonpangenome(jsonified_pangenome)
-    if not jsonpangenome.affinitytree:
-        return []
-    partial_consensustable_data = pd.read_json(jsonified_partial_consensustable)
-    current_consensuses_names = [column_name for column_name in list(partial_consensustable_data) if
-                                 "CONSENSUS" in column_name]
-    colors = poagraph.get_distinct_colors(len(jsonpangenome.affinitytree))
-    stylesheet = poagraph.get_poagraph_stylesheet()
-    for i, consensus in enumerate(jsonpangenome.affinitytree):
-        if consensus.name in current_consensuses_names:
-            stylesheet.append(
-                {
-                    'selector': f'.c{consensus.name}',
-                    'style': {
-                        'line-color': f'rgb{colors[i]}',
-                    }
-                }
-            )
+def update_poagraph_options(click_data, consensustable_data, consensustree_data):
+    if click_data:
+        node_id = click_data['points'][0]['pointIndex']
+        full_consensustable = pd.read_json(consensustable_data)
+        consensustree_data = json.loads(consensustree_data)
+        tree = consensustree.dict_to_tree(consensustree_data)
+        node_details_df = consensustable.get_consensus_details_df(node_id, full_consensustable, tree)
+        options = [{'label': s, 'value': s} for s in node_details_df["SEQID"].tolist()] 
+    else:
+        alignment_object = poagraph.alignment_main_object
+        if poagraph.alignment_main_object.sequences:
+            options = [{'label': s, 'value': s} for s in alignment_object.sequences.keys()]
         else:
-            stylesheet.append(
-                {
-                    'selector': f'.c{consensus.name}',
-                    'style': {
-                        'line-color': f'rgb{colors[i]}',
-                        'display': 'none'
-                    }
-                }
-            )
-    return stylesheet
+            options = []
+    return options

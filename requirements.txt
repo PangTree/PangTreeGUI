@@ -5,6 +5,7 @@ dash==1.9.1
 dash-bootstrap-components==0.9.1
 dash-core-components==1.8.1
 dash-cytoscape==0.1.1
+dash-daq==0.5.0
 dash-html-components==1.0.2
 dash-renderer==1.2.4
 dash-table==4.6.1
@@ -14,6 +15,7 @@ Flask==1.1.1
 Flask-Compress==1.4.0
 Flask-Session==0.3.1
 future==0.18.2
+gunicorn==20.0.4
 itsdangerous==1.1.0
 Jinja2==2.11.1
 jsonpickle==1.3

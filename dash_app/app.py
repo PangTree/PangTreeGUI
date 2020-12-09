@@ -6,44 +6,48 @@ from dash.dependencies import Input, Output
 from dash_app.layout import pages
 from dash_app.server import app
 
-app.title = 'PangtreeVis'
-app.css.config.serve_locally = False
-app.scripts.config.serve_locally = False
+from .callbacks import consensustable
+from .callbacks import consensustree
+from .callbacks import poagraph
+from .callbacks import pangtreebuild
+from .callbacks import visualisation
 
-
-external_css = [
-    'https://use.fontawesome.com/releases/v5.8.1/css/all.css',
-    # dbc.themes.FLATLY
-]
-for css in external_css:
-    app.css.append_css({"external_url": css})
-
-app.config.suppress_callback_exceptions = True
-draw_poagraph = True
 
 def get_nav_link(fa_icon, span, href, id):
-    return html.Li(html.A(
-        [
-            html.I(className=f"fas fas-nav {fa_icon}"), 
-            html.Span(span, className="nav-text")
-        ],
-        href=href, 
-        id=id), className="has-subnav high")
+    return html.Li(
+        html.A(
+            [
+                html.I(className=f"fas fas-nav {fa_icon}"), 
+                html.Span(span, className="nav-text")
+            ],
+            href=href, 
+            id=id
+        ), 
+        className="has-subnav high"
+    )
 
 
-app.layout = html.Div([
-    dcc.Location(id="url", refresh=False),
-    html.Div([], className="area"),
-    dbc.Navbar([
-        html.Ul([
-            get_nav_link("fa-home", "Home", "/#", "index_nav"),
-            get_nav_link("fa-seedling", "PangTreeBuild", "/pangtreebuild", "pangbuild_nav"),
-            get_nav_link("fa-tree", "PangTreeVis", "/pangtreevis", "pangtreevis_nav"),
-            get_nav_link("fa-question-circle", "FAQ", "/faq", "faq_nav"),
-        ])
-    ], className="main-menu", sticky="left"),
-    html.Div(id="page_content", style={'margin-left': '60px'})
-])
+app.layout = html.Div(
+    [
+        dcc.Location(id="url", refresh=False),
+        html.Div([], className="area"),
+        dbc.Navbar(
+            [
+                html.Ul(
+                    [
+                        get_nav_link("fa-home", "Home", "/#", "index_nav"),
+                        get_nav_link("fa-seedling", "PangTreeBuild", "/pangtreebuild", "pangbuild_nav"),
+                        get_nav_link("fa-tree", "PangTreeVis", "/pangtreevis", "pangtreevis_nav"),
+                        get_nav_link("fa-question-circle", "FAQ", "/faq", "faq_nav"),
+                    ]
+                )
+            ], 
+            className="main-menu", 
+            sticky="left"
+        ),
+        html.Div(id="page_content", style={'margin-left': '60px'})
+    ]
+)
 
 
 @app.callback([Output("page_content", 'children'),
@@ -62,11 +66,3 @@ def display_page(pathname):
     else:
         return pages.index(), "active_link", "", "", ""
 
-
-from .callbacks import consensustable
-from .callbacks import consensustree
-from .callbacks import mafgraph
-from .callbacks import poagraph
-
-from .callbacks import pangtreebuild
-from .callbacks import visualisation

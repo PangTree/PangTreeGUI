@@ -23,7 +23,6 @@ canvas{
     color: #272635;
 }
 
-
 div>.jumbotron{
     margin-top: 10px;
 }
@@ -88,6 +87,16 @@ div>.jumbotron{
     padding-left: 10px;
 }
 
+.tooltip-icon{
+    margin: 0px 10px;
+    cursor: pointer;
+    color: grey;
+}
+
+.tooltip-icon:hover{
+    color: lightskyblue;
+}
+
 i{
     align-self: center;
 }
@@ -133,6 +142,43 @@ i{
     margin-right: auto;
     width: 90%;
     padding: 20px;
+}
+
+#poagraph-simplifications{
+    text-align: left;
+    max-width: 30%;
+    margin-bottom: 20px;
+}
+
+/* #poagraph_dropdown{
+    margin: 0px 80px 50px 80px;
+} */
+
+
+#poagraph{
+    margin-bottom: 50px;
+    width: 100%;
+    min-height: 300px;
+}
+
+#poagraph_container{
+    width: 100%;
+    text-align: center;
+    margin-top: 50px;
+    height: 480px;
+}
+
+#poagraph-slider{
+    width: 80%;
+    margin: 50px auto;
+}
+
+#poagraph .svg-container{
+    min-height: 400px;
+}
+
+#consensuses_table{
+    overflow: scroll
 }
 
 .navbar{
@@ -305,4 +351,10 @@ details {
 
 #consensus_tree_slider {
     width: 85%;
+}
+
+#full_pangenome_graph {
+    height: 300px;
+    width: 100%;
+    margin-top: -40px;
 }

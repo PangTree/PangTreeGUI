@@ -2,20 +2,26 @@ import json
 
 import pandas as pd
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+from pangtreebuild.serialization.json import str_to_PangenomeJSON
+
 from dash_app.components import consensustable, consensustree
 from dash_app.server import app
-from pangtreebuild.serialization.json import str_to_PangenomeJSON
 
 
 @app.callback(
-    Output("full_consensustable_hidden", 'children'),
-    [Input("pangenome_hidden", 'children')])
-def update_full_consensustable_hidden(jsonified_pangenome):
+    [Output("full_consensustable_hidden", 'children'),
+     Output("consensus_table_container", 'style')],
+    [Input("pangenome_hidden", 'children')],
+    [State("consensus_table_container", 'style')])
+def update_full_consensustable_hidden(jsonified_pangenome, current_table_style):
     if not jsonified_pangenome:
-        return []
+        return [], {'display': 'none'}
+    if current_table_style['display'] == 'block':
+        raise PreventUpdate()
     jsonpangenome = str_to_PangenomeJSON(jsonified_pangenome)
     consensustable_data = consensustable.get_full_table_data(jsonpangenome)
-    return consensustable_data.to_json()
+    return consensustable_data.to_json(), {'display': 'block'}
 
 
 @app.callback(
@@ -57,12 +63,3 @@ def update_consensus_table(jsonified_partial_consensustable, jsonified_consensus
     tree = consensustree.dict_to_tree(consensustree_data)
     color_cells = consensustable.get_cells_styling(tree, partial_consensustable_data)
     return consensustable_content, consensustable_columns, color_cells
-
-
-@app.callback(
-    Output("consensus_table_container", 'style'),
-    [Input("full_consensustable_hidden", 'children')])
-def show_consensus_tree_container(jsonified_current_consensustree):
-    if jsonified_current_consensustree:
-        return {'display': 'block'}
-    return {'display': 'none'}

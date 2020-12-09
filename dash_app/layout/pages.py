@@ -1,13 +1,11 @@
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-import dash_cytoscape as cyto
+import dash_daq as daq
 import dash_html_components as html
 import dash_table
 from pangtreebuild.serialization.json import PangenomeJSON
 
 from dash_app.layout import links
-from dash_app.components import mafgraph as mafgraph_component
-from dash_app.components import poagraph as poagraph_component
 
 """--------------------------------FAQ---------------------------------------"""
 
@@ -414,7 +412,11 @@ _poapangenome_tab_content = html.Div([
         id='confirm_run',
         message='The results are ready, scroll down.',
     ),
-    dcc.Store(id="session_state"),
+    dcc.Loading(
+        dcc.Store(id="session_state"), 
+        type="circle",
+        fullscreen=True
+    ),
     dcc.Store(id="session_dir"),
     dbc.Row([
         html.Div([
@@ -433,7 +435,7 @@ _poapangenome_tab_content = html.Div([
                     dcc.Loading(
                         id="l2",
                         children=html.Div(id="running_indicator"),
-                        type="default")
+                        type="circle")
                 )
             ])
         ], id='poapangenome_form'),
@@ -485,45 +487,28 @@ _task_parameters_row = dbc.Row(
     ])
 )
 
-_input_data_row = dbc.Row(
-    style={'display': 'none'},
-    children=[
-        dbc.Col(
-            html.Div(
-                id="input_dagmaf_vis",
-                children=[
-                    html.H3("MAF graph"),
-                    dcc.Loading(
-                        cyto.Cytoscape(
-                            id="mafgraph_graph",
-                            elements=[],
-                            layout={'name': 'cose'},
-                            autoRefreshLayout=True,
-                            style={'width': 'auto', 'height': '350px'},
-                            zoom=1,
-                            stylesheet=mafgraph_component.get_mafgraph_stylesheet(),
-                            boxSelectionEnabled=False,
-                            autounselectify=True),
-                        type="circle")]
-            ))
-    ])
 
 _pangenome_row = html.Div(
     children=[
-        html.H4("Pangenome - Cut Width statistic\n"),
-        html.P("Representation of full poagraph as Cut Width statistics."),
-        html.P("Cut Width - edges count between two consecutive columns."),
+        dcc.Store(id="gap-shape_x", data=[0, 40]),
+        html.H4("Representation of full poagraph as gap statistics."),
+        html.P("Drag the green rectangle to see details of the highlighted pangenome region."),
         html.Div(
             id="full_pangenome_container",
-            style={'visibility': 'hidden', 'width': '100%'},
+            # style={'width': '100%'},
             children=[
                 dcc.Loading(
                     dcc.Graph(
                         id="full_pangenome_graph",
-                        style={'height': '250px', 'width': '100%'},
                         figure={},
-                        config={'displayModeBar': False},
-                    ), type="circle")]
+                        config={
+                            'displayModeBar': False,
+                            'edits': {'shapePosition': True}
+                        },
+                    ), 
+                    type="circle"
+                )
+            ]
         )
     ]
 )
@@ -532,27 +517,105 @@ _poagraph_row = dbc.Row(
     children=[
         html.Details([
             html.Summary('Pangenome'),
-            _pangenome_row,
             html.Div([
-                html.H4("Pangenome - a closer view on graph details\n"),
-                html.P("This is a visualisation of pangenome internal "
-                       "representation as a PoaGraph"),
+                html.H4("Pangenome\n"),
+                html.P("This is a visualisation of pangenome internal representation as a PoaGraph"),
                 html.Div(id="poagraph_node_info"),
                 html.Div(
                     id="poagraph_container",
-                    style={'width': '100%', 'text-align': 'center'},
-                    children=dcc.Loading(cyto.Cytoscape(
-                        id="poagraph",
-                        layout={'name': 'preset'},
-                        stylesheet=poagraph_component.get_poagraph_stylesheet(),
-                        elements=[],
-                        style={'height': '500px', 'background-color': 'white'},
-                        minZoom=0.9,
-                        maxZoom=3,
-                        userZoomingEnabled=False,
-                    ), type="circle"),
+                    children=dcc.Loading(
+                        dcc.Graph(
+                            id="poagraph",
+                            figure={},
+                            config={
+                                'displayModeBar': False,
+                            }
+                        ),
+                        type="circle"
+                    )
                 )
-            ])
+            ]),
+            html.Div([
+                html.Span("Graph slider: select the region you want to see on the graph"),
+                html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="slider-tooltip"),
+                dbc.Tooltip("Select (blue) the genome region you want to see on the graph by moving the circles along the axis.", target="slider-tooltip"),
+                dcc.RangeSlider(
+                    id="poagraph-slider",
+                    min=0,
+                    max=100,
+                    value=[0, 40],
+                    pushable=30,
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="zoom-tooltip"),
+                                dbc.Tooltip("Check if you want to see the entire genome on the graph.", target="zoom-tooltip"),
+                                daq.BooleanSwitch(
+                                    on=False,
+                                    id='zoom-out-switch',
+                                    label="Show full pangenome (Extreme zoom-out)",
+                                    labelPosition="top"
+                                )  
+                            ],
+                            style={
+                                # "text-align": "left",
+                                "max-width": "15%"
+                            }
+                        ),
+                        dbc.Col(
+                            [
+                                html.Span("Graph simplifications:"),
+                                html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="simplifications-tooltip"),
+                                dbc.Tooltip("Select all simplifications that you would like to activate on the graph.", target="simplifications-tooltip"),
+                                html.P(),
+                                dcc.Checklist(
+                                    id="poagraph_checklist",
+                                    options=[
+                                        {'label': 'Merge vertices', 'value': 1},
+                                        {'label': 'Removal of SNP', 'value': 3},
+                                        {'label': 'Removal of weak connections', 'value': 2},
+                                    ],
+                                    value=[],
+                                    labelStyle={'display': 'block'}
+                                ),
+                                dbc.Row(
+                                    [
+                                        html.P("Weak connections threshold: \t", className="secondary"),
+                                        daq.NumericInput(
+                                            id='poagraph_threshold',
+                                            min=0,
+                                            max=10,
+                                            value=5
+                                        ),
+                                    ]
+                                )
+                            ],
+                            id="poagraph-simplifications"
+                        ),
+                        dbc.Col(
+                            [
+                                html.Span("Selected vertex of the Affinity Tree: "),
+                                html.Span("0", id="selected_vertex"),
+                                html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="tree-tooltip"),
+                                dbc.Tooltip("By clicking on a vertex in the Affinity Tree, limit the sequences used in the graph to its subtree.", target="tree-tooltip"),
+                                html.P("Highlight the sequence:"),
+                                dcc.Dropdown(
+                                    id="poagraph_dropdown",
+                                    options=[
+                                        {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                                    ],
+                                    value='',
+                                    multi=False,
+                                )
+                            ],
+                            style={"text-align": "left"}
+                        )
+                    ]
+                ) 
+            ]),
+            # _pangenome_row,
         ])
     ], className="vis_row")
 
@@ -588,13 +651,16 @@ _affinity_tree_row = html.Div([
                 value='SEQID'
             )], 
             style={'width': '20%'}),
-        dcc.Graph(
-            id="consensus_tree_graph",
-            style={'height': '600px', 'width': 'auto'},
-            config={
-                'displayModeBar': False,
-                'scrollZoom': False,
-            },
+        dcc.Loading(
+            dcc.Graph(
+                id="consensus_tree_graph",
+                style={'height': '600px', 'width': 'auto'},
+                config={
+                    'displayModeBar': False,
+                    'scrollZoom': False,
+                },
+            ),
+            type="circle"
         ),
         dcc.Slider(
             id="consensus_tree_slider",
@@ -638,13 +704,14 @@ _pangviz_tab_content = dbc.Container([
             html.Div(id="partial_consensustable_hidden"),
             html.Div(id="current_consensustree_hidden"),
             html.Div(id="full_consensustable_hidden"),
-            html.Div(id="consensus_node_details_table_hidden")]),
+            # html.Div(id="consensus_node_details_table_hidden")
+        ]
+    ),
     _load_pangenome_row,
     dbc.Collapse(
         id="pangviz_result_collapse",
         children=[
             _task_parameters_row,
-            _input_data_row,
             _poagraph_row,
             _affinity_tree_row,
         ])

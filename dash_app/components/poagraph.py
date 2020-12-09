@@ -1,396 +1,316 @@
-import colorsys
-import math
-import pickle
-from pathlib import Path
-from typing import List, Dict, Tuple, Any, Union
-
+import copy
+import json
+import dash
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+import pandas as pd
 import plotly.graph_objs as go
-from pangtreebuild.serialization.json import PangenomeJSON
 
-# from ..components import tools
-from dash_app.layout.colors import colors
-
-CytoscapeNode = Dict[str, Union[str, Dict[str, Any]]]
-CytoscapeEdge = Dict[str, Union[str, Dict[str, Any]]]
+from dash_app.components import consensustable, consensustree, tools
+from dash_app.server import app
 
 
-def HSVToRGB(h, s, v):
-    (r, g, b) = colorsys.hsv_to_rgb(h, s, v)
-    return (int(255 * r), int(255 * g), int(255 * b))
+class Node:
+    def __init__(self, idx: int, base: str, column: int):
+        self.id = idx
+        self.base = base
+        self.column = column
+        
+    def __repr__(self):
+        return f"{self.base} ID: {self.id}, COLUMN: {self.column}"
 
 
-def get_distinct_colors(n):
-    huePartition = 1.0 / (n + 1)
-    return [HSVToRGB(huePartition * value, 1.0, 1.0) for value in range(0, n)]
+class GraphAlignment:
+    def __init__(self, data):
+        self.column_dict = None
+        self.consensus_sequence = None
+        self.nodes = None
+        self.sequences = None
+        self.diagram = None
+        app.callback(
+            [Output("poagraph", "figure"),
+             Output("selected_vertex", "children")],
+            [Input("pangenome_hidden", 'children'),
+             Input("zoom-out-switch", "on"),
+             Input("poagraph-slider", "value"),
+             Input("poagraph_dropdown", "value"),
+             Input("consensus_tree_graph", 'clickData'),
+             Input("poagraph_checklist", 'value'),
+             Input("poagraph_threshold", 'value')],
+            [State("full_consensustable_hidden", 'children'),
+             State("full_consensustree_hidden", 'children')]
+        )(self.get_sankey_diagram)
+        app.callback(
+            [Output("poagraph-slider", "max"),
+             Output("poagraph-slider", "marks")],
+            [Input("pangenome_hidden", 'children')]
+        )(self.set_slider)
+        app.callback(
+            Output("poagraph-simplifications", "style"),
+            [Input("zoom-out-switch", "on")]
+        )(lambda x: {"visibility": "hidden"} if x else {})
+    
+    def update_data(self, data):
+        self.column_dict = self.c_dict(data["nodes"])
+        self.consensus_sequence = data["affinitytree"][0]["nodes_ids"]
+        self.nodes = self.get_nodes(data["nodes"])
+        self.sequences = {sequence["sequence_str_id"]: sequence["nodes_ids"][0] for sequence in data["sequences"]}
+        self.diagram = self.construct_diagram()
+            
+    def get_nodes(self, nodes_data):
+        nodes_list = list()
+        for node in nodes_data:
+            column = self.column_dict[node["column_id"]]
+            for n in column:
+                if n in self.consensus_sequence:
+                    column.remove(n)
+                    column.insert(0, n)
+            
+            nodes_list.append(
+                Node(
+                    idx = node["id"], 
+                    base = node["base"],
+                    column = node["column_id"],
+                )
+            )
+        return nodes_list
+                
+    def c_dict(self, nodes_data):
+        column_dict = dict()
+        for node in nodes_data:
+            if node["column_id"] not in column_dict:
+                column_dict[node["column_id"]] = []
+            column_dict[node["column_id"]].append(node["id"])
+        return column_dict
 
+    def set_slider(self, hidden):
+        slider_max = len(self.column_dict)-1 if self.column_dict else 100
+        slider_marks = {i: {"label": str(i)} for i in range(0, slider_max, 100)}
+        return slider_max, slider_marks
+    
+    def find_gaps(self):
+        gaps = [0]*len(self.column_dict)
+        for sequence in self.sequences:
+            i=0
+            if len(self.sequences[sequence]) < len(gaps):
+                for node_id in self.sequences[sequence]:
+                    while self.nodes[node_id].column > i:
+                        gaps[i] += 1
+                        i += 1
+                    i += 1
+        return [gap/len(self.sequences) for gap in gaps]
 
-def get_poagraph_stylesheet():
-    return [
-        {
-            'selector': 'node',
-            'style': {'background-color': 'white'}
-        },
-        {
-            'selector': '.s_node',
-            'style': {
-                'background-color': colors['background'],
-                # 'border-color': 'green',
-                # 'border-width': '0.5px',
-                'content': 'data(label)',
-                'height': '10px',
-                'width': '10px',
-                'text-halign': 'center',
-                'text-valign': 'center',
-                'font-size': '5px',
-                # 'shape': 'circle',
-            }
-        },
-        {
-            'selector': '.c_node',
-            'style': {
-                'height': '7px',
-                'width': '7px',
-                'opacity': 0.5
-            }
-        },
-        {
-            'selector': 'edge',
-            'style': {}
-        },
-        {
-            'selector': '.s_edge',
-            'style': {
-                'width': 'data(weight)',
-                'target-arrow-shape': 'triangle',
-                'arrow-scale': 0.5,
-                'curve-style': 'bezier'
-            }
-        },
-        {
-            'selector': '.c_edge',
-            'style': {
-                'opacity': 0.5,
-                'curve-style': 'haystack',
-                'haystack-radius': 0.3,
-                'width': 'data(weight)',
-                # 'label': 'data(label)'
-            }
-        },
-        {
-            'selector': '.c2',
-            'style': {
-                'line-color': 'red',
-            }
-        },
-        {
-            'selector': '.c1',
-            'style': {
-                'line-color': 'green',
-            }
-        },
-        {
-            'selector': '.c_short',
-            'style': {
-                'curve-style': 'haystack',
-            }
-        },
-        {
-            'selector': '.s_short',
-            'style': {
-                'curve-style': 'haystack',
-            }
-        },
-        {
-            'selector': '.s_edge_aligned',
-            'style': {
-                'line-style': 'dashed',
-                'width': '10'
-            }
-        },
-    ]
+    def construct_diagram(self, sequences_values=None):
+        diagram_nodes = dict()
+        sequences_values = sequences_values if sequences_values else self.sequences.values()
+        for sequence in sequences_values:
+            for i, node_id in enumerate(sequence[:-2]):
+                source = self.nodes[node_id].id
+                target = self.nodes[sequence[i+1]].id
 
-
-def _get_pangenome_graph_x_range_faster(max_column_id: int) -> Tuple:
-    return (-2, min(max_column_id + 2, 2000))
-
-
-def get_pangenome_figure_faster(jsonpangenome: PangenomeJSON) -> go.Figure:
-    def get_columns_cut_width(jsonpangenome) -> List[int]:
-        col_ids = set([node.column_id for node in jsonpangenome.nodes])
-        columns_cut_widths = [set() for _ in col_ids]
-
-        for sequence in jsonpangenome.sequences:
-            for path in sequence.nodes_ids:
-                for i in range(len(path) - 1):
-                    current = path[i]
-                    next = path[i + 1]
-
-                    current_col = jsonpangenome.nodes[current].column_id
-                    next_col = jsonpangenome.nodes[next].column_id
-                    for k in range(next_col - 1, current_col - 1, -1):
-                        columns_cut_widths[k].add((current, next))
-        return [len(x) for x in columns_cut_widths]
-
-    def get_cut_width_trace(columns_cut_width: List[int]) -> go.Scattergl:
-        return go.Scattergl(
-            x=[*range(len(columns_cut_width))],
-            y=columns_cut_width,
-            hoverinfo='skip',
-            mode='lines',
-            marker=dict(
-                color=colors["accent"]
-            ),
-            name="Pangenome Cut Width"
-        )
-
-    if jsonpangenome.nodes is None:
-        return None
-    columns_cut_width = get_columns_cut_width(jsonpangenome)
-    pangenome_trace = get_cut_width_trace(columns_cut_width)
-
-    pangenome_x_range = _get_pangenome_graph_x_range_faster(len(columns_cut_width) - 1)
-    max_y = max(columns_cut_width)
-    y_range = [0, max_y + 1]
-    return go.Figure(
-        data=[pangenome_trace],
-        layout=go.Layout(
-            dragmode='pan',
-            yaxis=dict(
-                range=y_range,
-                fixedrange=True,
-                tickvals=[i for i in range(max_y + 1)]
-            ),
-            xaxis=dict(
-                range=[pangenome_x_range[0], pangenome_x_range[1]],
-                showgrid=False,
-                zeroline=False,
-                showline=False,
-                title="Drag the chart to the right or left to see details of the highlighted pangenome region."
-            ),
-            shapes=[
-                {
-                    'type': 'rect',
-                    'xref': 'paper',
-                    'yref': 'paper',
-                    'x0': 0.3,
-                    'y0': 0,
-                    'x1': 0.6,
-                    'y1': 1,
-                    'line': {
-                        'color': colors["dark_background"],
-                        'width': 1,
-                    }
-                }
-            ]
-        )
-    )
-
-
-def remove_elements_data_faster(elements_cache_info):
-    pass
-    # tools.remove_file(elements_cache_info)
-
-
-def update_cached_poagraph_elements_faster(user_session_elements_id, jsonpangenome: PangenomeJSON):
-    def get_y(column_id, node_id):
-        if column_id not in cols_occupancy:
-            cols_occupancy[column_id] = {node_id: 0}
-            columns[column_id] = [node_id]
-            return 0
-        else:
-            y = max([*cols_occupancy[column_id].values()]) + node_y_distance
-            cols_occupancy[column_id][node_id] = y
-            columns[column_id].append(node_id)
-            return y
-
-    def get_continuous_paths() -> List[List[int]]:
-        continuous_paths: List[List[int]] = []
-        for from_node_id, to_node_ids in edges.items():
-            followers = list(set(to_node_ids))
-            if len(followers) == 1 and len(set(edges_reverted[followers[0]])) == 1:
-                path_was_extended = False
-
-                for continuous_path in continuous_paths:
-                    if continuous_path[-1] == from_node_id:
-                        continuous_path.append(followers[0])
-                        path_was_extended = True
-                        break
-                if not path_was_extended:
-                    continuous_paths.append([from_node_id, followers[0]])
-        return continuous_paths
-
-    def find_out_y(continuous_path):
-        columns_occupied_y = [cols_occupancy[jsonpangenome.nodes[node_id].column_id]
-                              for node_id in continuous_path]
-        y_candidate = 0
-        while True:
-            if any([y_candidate == y and node_id not in continuous_path
-                    for co in columns_occupied_y for node_id, y in co.items()]):
-                y_candidate += node_y_distance
-            else:
-                for node_id in continuous_path:
-                    cols_occupancy[jsonpangenome.nodes[node_id].column_id][node_id] = y_candidate
-                return y_candidate
-
-    def get_cytoscape_node(id, label, x, y, cl, sequences_ids, consensus_ids) -> CytoscapeNode:
-        return {'data': {'id': id,
-                         'label': f"{label}",
-                         'sequences_ids': sequences_ids,
-                         'consensus_ids': consensus_ids},
-                'position': {'x': x, 'y': y},
-                'classes': cl}
-
-    def get_cytoscape_edge(source, target, weight, cl) -> CytoscapeEdge:
-        return {'data': {'label': cl, 'source': source, 'target': target, 'weight': weight},
-                'classes': cl}
-
-    def get_poagraph_elements() -> Tuple[List[CytoscapeNode], Dict[int, List[CytoscapeEdge]]]:
-        sequences_nodes = [get_cytoscape_node(id=node_id,
-                                              label=node_info[3],
-                                              x=node_info[0],
-                                              y=node_info[1],
-                                              cl='s_node',
-                                              sequences_ids=nodes_to_sequences[node_id],
-                                              consensus_ids=[])
-                           # consensus_ids=node_data['consensus_ids'])
-                           for node_id, node_info in enumerate(nodes)]
-        # consensuses_nodes = [get_cytoscape_node(id=node_id,
-        #                                       label=node_info[3],
-        #                                       x=node_info[0],
-        #                                       y=node_info[1],
-        #                                       cl='s_node',
-        #                                       sequences_ids=nodes_to_sequences[node_id],
-        #                                       consensus_ids=[])
-        #                    # consensus_ids=node_data['consensus_ids'])
-        #                    for node_id, node_info in enumerate(nodes)]
-        all_edges = {}
-        for src_node_id, targets in edges.items():
-            targets_unique = set(targets)
-            all_edges[src_node_id] = [get_cytoscape_edge(src_node_id,
-                                                         t,
-                                                         math.log10(targets.count(t) + 1),
-                                                         's_edge')
-                                      for t in targets_unique]
-            for t in targets_unique:
-                if jsonpangenome.nodes[t].column_id != jsonpangenome.nodes[src_node_id].column_id + 1:
-                    all_edges[src_node_id].append(get_cytoscape_edge(source=src_node_id,
-                                                                     target=t,
-                                                                     weight=0,
-                                                                     cl='s_edge'))
-        for i, node in enumerate(nodes):
-            if node[3] != None:
-                if i in all_edges:
-                    all_edges[i].append(get_cytoscape_edge(
-                        source=i,
-                        target=node[3],
-                        weight=1,
-                        cl='s_edge_aligned'))
-                else:
-                    all_edges[i] = [get_cytoscape_edge(
-                        source=i,
-                        target=node[3],
-                        weight=1,
-                        cl='s_edge_aligned')]
-
-        # if jsonpangenome.affinitytree:
-        #     for consensus in jsonpangenome.affinitytree:
-        #         for i in range(len(consensus.nodes_ids)-1):
-        #             c_edge = get_cytoscape_edge(
-        #                                          source=consensus.nodes_ids[i],
-        #                                          target=consensus.nodes_ids[i+1],
-        #                                          weight=math.log10(len(consensus.sequences_int_ids)+1),
-        #                                          cl=f'c_edge c{consensus.name}')
-        #             all_edges[consensus.nodes_ids[i]].append(c_edge)
-
-        return sequences_nodes, all_edges
-
-    nodes = [None] * len(jsonpangenome.nodes)  # id ~ (x, y, aligned_to)
-    nodes_to_sequences = dict()  # id ~ [sequences_ids]
-    cols_occupancy: Dict[int, Dict[int, int]] = dict()
-    columns = [None] * (
-                max([n.column_id for n in jsonpangenome.nodes]) + 1)  # column_id ~ [nodes_ids]
-    edges = dict()  # node_id ~ [nodes_ids]
-    edges_reverted = dict()  # node_id ~ [nodes_ids]
-    node_width = 10
-    node_y_distance = node_width * 1.5
-    continuous_path_nodes_distance = node_width * 2 / 3
-
-    for sequence in jsonpangenome.sequences:
-        for path in sequence.nodes_ids:
-            for i in range(len(path) - 1):
-                current_node_id = path[i]
-                current_node = jsonpangenome.nodes[current_node_id]
-                next_node_id = path[i + 1]
-                if current_node_id in nodes_to_sequences:
-                    nodes_to_sequences[current_node_id].append(sequence.sequence_int_id)
-                    if current_node_id in edges:
-                        edges[current_node_id].append(next_node_id)
+                # SOURCE
+                if node_id in diagram_nodes:
+                    if target in diagram_nodes[node_id]["targets"]:
+                        diagram_nodes[node_id]["targets"][target] += 1
                     else:
-                        edges[current_node_id] = [next_node_id]
+                        diagram_nodes[node_id]["targets"][target] = 1
                 else:
-                    nodes_to_sequences[current_node_id] = [sequence.sequence_int_id]
-                    x = current_node.column_id * node_y_distance
-                    col_id = current_node.column_id
-                    y = get_y(col_id, current_node_id)
-                    nodes[current_node_id] = (x, y, current_node.aligned_to, current_node.base, col_id)
-                    edges[current_node_id] = [next_node_id]
-                if next_node_id in edges_reverted:
-                    edges_reverted[next_node_id].append(current_node_id)
+                    diagram_nodes[node_id] = dict(
+                        base = self.nodes[node_id].base,
+                        sources = {},
+                        targets = {target: 1},
+                    )
+                # TARGET
+                if target in diagram_nodes:
+                    if node_id in diagram_nodes[target]["sources"]:
+                        diagram_nodes[target]["sources"][node_id] += 1
+                    else:
+                        diagram_nodes[target]["sources"][node_id] = 1
                 else:
-                    edges_reverted[next_node_id] = [current_node_id]
-            last_node_id = path[-1]
-            last_node = jsonpangenome.nodes[last_node_id]
-            if last_node_id in nodes_to_sequences:
-                nodes_to_sequences[last_node_id].append(sequence.sequence_int_id)
+                    diagram_nodes[target] = dict(
+                        base = self.nodes[target].base,
+                        sources = {node_id: 1},
+                        targets = {},
+                    )
+        return diagram_nodes
+    
+    def _bound_vertices(self, diagram, range_start, range_end):
+        diagram_reorganization = dict()
+        for node_id in sorted(diagram.keys())[range_start:range_end+1]:
+            node = diagram[node_id]
+            if len(node["sources"]) == 1:
+                source_id = list(node["sources"].keys())[0]
+                source_value = node["sources"][source_id]
+                while source_id in diagram_reorganization:
+                    source_id = diagram_reorganization[source_id]
+                diagram[node_id]["sources"] = {source_id: source_value}
+                if source_id >= range_start and len(diagram[source_id]["targets"]) == 1:
+                    diagram_reorganization[node_id] = source_id
+                    diagram[source_id]["base"] += diagram[node_id]["base"]
+                    diagram[source_id]["targets"] = diagram[node_id]["targets"]
+                    diagram[node_id]["sources"] = {}
+                    diagram[node_id]["targets"] = {}
+        return diagram, diagram_reorganization
+
+    def _remove_snp(self, consensus, sequence):
+        filtered_sequence = [sequence[0]]
+        for i, node_id in enumerate(sequence[1:-1]):
+            # SUBSTITUTION AND INSERTION
+            if node_id not in consensus and sequence[i] in consensus and sequence[i+2] in consensus:
+                before = consensus.index(sequence[i])
+                after = consensus.index(sequence[i+2])
+                if after-before == 1:  # INSERTION
+                    pass
+                elif after-before == 2:  # SUBSTITUTION
+                    filtered_sequence.append(consensus[before+1])
+                else:
+                    filtered_sequence.append(node_id)
+            # DELETION
+            elif node_id in consensus and sequence[i+2] in consensus:
+                before = consensus.index(sequence[i+1])
+                after = consensus.index(sequence[i+2])
+                if after-before == 2:  # DELETION
+                    filtered_sequence.append(node_id)
+                    filtered_sequence.append(consensus[before+1])
+                else:
+                    filtered_sequence.append(node_id)
             else:
-                nodes_to_sequences[last_node_id] = [sequence.sequence_int_id]
-                x = last_node.column_id * node_y_distance
-                col_id = last_node.column_id
-                y = get_y(col_id, last_node_id)
-                nodes[last_node_id] = (x, y, current_node.aligned_to, current_node.base, col_id)
+                filtered_sequence.append(node_id)
+        filtered_sequence.append(sequence[-1])
+        return filtered_sequence
+            
 
-    continuous_paths = get_continuous_paths()
-    for continuous_path in continuous_paths:
-        first_node_x = nodes[continuous_path[0]][0]
-        last_node_x = nodes[continuous_path[-1]][0]
-        middle_point = first_node_x + (last_node_x - first_node_x) / 2
-        new_first_node_x = middle_point - 2 / 3 * len(
-            continuous_path) // 2 * node_width + node_width / 3
-        node_x = new_first_node_x
-        path_y = find_out_y(continuous_path)
-        for node_id in continuous_path:
-            nodes[node_id] = (
-            node_x, path_y, nodes[node_id][2], nodes[node_id][3], nodes[node_id][4])
-            node_x += continuous_path_nodes_distance
-    sequences_nodes, edges = get_poagraph_elements()
-    d = {"sn": sequences_nodes,
-         "e": edges,
-         "cw": columns}
-    with open(user_session_elements_id, 'wb') as o:
-        pickle.dump(d, o)
+    def get_sankey_diagram(self, hidde, zoom_out, slider_values, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
+        if not self.sequences:
+            raise PreventUpdate()
+        
+        # RANGE START / END
+        range_start = min(self.column_dict[slider_values[0]])
+        range_end = max(self.column_dict[slider_values[1]]) if slider_values[1] in self.column_dict else len(self.diagram)
+            
+        label = []
+        source = []
+        target = []
+        value = []
+        link_color = []
+        colors=dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
+        
+        
+        # FILTER SEQUENCES (AFFINITY TREE)
+        if click_data:
+            tree_node_id = click_data['points'][0]['pointIndex']
+            full_consensustable = pd.read_json(consensustable_data)
+            consensustree_data = json.loads(consensustree_data)
+            tree = consensustree.dict_to_tree(consensustree_data)
+            node_details_df = consensustable.get_consensus_details_df(tree_node_id, full_consensustable, tree)
+            filtered_sequences = node_details_df["SEQID"].tolist()
+            diagram_filtered = self.construct_diagram(sequences_values=[self.sequences[seq] for seq in filtered_sequences])
+            
+            for i in range(len(self.column_dict)):
+                if i not in diagram_filtered:
+                    diagram_filtered[i] = dict(
+                        base = "",
+                        sources = {},
+                        targets = {},
+                    )
+        else:
+            tree_node_id = None
+            filtered_sequences = list(self.sequences.keys())
+            diagram_filtered = copy.deepcopy(self.diagram)
+        
+        if zoom_out:  # EXTREAME ZOOM-OUT
+            checklist = [1, 2]
+            threshold = len(self.sequences)*0.2
+            range_start = 0
+            range_end = len(self.column_dict)-1
+
+        if 3 in checklist:
+            sequences_values = [self.sequences[seq] for seq in filtered_sequences]
+            new_sequences_values = [self._remove_snp(self.consensus_sequence, sequence) for sequence in sequences_values]
+            diagram_filtered = self.construct_diagram(sequences_values=new_sequences_values)
+            for i in range(len(self.diagram)):
+                if i not in diagram_filtered:
+                    diagram_filtered[i] = dict(
+                        base = "",
+                        sources = {},
+                        targets = {},
+                    )
+
+        if 2 in checklist and threshold > 0:  # WEAK CONNECTIONS                
+            weak_nodes = list()
+            for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
+                node = diagram_filtered[node_id]
+                if node["sources"] and (all([x in weak_nodes for x in node["sources"].keys()]) or all([x<=threshold for x in node["sources"].values()])):
+                    weak_nodes.append(node_id)
+                    diagram_filtered[node_id]["sources"] = {}
+                    diagram_filtered[node_id]["targets"] = {}
+                else:
+                    diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if value>threshold}
+                    diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if value>threshold}
+            
+            for node_id in sorted(diagram_filtered.keys())[range_end-1:range_start:-1]:
+                node = diagram_filtered[node_id]
+                if node["targets"] and all([x in weak_nodes for x in node["targets"].keys()]):
+                    weak_nodes.append(node_id)
+                    diagram_filtered[node_id]["sources"] = {}
+                    diagram_filtered[node_id]["targets"] = {}
+                else:
+                    diagram_filtered[node_id]["sources"] = {key: value for key, value in node["sources"].items() if key not in weak_nodes}
+                    diagram_filtered[node_id]["targets"] = {key: value for key, value in node["targets"].items() if key not in weak_nodes}
 
 
-def get_poagraph_elements_faster(elements_cache_info, relayout_data):
-    if not Path(elements_cache_info).exists():
-        print("help")
-    with open(elements_cache_info, 'rb') as i:
-        poagraph_elements = pickle.load(i)
-    max_column_id = len(poagraph_elements["cw"]) + 1
-    try:
-        min_x = int(relayout_data['xaxis.range[0]'])
-        max_x = int(relayout_data['xaxis.range[1]'])
-        visible_axis_length = abs(max_x - min_x)
-        min_x = max(0, min_x + int(max_column_id * 0.3))
-        max_x = min(min_x + int(0.3 * max_column_id), max_column_id)  # visible_axis_length // 3 * 2
-    except KeyError:
-        min_x = int(0.3 * max_column_id)
-        max_x = int(0.6 * max_column_id)
-    c_to_n = poagraph_elements["cw"]
-    nodes_ids_to_display = [n for nodes_ids in c_to_n[min_x:max_x + 1] for n in nodes_ids]
-    if nodes_ids_to_display:
-        nodes = poagraph_elements["sn"][min(nodes_ids_to_display): max(nodes_ids_to_display) + 1]
-        edges = [e for src in nodes_ids_to_display for e in poagraph_elements["e"][src]]
-    else:
-        nodes = []
-        edges = []
-    return nodes + edges
+        if 1 in checklist:  # CONCAT VERTICLES
+            diagram_filtered, diagram_reorganization = self._bound_vertices(diagram_filtered, range_start, range_end)
+        else:
+            diagram_reorganization = dict()
+
+        if highlight_seq and highlight_seq in filtered_sequences:  # HIGHLIGHT SEQUENCE
+            highlight_seq_nodes = [node_id for node_id in self.sequences[highlight_seq] if node_id not in diagram_reorganization.keys()]
+        else:
+            highlight_seq_nodes = []
+        
+        for node_id in sorted(diagram_filtered.keys())[range_start:range_end+1]:
+            label.append(diagram_filtered[node_id]["base"])
+            for t in diagram_filtered[node_id]["targets"]:
+                if t <= range_end:
+                    source.append(node_id-range_start)
+                    target.append(t-range_start)
+                    value.append(diagram_filtered[node_id]["targets"][t])
+                    link_color.append("#D3D3D3")
+                    
+                    # HIGHLIGHT SEQUENCE
+                    if highlight_seq_nodes and node_id in highlight_seq_nodes:
+                        s_id = highlight_seq_nodes.index(node_id)
+                        if highlight_seq_nodes[s_id+1] == t:
+                            value[-1] -= 1
+                            source.append(node_id-range_start)
+                            target.append(t-range_start)
+                            value.append(1)
+                            link_color.append("#342424")
+
+        
+        colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
+        fig = go.Figure(
+            data=go.Sankey(
+                arrangement = "snap",
+                node = dict(
+                    label=[l if len(l)<5 else f"{l[0]}...{l[-1]}({len(l)})" for l in label],
+                    pad=10,
+                    color=[colors[l] if l in colors else "gray" for l in label]
+                ),
+                link = dict(
+                    source=source,
+                    target=target,
+                    value=value,
+                    color=link_color
+                )
+            ),
+            layout=dict(
+                # height=300,
+                # width=1600
+            )
+        )
+        
+        return fig, str(tree_node_id) 
+
+alignment_main_object = GraphAlignment(data={})

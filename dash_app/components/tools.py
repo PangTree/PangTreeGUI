@@ -2,6 +2,7 @@ import os
 import shutil
 import uuid
 import base64
+import json
 from datetime import datetime
 from io import StringIO
 from pathlib import Path
@@ -10,24 +11,12 @@ from typing import Optional
 from pangtreebuild.serialization.json import PangenomeJSON, str_to_PangenomeJSON
 
 
+def read_upload(content: str) -> dict:
+    content_string = base64.b64decode(content.split(',')[1]).decode('ascii')
+    return json.loads(content_string)
+
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
     return str_to_PangenomeJSON(jsonified_pangenome)
-
-
-# def jsonify_builtin_types(data: Any) -> str:
-#     return json.dumps(data)
-#
-#
-# def unjsonify_builtin_types(jsonified_data: str) -> Any:
-#     return json.loads(jsonified_data)
-#
-#
-# def jsonify_df(df: pd.DataFrame) -> str:
-#     return df.to_json()
-#
-#
-# def unjsonify_df(jsonified_df: str) -> pd.DataFrame:
-#     return pd.read_json(jsonified_df)
 
 
 def encode_content(content: str) -> str:
@@ -40,7 +29,6 @@ def decode_content(content: str) -> str:
         return ''
     content_string = content.split(',')[1]
     return base64.b64decode(content_string).decode('ascii')
-
 
 def decode_zip_content(content: str) -> str:
     if not content:

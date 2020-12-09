@@ -2,9 +2,14 @@ from flask import Flask, session
 from flask_session import Session
 from dash import Dash
 
-server = Flask('pangenome')
-SESSION_TYPE = 'filesystem'
+server = Flask('PangTree')
 server.config.from_object(__name__)
 server.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-app = Dash(__name__, server=server)
-
+ 
+app = Dash(
+    __name__,
+    external_stylesheets=['https://use.fontawesome.com/releases/v5.8.1/css/all.css'],
+    server=server
+)
+app.title = 'PangTreeGUI'
+app.config.suppress_callback_exceptions = True
