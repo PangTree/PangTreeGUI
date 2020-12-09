@@ -156,16 +156,16 @@ i{
 
 
 #poagraph{
-    margin-bottom: 50px;
+    /* margin-bottom: 50px; */
     width: 100%;
-    min-height: 300px;
+    height: 400px;
 }
 
 #poagraph_container{
     width: 100%;
     text-align: center;
     margin-top: 50px;
-    height: 480px;
+    height: 430px;
 }
 
 #poagraph-slider{
