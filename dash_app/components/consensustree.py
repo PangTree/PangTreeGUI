@@ -141,7 +141,7 @@ def get_node_id_to_y_pos(tree: nx.DiGraph) -> Dict[AffinityNodeID, int]:
     return node_id_to_y
 
 
-def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_value: str, full_consensustable: pd.DataFrame, highlight_node=None) -> go.Figure:
+def get_consensustree_graph(tree: nx.DiGraph, leaf_info_value: str, full_consensustable: pd.DataFrame, highlight_node=None) -> go.Figure:
     node_id_to_y = get_node_id_to_y_pos(tree)
     minCompsLabels = [format(tree.nodes[node_id]["mincomp"], '.4f') for node_id in range(len(tree.nodes))]
     labels_on_hover = [f'{minCompLabel}' for minCompLabel in minCompsLabels]
@@ -149,8 +149,8 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
     positions = [(tree.nodes[node_id]["mincomp"], node_id_to_y[node_id]) for node_id in range(len(tree.nodes))]
 
     x_positions = np.array([x for [x, _] in positions])
-    min_slider = round(min(x_positions), 2)
-    marks = {i / 10: str(round(min_slider + ((1 - min_slider) * i / 10), 2)) for i in range(11)}
+    # min_slider = round(min(x_positions), 2)
+    # marks = {i / 10: str(round(min_slider + ((1 - min_slider) * i / 10), 2)) for i in range(11)}
     x_positions -= min(x_positions)-0.01
     x_positions /= max(x_positions)
     y_positions = np.array([y for [_, y] in positions])
@@ -160,7 +160,7 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
     tree_nodes_annotations = get_tree_nodes_annotations(positions, labels)
     tree_lines_graph = get_tree_lines_graph(positions, tree)
 
-    line_graph = get_line_graph(slider_value)
+    # line_graph = get_line_graph(slider_value)
 
     leaves_text_graph = get_leaves_text_graph(positions, tree, leaf_info_value, full_consensustable)
 
@@ -188,9 +188,9 @@ def get_consensustree_graph(tree: nx.DiGraph, slider_value: float, leaf_info_val
         plot_bgcolor=colors['transparent'],
         autosize=True,
     )
-    fig = go.Figure(data=[tree_lines_graph, tree_nodes_graph, line_graph, leaves_text_graph], layout=layout)
+    fig = go.Figure(data=[tree_lines_graph, tree_nodes_graph, leaves_text_graph], layout=layout)
     fig.update_layout(clickmode='event+select')
-    return fig, marks
+    return fig
 
 
 def get_line_graph(slider_value: float) -> go.Scatter:
