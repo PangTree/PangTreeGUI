@@ -536,9 +536,9 @@ _poagraph_row = dbc.Row(
                 )
             ]),
             html.Div([
-                html.Span("Graph slider: select the region you want to see in the graph"),
+                html.Span("Graph slider: select the region you want to see on the graph"),
                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="slider-tooltip"),
-                dbc.Tooltip("Some help text", target="slider-tooltip"),
+                dbc.Tooltip("Select (blue) the genome region you want to see on the graph by moving the circles along the axis.", target="slider-tooltip"),
                 dcc.RangeSlider(
                     id="poagraph-slider",
                     min=0,
@@ -551,7 +551,7 @@ _poagraph_row = dbc.Row(
                         dbc.Col(
                             [
                                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="zoom-tooltip"),
-                                dbc.Tooltip("Some help text", target="zoom-tooltip"),
+                                dbc.Tooltip("Check if you want to see the entire genome on the graph.", target="zoom-tooltip"),
                                 daq.BooleanSwitch(
                                     on=False,
                                     id='zoom-out-switch',
@@ -568,7 +568,7 @@ _poagraph_row = dbc.Row(
                             [
                                 html.Span("Graph simplifications:"),
                                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="simplifications-tooltip"),
-                                dbc.Tooltip("Some help text", target="simplifications-tooltip"),
+                                dbc.Tooltip("Select all simplifications that you would like to activate on the graph.", target="simplifications-tooltip"),
                                 html.P(),
                                 dcc.Checklist(
                                     id="poagraph_checklist",
@@ -599,7 +599,7 @@ _poagraph_row = dbc.Row(
                                 html.Span("Selected vertex of the Affinity Tree: "),
                                 html.Span("0", id="selected_vertex"),
                                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="tree-tooltip"),
-                                dbc.Tooltip("Some help text", target="tree-tooltip"),
+                                dbc.Tooltip("By clicking on a vertex in the Affinity Tree, limit the sequences used in the graph to its subtree.", target="tree-tooltip"),
                                 html.P("Highlight the sequence:"),
                                 dcc.Dropdown(
                                     id="poagraph_dropdown",
