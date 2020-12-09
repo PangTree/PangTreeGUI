@@ -1,4 +1,4 @@
-# PangtreeVis
+# PangtreeGUI
 
 ## About
 PangTreeGUI is a web-browser tool. It enables direct calling [PangtreeBuild](https://github.com/PangTree/PangTreeBuild) but also loading the JSON file which is the result of calling PangtreeBuild.
@@ -7,8 +7,6 @@ PangTreeGUI is a web-browser tool. It enables direct calling [PangtreeBuild](htt
 
 1) First you need to clone this repository:
 ```bash
-$ git clone git@gitlab.com:PangTree/PangTreeGUI.git
-# or
 $ git clone https://github.com/PangTree/PangTreeGUI.git
 ```
 
@@ -45,7 +43,7 @@ To use PangTreeGUI you need to activate your virtualenv (`$ source your_venv_nam
 ```
 $ python run.py
 ```
-A link to the application should appear in the terminal. Open the application by clicking on it or typing `127.0.0.1/8052` in the web browser (tested in Chrome and Firefox).
+A link to the application should appear in the terminal. Open the application by clicking on it or typing `127.0.0.1:8052` in the web browser (tested in Chrome and Firefox).
 
 ## Founding
 This software is developed with support of [OPUS 11 scientific project of National Science Centre:  Incorporating genomic variation information
