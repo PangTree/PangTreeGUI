@@ -315,7 +315,7 @@ _poa_hbmin_form = dbc.Collapse(
     pang_task_form(
         label_id="hbmin_input",
         label="HBMIN",
-        form=[dbc.Input(value=0.9, type='number', min=0, max=1, id="hbmin_input")],
+        form=[dbc.Input(value=0.9, type='number', min=0, max=1, step=0.1, id="hbmin_input")],
         text="HBMIN is required minimum value of similarity between sequence and "
              "assigned consensus. It must be a value from range [0,1]."
     ),
@@ -326,7 +326,7 @@ _tree_params_form = dbc.Collapse([
     pang_task_form(
         label_id="hbmin_input",
         label="P",
-        form=[dbc.Input(value=1, type='number', min=0, id="p_input")],
+        form=[dbc.Input(value=1, type='number', min=0, step=0.1, id="p_input")],
         text=[
             "P is used during cutoff search. P < 1 decreases distances between small "
             "compatibilities and increases distances between the bigger ones while P > 1 "
@@ -337,7 +337,7 @@ _tree_params_form = dbc.Collapse([
     pang_task_form(
         label_id="hbmin_input",
         label="Stop",
-        form=[dbc.Input(value=1, type='number', min=0, max=1, id="stop_input")],
+        form=[dbc.Input(value=1, type='number', min=0, max=1, step=0.1, id="stop_input")],
         text="Minimum value of compatibility in tree leaves. It must be a value from range [0,1]."
     )],
     id="tree_specific_params"
