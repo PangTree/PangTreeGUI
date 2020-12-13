@@ -59,6 +59,8 @@ def get_example(toy_n_clicks, ebola_subset_n_clicks, ebola_n_clicks):
         metadata_file = "metadata.csv"
         multialignment_file = "multialignment.maf"
         fasta_file = None
+    else:
+        raise PreventUpdate()
     
     with open(f"example_data/pangtreebuild/{example_folder}/{metadata_file}") as f:
         metadata_content = tools.encode_content(f.read())
@@ -280,7 +282,7 @@ def run_pangenome(run_processing_btn_click,
                   hbmin_value: float,
                   stop_value: float,
                   p_value: float):
-    if run_processing_btn_click == 0:
+    if not run_processing_btn_click:
         raise PreventUpdate()
     if session_state is None:
         session_state = {}
@@ -300,7 +302,7 @@ def run_pangenome(run_processing_btn_click,
                             file_name=multialignment_filename)
     else:
         session_state["error"] = "Cannot create Poagraph. Only MAF and PO files are supported."
-        return session_state
+        return session_state, False
 
     missing_symbol = MissingBase(missing_symbol) if missing_symbol != "" else MissingBase()
 
