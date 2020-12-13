@@ -358,3 +358,12 @@ details {
     width: 100%;
     margin-top: -40px;
 }
+
+#poagraph_start, #poagraph_end{
+    display: inline-block;
+    margin: 5px 10px;
+}
+
+#poagraph_region_button{
+    margin: 10px auto 20px auto;
+}

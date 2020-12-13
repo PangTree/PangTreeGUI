@@ -536,7 +536,7 @@ _poagraph_row = dbc.Row(
                 )
             ]),
             html.Div([
-                html.Span("Graph slider: select the region you want to see on the graph"),
+                html.Span("Use graph slider to select the region you want to see on the graph or enter start and end in the boxes below"),
                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="slider-tooltip"),
                 dbc.Tooltip("Select (blue) the genome region you want to see on the graph by moving the circles along the axis.", target="slider-tooltip"),
                 dcc.RangeSlider(
@@ -544,10 +544,32 @@ _poagraph_row = dbc.Row(
                     min=0,
                     max=100,
                     value=[0, 40],
-                    pushable=30,
+                    pushable=20,
                 ),
                 dbc.Row(
                     [
+                        dbc.Col(
+                            [
+                                html.P("Selected genome region:"),
+                                daq.NumericInput(
+                                    id='poagraph_start',
+                                    min=0,
+                                    max=10,
+                                    value=0
+                                ),
+                                dbc.Label("-"),
+                                daq.NumericInput(
+                                    id='poagraph_end',
+                                    min=0,
+                                    max=100,
+                                    value=40
+                                ),
+                                dbc.Button("Select region", color="info", id="poagraph_region_button"),
+                            ],
+                            style={
+                                "max-width": "18%"
+                            }
+                        ),
                         dbc.Col(
                             [
                                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="zoom-tooltip"),
@@ -555,13 +577,13 @@ _poagraph_row = dbc.Row(
                                 daq.BooleanSwitch(
                                     on=False,
                                     id='zoom-out-switch',
-                                    label="Show full pangenome (Extreme zoom-out)",
-                                    labelPosition="top"
+                                    label="Show full pangenome \n(Extreme zoom-out)",
+                                    labelPosition="top",
+                                    style={"margin": "0px 30px"}
                                 )  
                             ],
                             style={
-                                # "text-align": "left",
-                                "max-width": "15%"
+                                "max-width": "18%"
                             }
                         ),
                         dbc.Col(

@@ -49,6 +49,17 @@ class GraphAlignment:
             Output("poagraph-simplifications", "style"),
             [Input("zoom-out-switch", "on")]
         )(lambda x: {"visibility": "hidden"} if x else {})
+        app.callback(
+            Output("poagraph-slider", "value"),
+            [Input("poagraph_region_button", 'n_clicks')],
+            [State("poagraph_start", 'value'),
+             State("poagraph_end", 'value')]
+        )(lambda x, start, end: [start, end])
+        app.callback(
+            [Output("poagraph_start", 'value'),
+             Output("poagraph_end", 'value')],
+            [Input("poagraph-slider", "value")]
+        )(lambda x: (x[0], x[1]))
     
     def update_data(self, data):
         self.column_dict = self.c_dict(data["nodes"])
