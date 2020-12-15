@@ -12,7 +12,7 @@ $ git clone https://github.com/PangTree/PangTreeGUI.git
 
 2) Create new virtualenv with python>=3.6:
 ```bash
-$  virtualenv -p python3.6 your_venv_name
+$  virtualenv -p python3 your_venv_name
 ```
 
 3) Activate your virtualenv:
@@ -31,10 +31,10 @@ $ cd PangTreeGUI
 $ pip install -r requirements.txt
 ```
 
-6) Make sure [PangtreeBuild](https://github.com/PangTree/PangTreeBuild) package is installed.
+<!-- 6) Make sure [PangtreeBuild](https://github.com/PangTree/PangTreeBuild) package is installed.
 ```
 $ pip install pangtreebuild
-```
+``` -->
 
 ## Usage
 
