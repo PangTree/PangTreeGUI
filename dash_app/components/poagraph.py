@@ -308,7 +308,7 @@ class GraphAlignment:
                     thickness=max(10, 26-(len(label)//10)),
                     label=[l if len(l)<5 else f"{l[0]}...{l[-1]}({len(l)})" for l in label],
                     pad=10,
-                    color=[colors[l] if l in colors else "gray" for l in label]
+                    color=[colors[l] if l in colors else get_color_for_merged_node(l) for l in label]
                 ),
                 link = dict(
                     source=source,
@@ -324,5 +324,9 @@ class GraphAlignment:
         )
         
         return fig, str(tree_node_id) 
+
+def get_color_for_merged_node(label):
+    intensity = max(200-len(label)*15, 80)
+    return f"rgb({intensity},{intensity},{intensity})"
 
 alignment_main_object = GraphAlignment(data={})
