@@ -554,14 +554,12 @@ _poagraph_row = dbc.Row(
                                 daq.NumericInput(
                                     id='poagraph_start',
                                     min=0,
-                                    max=10,
                                     value=0
                                 ),
                                 dbc.Label("-"),
                                 daq.NumericInput(
                                     id='poagraph_end',
                                     min=0,
-                                    max=100,
                                     value=40
                                 ),
                                 dbc.Button("Select region", color="info", id="poagraph_region_button"),

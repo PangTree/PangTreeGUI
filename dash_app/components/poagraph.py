@@ -305,6 +305,7 @@ class GraphAlignment:
             data=go.Sankey(
                 arrangement = "snap",
                 node = dict(
+                    thickness=max(10, 26-(len(label)//10)),
                     label=[l if len(l)<5 else f"{l[0]}...{l[-1]}({len(l)})" for l in label],
                     pad=10,
                     color=[colors[l] if l in colors else "gray" for l in label]
