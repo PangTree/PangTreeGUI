@@ -367,3 +367,7 @@ details {
 #poagraph_region_button{
     margin: 10px auto 20px auto;
 }
+
+.daq-numericinput--light__input{
+    width: 80px !important;
+}
