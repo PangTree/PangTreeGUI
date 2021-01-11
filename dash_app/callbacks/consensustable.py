@@ -33,6 +33,7 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
                               slider_value: float):
     if not jsonified_full_consensustable or not jsonified_tree:
         return []
+    print(slider_value)        
     full_consensustable_data = pd.read_json(jsonified_full_consensustable)
     full_consensustree_data = json.loads(jsonified_tree)
     full_consensustree_tree = consensustree.dict_to_tree(full_consensustree_data)
