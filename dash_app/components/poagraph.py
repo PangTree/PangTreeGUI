@@ -301,12 +301,21 @@ class GraphAlignment:
 
         
         colors = dict(A="#FF9AA2", C="#B5EAD7", G="#C7CEEA", T="#FFDAC1")
+        #extra dump node
+        if len(source) == 0:
+            label.append("start")
+            label.append("end")
+            source.append(len(label)-2)
+            target.append(len(label)-1)
+            value.append(len(filtered_sequences))
+            link_color.append("#D3D3D3")
+            
         fig = go.Figure(
             data=go.Sankey(
                 arrangement = "snap",
                 node = dict(
                     thickness=max(10, 26-(len(label)//10)),
-                    label=[l if len(l)<5 else f"{l[0]}...{l[-1]}({len(l)})" for l in label],
+                    label=[l if len(l)<6 else f"{l[0]}...{l[-1]}({len(l)})" for l in label],
                     pad=10,
                     color=[colors[l] if l in colors else get_color_for_merged_node(l) for l in label]
                 ),
