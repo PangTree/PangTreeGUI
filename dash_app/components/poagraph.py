@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.graph_objs as go
 
 from dash_app.components import consensustable, consensustree, tools
-from dash_app.server import app
+from dash_app.app import app
 
 
 class Node:

@@ -1,11 +1,19 @@
+import dash
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from dash_app.components import layout
-from dash_app.server import app
+from dash_app.settings import APP_SETTINGS
 
+app = dash.Dash(
+    __name__,
+    external_stylesheets=APP_SETTINGS["stylesheets"],
+    suppress_callback_exceptions=True,
+    title=APP_SETTINGS["title"],
+    update_title=None
+)
 
 def get_nav_link(fa_icon, span, href, id):
     return html.Li(

@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 from pangtreebuild.serialization.json import str_to_PangenomeJSON
 
 from dash_app.components import consensustable, consensustree
-from dash_app.server import app
+from dash_app.app import app
 
 
 @app.callback(

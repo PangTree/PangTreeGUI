@@ -3,7 +3,7 @@ import pandas as pd
 from dash.dependencies import Input, Output
 
 from dash_app.components import consensustable, consensustree, tools
-from dash_app.server import app
+from dash_app.app import app
 
 
 @app.callback(

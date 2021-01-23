@@ -6,7 +6,7 @@ from dash.exceptions import PreventUpdate
 
 from dash_app.components import consensustable, consensustree, tools, poagraph
 from dash_app.components.layout import get_task_description_layout
-from dash_app.server import app
+from dash_app.app import app
 
 
 @app.callback(
