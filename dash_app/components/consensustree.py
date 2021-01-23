@@ -174,14 +174,16 @@ def get_consensustree_graph(tree: nx.DiGraph, leaf_info_value: str, full_consens
             showline=False, 
             zeroline=False, 
             showgrid=False, 
-            showticklabels=False
+            showticklabels=False,
+            # fixedrange=True,
         ),
         yaxis=dict(
             range=[0, 100], 
             showline=False, 
             zeroline=False, 
             showgrid=False, 
-            showticklabels=False
+            showticklabels=False,
+            # fixedrange=True,
         ),
         margin=dict(l=20, r=10, b=0, t=0),
         hovermode='closest',

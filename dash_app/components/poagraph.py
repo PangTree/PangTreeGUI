@@ -34,6 +34,7 @@ class GraphAlignment:
              Input("zoom-out-switch", "on"),
              Input("poagraph-slider", "value"),
              Input("poagraph_dropdown", "value"),
+             Input("poagraph_node_dropdown", "value"),
              Input("consensus_tree_graph", 'clickData'),
              Input("poagraph_checklist", 'value'),
              Input("poagraph_threshold", 'value')],
@@ -191,7 +192,7 @@ class GraphAlignment:
         return filtered_sequence
             
 
-    def get_sankey_diagram(self, hidde, zoom_out, slider_values, highlight_seq, click_data, checklist, threshold, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, hidde, zoom_out, slider_values, highlight_seq, tree_node, click_data, checklist, threshold, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
@@ -208,8 +209,11 @@ class GraphAlignment:
         
         
         # FILTER SEQUENCES (AFFINITY TREE)
-        if click_data:
-            tree_node_id = click_data['points'][0]['pointIndex']
+        if tree_node or click_data:
+            if tree_node:
+                tree_node_id = int(tree_node[5:])
+            else:
+                tree_node_id = click_data['points'][0]['pointIndex']
             full_consensustable = pd.read_json(consensustable_data)
             consensustree_data = json.loads(consensustree_data)
             tree = consensustree.dict_to_tree(consensustree_data)

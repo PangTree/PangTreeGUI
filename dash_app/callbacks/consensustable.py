@@ -11,7 +11,8 @@ from dash_app.server import app
 
 @app.callback(
     [Output("full_consensustable_hidden", 'children'),
-     Output("consensus_table_container", 'style')],
+     Output("consensus_table_container", 'style'),
+     Output("poagraph_node_dropdown", "options"),],
     [Input("pangenome_hidden", 'children')],
     [State("consensus_table_container", 'style')])
 def update_full_consensustable_hidden(jsonified_pangenome, current_table_style):
@@ -21,7 +22,10 @@ def update_full_consensustable_hidden(jsonified_pangenome, current_table_style):
         raise PreventUpdate()
     jsonpangenome = str_to_PangenomeJSON(jsonified_pangenome)
     consensustable_data = consensustable.get_full_table_data(jsonpangenome)
-    return consensustable_data.to_json(), {'display': 'block'}
+    
+    consensus_num = len([column for column in consensustable_data.columns if "CONSENSUS" in column])
+    options = [{'label': f'node {i}', 'value': f'node {i}'} for i in range(consensus_num)]
+    return consensustable_data.to_json(), {'display': 'block'}, options
 
 
 @app.callback(
@@ -33,7 +37,6 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
                               slider_value: float):
     if not jsonified_full_consensustable or not jsonified_tree:
         return []
-    print(slider_value)        
     full_consensustable_data = pd.read_json(jsonified_full_consensustable)
     full_consensustree_data = json.loads(jsonified_tree)
     full_consensustree_tree = consensustree.dict_to_tree(full_consensustree_data)

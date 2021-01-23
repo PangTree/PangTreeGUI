@@ -621,7 +621,16 @@ _poagraph_row = dbc.Row(
                                 html.Span("Selected vertex of the Affinity Tree: "),
                                 html.Span("0", id="selected_vertex"),
                                 html.I(className="fas fa-question-circle fa-lg tooltip-icon", id="tree-tooltip"),
-                                dbc.Tooltip("By clicking on a vertex in the Affinity Tree, limit the sequences used in the graph to its subtree. Click node \"0\" to reset.", target="tree-tooltip"),
+                                dbc.Tooltip("By clicking on a vertex in the Affinity Tree or using dropdown below, limit the sequences used in the graph to its subtree. Click node \"0\" to reset.", target="tree-tooltip"),
+                                dcc.Dropdown(
+                                    id="poagraph_node_dropdown",
+                                    options=[
+                                        {'label': f'seq{i}', 'value': f'seq{i}'} for i in range(1, 5)
+                                    ],
+                                    value='',
+                                    multi=False,
+                                ),
+                                html.Br(),
                                 html.P("Highlight the sequence:"),
                                 dcc.Dropdown(
                                     id="poagraph_dropdown",

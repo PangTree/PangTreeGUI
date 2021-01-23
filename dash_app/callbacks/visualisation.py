@@ -11,7 +11,6 @@ from dash_app.server import app
 
 @app.callback(
     [Output("pangenome_hidden", 'children'),
-    #  Output("poagraph_dropdown", "options"),
      Output("pangviz_load_row", "style")],
     [Input("pangenome_upload", 'contents')])
 def load_visualisation(pangenome_content):
@@ -47,13 +46,17 @@ def show_task_parameters(jsonified_pangenome):
 
 @app.callback(
     Output("poagraph_dropdown", "options"),
-    [Input("consensus_tree_graph", 'clickData')],
+    [Input("consensus_tree_graph", 'clickData'),
+     Input("poagraph_node_dropdown", "value")],
     [State("full_consensustable_hidden", 'children'),
      State("full_consensustree_hidden", 'children')]
 )
-def update_poagraph_options(click_data, consensustable_data, consensustree_data):
-    if click_data:
-        node_id = click_data['points'][0]['pointIndex']
+def update_poagraph_options(click_data, node_value, consensustable_data, consensustree_data):
+    if node_value or click_data:
+        if node_value:
+            node_id = int(node_value[5:])
+        else:
+            node_id = click_data['points'][0]['pointIndex']
         full_consensustable = pd.read_json(consensustable_data)
         consensustree_data = json.loads(consensustree_data)
         tree = consensustree.dict_to_tree(consensustree_data)
