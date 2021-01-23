@@ -8,7 +8,9 @@ from dash_app.server import app
 
 @app.callback(
     Output("full_consensustree_hidden", 'children'),
-    [Input("pangenome_hidden", 'children')]
+    [
+        Input("pangenome_hidden", 'children')
+    ]
 )
 def update_consensustree_hidden(jsonified_pangenome):
     if not jsonified_pangenome:
@@ -20,7 +22,9 @@ def update_consensustree_hidden(jsonified_pangenome):
 
 @app.callback(
     Output("current_consensustree_hidden", 'children'),
-    [Input("full_consensustree_hidden", 'children')]
+    [
+        Input("full_consensustree_hidden", 'children')
+    ]
 )
 def update_current_tree_state(jsonified_full_consensustree):
     if not jsonified_full_consensustree:
@@ -32,13 +36,17 @@ def update_current_tree_state(jsonified_full_consensustree):
 
 
 @app.callback(
-    [Output("consensus_tree_graph", 'figure'),
-    Output("consensus_tree_slider", 'min'),
-    Output("consensus_tree_slider", 'marks')],
-    [Input("current_consensustree_hidden", 'children'),
-    #  Input("consensus_tree_slider", 'value'),
-     Input("leaf_info_dropdown", 'value'),
-     Input("full_consensustable_hidden", 'children')])
+    [
+        Output("consensus_tree_graph", 'figure'),
+        Output("consensus_tree_slider", 'min'),
+        Output("consensus_tree_slider", 'marks')
+    ],
+    [
+        Input("current_consensustree_hidden", 'children'),
+        Input("leaf_info_dropdown", 'value'),
+        Input("full_consensustable_hidden", 'children')
+    ]
+)
 def to_consensustree_graph(jsonified_current_consensustree, leaf_info,
                            jsonified_full_consensustable):
     if not jsonified_current_consensustree or not jsonified_full_consensustable:
@@ -51,7 +59,10 @@ def to_consensustree_graph(jsonified_current_consensustree, leaf_info,
 
 @app.callback(
     Output("leaf_info_dropdown", 'options'),
-    [Input("full_consensustable_hidden", 'children')])
+    [
+        Input("full_consensustable_hidden", 'children')
+    ]
+)
 def to_consensustree_leaf_info_options_dropdown(jsonified_full_consensustable):
     if not jsonified_full_consensustable:
         return []

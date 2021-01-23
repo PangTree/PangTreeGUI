@@ -10,11 +10,18 @@ from dash_app.server import app
 
 
 @app.callback(
-    [Output("full_consensustable_hidden", 'children'),
-     Output("consensus_table_container", 'style'),
-     Output("poagraph_node_dropdown", "options"),],
-    [Input("pangenome_hidden", 'children')],
-    [State("consensus_table_container", 'style')])
+    [
+        Output("full_consensustable_hidden", 'children'),
+        Output("consensus_table_container", 'style'),
+        Output("poagraph_node_dropdown", "options"),
+    ],
+    [
+        Input("pangenome_hidden", 'children')
+    ],
+    [
+        State("consensus_table_container", 'style')
+    ]
+)
 def update_full_consensustable_hidden(jsonified_pangenome, current_table_style):
     if not jsonified_pangenome:
         return [], {'display': 'none'}
@@ -30,9 +37,12 @@ def update_full_consensustable_hidden(jsonified_pangenome, current_table_style):
 
 @app.callback(
     Output("partial_consensustable_hidden", 'children'),
-    [Input("full_consensustable_hidden", 'children'),
-     Input("full_consensustree_hidden", 'children'),
-     Input("consensus_tree_slider", 'value')])
+    [
+        Input("full_consensustable_hidden", 'children'),
+        Input("full_consensustree_hidden", 'children'),
+        Input("consensus_tree_slider", 'value')
+    ]
+)
 def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree: str,
                               slider_value: float):
     if not jsonified_full_consensustable or not jsonified_tree:
@@ -48,11 +58,18 @@ def update_partial_table_data(jsonified_full_consensustable: str, jsonified_tree
 
 
 @app.callback(
-    [Output("consensuses_table", 'data'),
-     Output("consensuses_table", 'columns'),
-     Output("consensuses_table", 'style_data_conditional')],
-    [Input("partial_consensustable_hidden", 'children')],
-    [State("full_consensustree_hidden", 'children')])
+    [
+        Output("consensuses_table", 'data'),
+        Output("consensuses_table", 'columns'),
+        Output("consensuses_table", 'style_data_conditional')
+    ],
+    [
+        Input("partial_consensustable_hidden", 'children')
+    ],
+    [
+        State("full_consensustree_hidden", 'children')
+    ]
+)
 def update_consensus_table(jsonified_partial_consensustable, jsonified_consensus_tree):
     if not jsonified_partial_consensustable:
         # return [], [{}], []

@@ -10,9 +10,14 @@ from dash_app.server import app
 
 
 @app.callback(
-    [Output("pangenome_hidden", 'children'),
-     Output("pangviz_load_row", "style")],
-    [Input("pangenome_upload", 'contents')])
+    [
+        Output("pangenome_hidden", 'children'),
+        Output("pangviz_load_row", "style")
+    ],
+    [
+        Input("pangenome_upload", 'contents')
+    ]
+)
 def load_visualisation(pangenome_content):
     if not pangenome_content:
         raise PreventUpdate()
@@ -29,15 +34,22 @@ def load_visualisation(pangenome_content):
 
 @app.callback(
     Output("pangviz_result_collapse", 'is_open'),
-    [Input("pangenome_upload", 'contents')])
+    [
+        Input("pangenome_upload", 'contents')
+    ]
+)
 def show_visualisation(pangenome_content):
     if pangenome_content and pangenome_content.startswith("data:application/json;base64"):
         return True
     return False
 
 
-@app.callback(Output("task_parameters_vis", 'children'),
-              [Input("pangenome_hidden", 'children')])
+@app.callback(
+    Output("task_parameters_vis", 'children'),
+    [
+        Input("pangenome_hidden", 'children')
+    ]
+)
 def show_task_parameters(jsonified_pangenome):
     if not jsonified_pangenome:
         return []
@@ -46,10 +58,14 @@ def show_task_parameters(jsonified_pangenome):
 
 @app.callback(
     Output("poagraph_dropdown", "options"),
-    [Input("consensus_tree_graph", 'clickData'),
-     Input("poagraph_node_dropdown", "value")],
-    [State("full_consensustable_hidden", 'children'),
-     State("full_consensustree_hidden", 'children')]
+    [
+        Input("consensus_tree_graph", 'clickData'),
+        Input("poagraph_node_dropdown", "value")
+    ],
+    [
+        State("full_consensustable_hidden", 'children'),
+        State("full_consensustree_hidden", 'children')
+    ]
 )
 def update_poagraph_options(click_data, node_value, consensustable_data, consensustree_data):
     if node_value or click_data:
