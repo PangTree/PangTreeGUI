@@ -1,6 +1,15 @@
 from dash_app.app import app
+from dash_app.settings import SERVER_SETTINGS
 
 server = app.server
 
-if __name__ == '__main__':
-    app.run_server(debug=False, port=8052, dev_tools_ui=True)
+def main():
+    app.run_server(
+        host=SERVER_SETTINGS["host"],
+        port=SERVER_SETTINGS["port"],
+        debug=SERVER_SETTINGS["debug"],
+    )
+
+
+if __name__ == "__main__":
+    main()

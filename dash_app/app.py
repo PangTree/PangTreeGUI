@@ -8,7 +8,6 @@ from dash_app.server import app
 
 from .callbacks import consensustable
 from .callbacks import consensustree
-from .callbacks import poagraph
 from .callbacks import pangtreebuild
 from .callbacks import visualisation
 
