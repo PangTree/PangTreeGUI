@@ -3,13 +3,8 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from dash_app.layout import pages
+from dash_app.components import layout
 from dash_app.server import app
-
-from .callbacks import consensustable
-from .callbacks import consensustree
-from .callbacks import pangtreebuild
-from .callbacks import visualisation
 
 
 def get_nav_link(fa_icon, span, href, id):
@@ -57,11 +52,11 @@ app.layout = html.Div(
               [Input("url", 'pathname')])
 def display_page(pathname):
     if pathname == '/faq':
-        return pages.faq(), "", "", "", "active_link"
+        return layout.faq(), "", "", "", "active_link"
     elif pathname == '/pangtreebuild':
-        return pages.pangtreebuild(), "", "active_link", "", ""
+        return layout.pangtreebuild(), "", "active_link", "", ""
     elif pathname == '/pangtreevis':
-        return pages.pangtreevis(), "", "", "active_link", ""
+        return layout.pangtreevis(), "", "", "active_link", ""
     else:
-        return pages.index(), "active_link", "", "", ""
+        return layout.index(), "active_link", "", "", ""
 

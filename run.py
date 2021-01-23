@@ -1,5 +1,11 @@
 from dash_app.app import app
 from dash_app.settings import SERVER_SETTINGS
+from dash_app.callbacks import (
+    consensustable,
+    consensustree,
+    pangtreebuild,
+    visualisation,
+)
 
 server = app.server
 

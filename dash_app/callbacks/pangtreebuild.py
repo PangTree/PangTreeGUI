@@ -17,7 +17,7 @@ from pangtreebuild.pangenome.parameters.msa import Maf, Po, MetadataCSV
 from pangtreebuild.serialization.json import to_json
 
 from dash_app.components import pangtreebuild, tools
-from dash_app.layout.pages import get_task_description_layout
+from dash_app.components.layout import get_task_description_layout
 from dash_app.server import app
 
 
