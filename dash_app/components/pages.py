@@ -5,7 +5,7 @@ import dash_html_components as html
 import dash_table
 from pangtreebuild.serialization.json import PangenomeJSON
 
-from dash_app.layout import links
+from dash_app.shared import links
 
 """--------------------------------FAQ---------------------------------------"""
 

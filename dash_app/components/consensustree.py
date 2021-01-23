@@ -2,11 +2,11 @@ from collections import deque
 from typing import Dict, List, Tuple, Set, Any
 
 import math
-from ..layout.colors import colors
-import plotly.graph_objs as go
 import numpy as np
+import plotly.graph_objs as go
 import pandas as pd
 
+from dash_app.shared.colors import colors
 from pangtreebuild.affinity_tree.tree import AffinityNodeID
 from pangtreebuild.serialization.json import PangenomeJSON, AffinityNode
 import networkx as nx

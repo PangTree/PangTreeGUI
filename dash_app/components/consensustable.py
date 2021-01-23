@@ -4,12 +4,13 @@ from collections import deque
 from typing import Dict, List
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import ColorConverter
 import networkx as nx
 import pandas as pd
 import seaborn as sns
+
 from dash_app.components import consensustree
-from dash_app.layout.colors import colors
-from matplotlib.colors import ColorConverter
+from dash_app.shared.colors import colors
 from pangtreebuild.affinity_tree.tree import AffinityNodeID
 from pangtreebuild.serialization.json import PangenomeJSON
 
