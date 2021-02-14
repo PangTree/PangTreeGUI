@@ -602,19 +602,38 @@ _poagraph_row = dbc.Row(
                                     value=[],
                                     labelStyle={'display': 'block'}
                                 ),
+                            ],
+                            id="poagraph-simplifications"
+                        ),
+                        dbc.Col(
+                            children=[
+                                html.P("Graph simplifications parameters:"),
+                                html.Br(),
                                 dbc.Row(
                                     [
-                                        html.P("Weak connections threshold: \t", className="secondary"),
+                                        daq.NumericInput(
+                                            id='poagraph_snp_threshold',
+                                            min=0,
+                                            max=10,
+                                            value=1
+                                        ),
+                                        html.P(" - nucleotides in SNP", className="secondary"),
+                                        
+                                    ]
+                                ),
+                                html.Br(),
+                                dbc.Row(
+                                    [
                                         daq.NumericInput(
                                             id='poagraph_threshold',
                                             min=0,
                                             max=10,
                                             value=5
                                         ),
+                                        html.P(" - weak connections threshold", className="secondary"),
                                     ]
-                                )
-                            ],
-                            id="poagraph-simplifications"
+                                ),   
+                            ]
                         ),
                         dbc.Col(
                             [
