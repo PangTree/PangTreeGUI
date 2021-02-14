@@ -37,7 +37,8 @@ class GraphAlignment:
              Input("poagraph_node_dropdown", "value"),
              Input("consensus_tree_graph", 'clickData'),
              Input("poagraph_checklist", 'value'),
-             Input("poagraph_threshold", 'value')],
+             Input("poagraph_threshold", 'value'),
+             Input("poagraph_snp_threshold", 'value')],
             [State("full_consensustable_hidden", 'children'),
              State("full_consensustree_hidden", 'children')]
         )(self.get_sankey_diagram)
@@ -190,9 +191,36 @@ class GraphAlignment:
                 filtered_sequence.append(node_id)
         filtered_sequence.append(sequence[-1])
         return filtered_sequence
+
+
+    def _remove_snp_with_parameter(self, consensus, sequence, parameter):
+        filtered_sequence = []
+        i = 0
+        while i < len(sequence):
+            node_id_before = sequence[i]
+            if node_id_before not in consensus:
+                filtered_sequence.append(node_id_before)
+                i += 1
+                continue
+            for j in range(parameter+1, 0, -1):
+                if i+j < len(sequence):
+                    node_id_after = sequence[i+j]
+                    if node_id_before in consensus and node_id_after in consensus:
+                        before = consensus.index(node_id_before)
+                        after = consensus.index(node_id_after)
+                        if after-before <= parameter:
+                            filtered_sequence += consensus[before:after+1]
+                            i += j+1
+                            break
+            if node_id_before not in filtered_sequence:
+                filtered_sequence.append(node_id_before)
+            i += 1
+        if sequence[-1] != filtered_sequence[:-1]:
+            filtered_sequence.append(sequence[-1])
+        return filtered_sequence
             
 
-    def get_sankey_diagram(self, hidde, zoom_out, slider_values, highlight_seq, tree_node, click_data, checklist, threshold, consensustable_data, consensustree_data):
+    def get_sankey_diagram(self, hidde, zoom_out, slider_values, highlight_seq, tree_node, click_data, checklist, threshold, snp_nucleotides, consensustable_data, consensustree_data):
         if not self.sequences:
             raise PreventUpdate()
         
@@ -241,7 +269,10 @@ class GraphAlignment:
 
         if 3 in checklist:
             sequences_values = [self.sequences[seq] for seq in filtered_sequences]
-            new_sequences_values = [self._remove_snp(self.consensus_sequence, sequence) for sequence in sequences_values]
+            new_sequences_values = [
+                self._remove_snp_with_parameter(self.consensus_sequence, sequence, snp_nucleotides) 
+                for sequence in sequences_values
+            ]
             diagram_filtered = self.construct_diagram(sequences_values=new_sequences_values)
             for i in range(len(self.diagram)):
                 if i not in diagram_filtered:
