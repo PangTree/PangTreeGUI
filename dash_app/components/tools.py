@@ -12,8 +12,12 @@ from pangtreebuild.serialization.json import PangenomeJSON, str_to_PangenomeJSON
 
 
 def read_upload(content: str) -> dict:
-    content_string = base64.b64decode(content.split(',')[1]).decode('ascii')
+    try:
+        content_string = base64.b64decode(content.split(',')[1]).decode('ascii')
+    except:
+        content_string = content
     return json.loads(content_string)
+    
 
 def unjsonify_jsonpangenome(jsonified_pangenome: str) -> PangenomeJSON:
     return str_to_PangenomeJSON(jsonified_pangenome)

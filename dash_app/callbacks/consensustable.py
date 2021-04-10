@@ -24,7 +24,7 @@ from dash_app.app import app
 )
 def update_full_consensustable_hidden(jsonified_pangenome, current_table_style):
     if not jsonified_pangenome:
-        return [], {'display': 'none'}
+        return [], {'display': 'none'}, []
     if 'display' in current_table_style and current_table_style['display'] == 'block':
         raise PreventUpdate()
     jsonpangenome = str_to_PangenomeJSON(jsonified_pangenome)

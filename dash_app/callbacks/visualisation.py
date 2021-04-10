@@ -12,7 +12,6 @@ from dash_app.app import app
 @app.callback(
     [
         Output("pangenome_hidden", 'children'),
-        Output("pangviz_load_row", "style")
     ],
     [
         Input("pangenome_upload", 'contents')
@@ -28,8 +27,8 @@ def load_visualisation(pangenome_content):
     options = [{'label': s, 'value': s} for s in alignment_object.sequences.keys()]
 
     if pangenome_content.startswith("data:application/json;base64"):
-        return tools.decode_content(pangenome_content), {"visibility": "hidden"}
-    return pangenome_content, {"visibility": "hidden"}
+        return [tools.decode_content(pangenome_content)]
+    return [pangenome_content]
 
 
 @app.callback(
@@ -39,7 +38,7 @@ def load_visualisation(pangenome_content):
     ]
 )
 def show_visualisation(pangenome_content):
-    if pangenome_content and pangenome_content.startswith("data:application/json;base64"):
+    if pangenome_content:  # and pangenome_content.startswith("data:application/json;base64"):
         return True
     return False
 

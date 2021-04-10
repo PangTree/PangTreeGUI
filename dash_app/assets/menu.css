@@ -55,7 +55,10 @@ text-decoration:none;
 -webkit-transform:translateZ(0) scale(1,1);
 -webkit-transition:all .1s linear;
 transition:all .1s linear;
+}
 
+a:not([href]):not([tabindex]) {
+  color: #999;
 }
 
 .main-menu .nav-icon {
@@ -93,6 +96,7 @@ overflow:visible;
 
 a:hover,a:focus {
 text-decoration:none;
+cursor: pointer;
 }
 
 nav {

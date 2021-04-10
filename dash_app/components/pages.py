@@ -69,10 +69,10 @@ def index_info_card(header, fa_icon, info):
     ])
 
 
-def logo_col(logo_href, img_src, img_class, title, text):
+def logo_col(logo_id, img_src, img_class, title, text):
     return dbc.Col([
         html.A(
-            href=logo_href,
+            id=logo_id,
             children=html.Div(
                 html.Img(className=img_class, src=img_src),
                 className="tools-logo circle-img"
@@ -85,14 +85,14 @@ def logo_col(logo_href, img_src, img_class, title, text):
 def index():
     tools_logos = dbc.Row([
         logo_col(
-            logo_href="/pangtreebuild",
+            logo_id="logo_pangtreebuild",
             img_src=links.build_logo_src,
             img_class="small_icon",
             title="PangTreeBuild",
             text="tool for multiple sequence alignment analysis."
         ),
         logo_col(
-            logo_href="/pangtreevis",
+            logo_id="logo_pangtreevis",
             img_src=links.vis_logo_src,
             img_class="medium_icon",
             title="PangTreeVis",
@@ -453,7 +453,15 @@ _poapangenome_tab_content = html.Div([
                         color="info"
                     ),
                     id="download_processing_result"
-                )
+                ),
+                html.A(
+                    dbc.Button(
+                        "Visualise result",
+                        className="result_btn",
+                        color="info"
+                    ),
+                    id="visualise_processing_result"
+                ),
             ]),
             html.Div(id="poapangenome_result_description"),
         ]), 

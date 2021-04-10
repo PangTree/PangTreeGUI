@@ -431,6 +431,28 @@ def run_pangenome(run_processing_btn_click,
 
 
 @app.callback(
+    [
+        Output("pangtreevis_nav", 'n_clicks'),
+        Output("pangenome_upload", 'contents'),
+    ],
+    [
+        Input("visualise_processing_result", 'n_clicks')
+    ],
+    [
+        State("session_state", 'data')
+    ]
+)
+def update_download_result_content(n_clicks, session_state_data):
+    if not n_clicks:
+        raise PreventUpdate()
+    jsonpangenome = session_state_data["jsonpangenome"]
+    return [
+        1,
+        jsonpangenome,
+    ]
+
+
+@app.callback(
     Output("download_processing_result", "href"),
     [
         Input("session_state", 'data')
