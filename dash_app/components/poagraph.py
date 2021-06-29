@@ -194,6 +194,8 @@ class GraphAlignment:
 
 
     def _remove_snp_with_parameter(self, consensus, sequence, parameter):
+        if parameter == 1:
+            return self._remove_snp(consensus, sequence)
         filtered_sequence = []
         i = 0
         while i < len(sequence):
